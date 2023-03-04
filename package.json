@@ -27,6 +27,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@this-oliver/ssasy": "^1.0.0",
     "pinia": "^2.0.32",
     "vue": "^3.2.47",
     "vue-router": "^4.1.6"
