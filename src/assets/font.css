@@ -1,0 +1,32 @@
+body {
+  font-size: 1rem;
+  font-family: "Helvetica Neue", sans-serif;
+}
+
+h1 {
+  font-size: 1.5rem;
+}
+
+h2 {
+  font-size: 1.25rem;
+}
+
+.nav-title {
+  font-size: 2rem;
+  font-weight: bolder;
+  font-family: Luminari, fantasy;
+}
+
+.text-title {
+  font-size: 2rem;
+  font-weight: bolder;
+  text-decoration: underline;
+}
+
+.text-error {
+  color: red;
+}
+
+.text-success {
+  color: green;
+}

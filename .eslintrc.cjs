@@ -37,10 +37,14 @@ module.exports = {
     // ensures that functions are defined before they are used
     "func-style": [ "error", "declaration", { "allowArrowFunctions": true } ],
     // new line for ternary operator
-    "multiline-ternary": [ "error", "always" ],
+    "multiline-ternary": [ "error", "always-multiline" ],
     // new line for operators
     "operator-linebreak": [ "error", "none", { "overrides": { "?": "before", ":": "before", "||": "after", "&&": "after" } } ],
     // new line for function arguments
-    "function-call-argument-newline": [ "error", "consistent" ]
+    "function-call-argument-newline": [ "error", "consistent" ],
+
+    /* ================ vue ================ */
+    // use kebab-case for component names
+    "vue/component-name-in-template-casing": [ "error", "kebab-case" ]
   }
 }
