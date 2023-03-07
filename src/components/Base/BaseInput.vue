@@ -30,13 +30,13 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, watch } from "vue";
-import BaseBtn from "./BaseBtn.vue";
+import { reactive, watch } from 'vue';
+import BaseBtn from './BaseBtn.vue';
 
 const props = defineProps({
   value: {
     type: String,
-    default: ""
+    default: ''
   },
   label: {
     type: String,
@@ -48,9 +48,9 @@ const props = defineProps({
   },
   type: {
     type: String,
-    default: "text",
+    default: 'text',
     validator: (value: string) => {
-      return [ "text", "password" ].includes(value);
+      return [ 'text', 'password' ].includes(value);
     }
   },
   outlined: {
@@ -63,7 +63,7 @@ const props = defineProps({
   }
 });
 
-const emits = defineEmits([ "input" ]);
+const emits = defineEmits([ 'input' ]);
 
 const data = reactive({
   input: null as unknown as string,
@@ -76,7 +76,7 @@ function setData(value: string){
 }
 
 watch(() => data.input, (newInput) => {
-  emits("input", newInput);
+  emits('input', newInput);
 });
 
 watch(() => props.value, (newValue) => {

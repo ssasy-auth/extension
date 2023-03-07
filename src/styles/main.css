@@ -1,0 +1,15 @@
+@import "./font.css";
+
+html,
+body,
+#app {
+  margin: 0;
+  padding: 0;
+}
+
+#app-popup {
+  padding: 10px;
+  
+  min-height: 400px;
+  min-width: 300px;
+}

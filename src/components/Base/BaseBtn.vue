@@ -16,12 +16,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed } from 'vue';
 
 const props = defineProps({
   color: {
     type: String,
-    default: "primary"
+    default: 'primary'
   },
   small: {
     type: Boolean,
@@ -73,17 +73,17 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits([ "click" ]);
+const emit = defineEmits([ 'click' ]);
 
 // computed
 
 const getButtonSize = computed(() => {
   if (props.small) {
-    return "small";
+    return 'small';
   } else if (props.large) {
-    return "large";
+    return 'large';
   } else {
-    return "medium";
+    return 'medium';
   }
 });
 
@@ -91,6 +91,6 @@ const getButtonSize = computed(() => {
 
 function handleClick() {
   // emit click event
-  emit("click")
+  emit('click')
 }
 </script>
