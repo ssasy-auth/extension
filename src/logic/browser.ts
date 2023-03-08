@@ -31,7 +31,7 @@ export function openOptionsPage (config?: openOptionsPageConfig) {
     browser.runtime.openOptionsPage()
   }
 
-  if(config?.closePopup){
+  if(config?.closePopup === true){
     closePopup();
   }
 }

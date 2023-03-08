@@ -1,9 +1,9 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import Start from '../views/Start.vue';
 import Setup from '../views/Setup/Index.vue';
-import SetupKey from '../views/Setup/SetupKey.vue';
-import SetupImport from '../views/Setup/SetupImport.vue';
-import SetupStorage from '../views/Setup/SetupStorage.vue';
+import SetupKeyVue from '../views/Setup/SetupKey.vue';
+import SetupImportVue from '../views/Setup/SetupImport.vue';
+import SetupStorageVue from '../views/Setup/SetupStorage.vue';
 
 const routes: Array<RouteRecordRaw> = [
   { 
@@ -14,22 +14,22 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/setup',
     name: 'setup',
-    component: () => Setup
+    component: Setup
   },
   {
     path: '/setup/key',
     name: 'setup-key',
-    component: () => SetupKey
+    component: SetupKeyVue
   },
   {
     path: '/setup/import',
     name: 'setup-import',
-    component: () => SetupImport
+    component: SetupImportVue
   },
   {
     path: '/setup/storage',
     name: 'setup-storage',
-    component: () => SetupStorage
+    component: SetupStorageVue
   }
 ];
 

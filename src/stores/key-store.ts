@@ -36,7 +36,7 @@ export const useKeySmithStore = defineStore('keySmithStore', {
       }
       
       if(!KeyChecker.isRawKey(key)) {
-        throw new Error('Key is not valid');
+        throw new Error('Key is not valid raw key');
       }
 
       return await KeyModule.importKey(key);

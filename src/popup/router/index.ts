@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
-import Start from '~/popup/views/Start.vue';
+import Start from '~/options/views/Start.vue';
 
 const routes: Array<RouteRecordRaw> = [
   { 

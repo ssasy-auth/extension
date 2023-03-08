@@ -1,33 +1,28 @@
 <!-- login user or redirect them to setup.vue -->
 <script setup lang="ts">
+import { useRouter } from 'vue-router';
 import { useVaultStore } from '~/stores/vault-store.js'
-import { openOptionsPage } from '~/logic/browser';
+import { inPopupPage, openOptionsPage, closePopup } from '~/logic/browser';
 import BasePage from '~/components/Base/BasePage.vue';
 import BaseBtn from '~/components/Base/BaseBtn.vue';
-import FormLogin from '~/components/FormLogin.vue';
 
+const router = useRouter()
 const vaultStore = useVaultStore()
 
-function handleLoginForm(password: string){
-  console.log(`password: ${password}`)
-
-  // TODO: decrypt vault with password
-}
-
-function openSetupOption(){
-  openOptionsPage({ path: '/setup' }) // go to setup route in options page
+function goToSetup(){
+  if(inPopupPage()){
+    openOptionsPage(/*{ path: '/setup' }*/) // go to setup route in options page
+    closePopup()
+  } else {
+    router.push('/setup')
+  }
 }
 </script>
 
 <template>
   <base-page title="Start Page">
-    <v-row v-if="vaultStore.hasKey">
-      <v-col cols="10">
-        <form-login @login="handleLoginForm" />
-      </v-col>
-    </v-row>
     <v-row
-      v-else
+      v-if="!vaultStore.hasKey"
       justify="center">
       <v-col
         cols="10"
@@ -38,7 +33,7 @@ function openSetupOption(){
       <v-col cols="auto">
         <base-btn
           large
-          @click="openSetupOption()">
+          @click="goToSetup()">
           Setup Wallet
         </base-btn>
       </v-col>

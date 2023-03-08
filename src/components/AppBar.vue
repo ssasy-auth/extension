@@ -30,7 +30,7 @@ function goBack() {
       v-if="inPopup"
       id="bar-left"
       small
-      icon
+      rounded="pill"
       @click="goBack">
       <material-symbols-arrow-back />
     </base-btn>
