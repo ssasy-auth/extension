@@ -15,16 +15,40 @@ export const useNotificationStore = defineStore('notificationStore', {
     notifications: []
   }),
   actions: {
-    notify(title: string, message: string, status?: number){
+    notify(title: string, message: string){
       const notification: Notification = { 
-        type: status ? 'error' : 'info', 
+        type: 'info', 
         title, 
-        message,
-        status 
+        message 
       };
 
       this.notifications.push(notification);
-      console.log(notification);
+      
+      logNotification(notification);
+    },
+    error(title: string, message: string, status?: number){
+
+      const notification: Notification = { 
+        type: 'error', 
+        title, 
+        message,
+        status: status || 500
+      };
+
+      // push notification
+      this.notifications.push(notification);
+      
+      // log notification
+      logNotification(notification);
     }
   }
 });
+
+function formatNotification(notification: Notification){
+  const emoji = notification.type === 'error' ? '❗️' : '📣';
+  return `[ssasy ${emoji}] ${notification.title} - ${notification.message}`;
+}
+
+function logNotification(notification: Notification){
+  console.log(formatNotification(notification));
+}

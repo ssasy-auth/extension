@@ -1,17 +1,29 @@
 import { defineStore } from 'pinia';
 import { KeyModule, KeyChecker } from '@this-oliver/ssasy';
 import type { GenericKey, PrivateKey, RawKey } from '@this-oliver/ssasy';
+import { useNotificationStore } from '~/stores/app-store';
 
-interface KeySmithStoreState {
+interface KeyStoreState {
   temporaryKey: PrivateKey | undefined;
 }
-export const useKeySmithStore = defineStore('keySmithStore', {
-  state: (): KeySmithStoreState => ({
+export const useKeyStore = defineStore('keyStore', {
+  state: (): KeyStoreState => ({
     temporaryKey: undefined
   }),
   getters: {
     hasTemporaryKey(): boolean {
-      return this.temporaryKey !== undefined && KeyChecker.isAsymmetricKey(this.temporaryKey);
+      const notificationStore = useNotificationStore();
+      if(this.temporaryKey === undefined) {
+        notificationStore.error('Key Error', 'No temporary key');
+        return false;
+      }
+      
+      if(!KeyChecker.isAsymmetricKey(this.temporaryKey)) {
+        notificationStore.error('Key Error', 'Key is not assymetric');
+        return false;
+      }
+      
+      return true;
     }
   },
   actions: {
@@ -31,7 +43,7 @@ export const useKeySmithStore = defineStore('keySmithStore', {
       return await KeyModule.exportKey(key);
     },
     async importKey(key: RawKey) : Promise<GenericKey> {
-      if(KeyChecker.isKey(key)) {
+      if(KeyChecker.isKey(key) && !KeyChecker.isRawKey(key)) {
         return key;
       }
       
@@ -39,7 +51,9 @@ export const useKeySmithStore = defineStore('keySmithStore', {
         throw new Error('Key is not valid raw key');
       }
 
-      return await KeyModule.importKey(key);
+      const importedKey = await KeyModule.importKey(key);
+
+      return importedKey;
     }
   }
 });

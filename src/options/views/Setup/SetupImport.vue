@@ -1,8 +1,8 @@
 <!-- generate key or import -->
 <script setup lang="ts">
-import { reactive, computed, toRaw } from 'vue';
+import { reactive, computed } from 'vue';
 import { KeyChecker } from '@this-oliver/ssasy';
-import { useKeySmithStore } from '~/stores/key-store';
+import { useKeyStore } from '~/stores/key-store';
 import { useNotificationStore } from '~/stores/app-store';
 import BasePage from '~/components/Base/BasePage.vue';
 import InputFile from '~/components/Base/InputFile.vue';
@@ -12,17 +12,21 @@ import { KeyType } from '@this-oliver/ssasy';
 import type { PrivateKey, RawKey } from '@this-oliver/ssasy';
 
 const notificationStore = useNotificationStore();
-const keySmithStore = useKeySmithStore();
-
-const data = reactive({
-  privateKey: undefined as PrivateKey | undefined
-})
+const keyStore = useKeyStore();
 
 const form = reactive({
   files: undefined as File[] | undefined,
   text: undefined as string | undefined
 });
 
+const data = reactive({
+  rawKey: undefined as RawKey | undefined,
+  privateKey: undefined as PrivateKey | undefined
+})
+
+/**
+ * Returns true if the private key is valid
+ */
 const isValidKey = computed(() => {
   if(!data.privateKey){
     return false;
@@ -31,76 +35,82 @@ const isValidKey = computed(() => {
   return KeyChecker.isKey(data.privateKey);
 });
 
-async function importKey(){
-  try {
-    if(form.files){
-      console.log({ pre: form.files });
-      data.privateKey = await convertFileToKey(toRaw(form.files));
-    } else if(form.text){
-      data.privateKey = await convertStringToKey(toRaw(form.text));
-    } else {
-      throw new Error('No key to import');
+async function convertInputToKey(input: string | Blob[]): Promise<RawKey>{
+  let key: RawKey;
+
+  if(typeof input === 'string'){
+    try {
+    // convert string to raw key (json)
+      key = JSON.parse(input);
+    } catch (error) {
+      throw new Error('Not a valid json string');
     }
-  } catch (error) {
-    const message = (error as Error).message || 'Failed to convert file to key';
-    notificationStore.notify('Setup Import Flow', message, 500);
+
+  } else if ( Array.isArray(input) && input[0] instanceof Blob){
+    const file = input[0] as File;
+
+    // throw error if no file
+    if(!file){
+      throw new Error('No file');
+    }
+
+    // throw error if not a json file
+    if(file.type !== 'application/json'){
+      throw new Error('Not a json file');
+    }
+
+    // extract file contents
+    const content = await file.text();
+
+    // convert string content to raw key (json)
+    key = JSON.parse(content);
+  } else {
+    throw new Error('Invalid input');
   }
-}
-
-/**
- * Converts a json file to a raw key
- */
-async function convertFileToKey(f: File[]): Promise<PrivateKey> {
-  console.log({ psot: f });
-  const file = f[0] as File;
-
-  if(!file){
-    throw new Error('No file');
-  }
-
-  if(file.type !== 'application/json'){
-    throw new Error('Not a json file');
-  }
-
-  // extract file contents
-  const content = await file.text();
-
-  // convert string to json
-  const json = JSON.parse(content);
-
-  // return if file is not a key
-  if(!KeyChecker.isRawKey(json)){
-    throw new Error('Not a raw key');
-  }
-
-  return json;
-}
-
-/**
- * Converts a string to a raw key
- */
-async function convertStringToKey(string: string): Promise<PrivateKey>{
-  if(typeof string !== 'string'){
-    throw new Error('Not a string');
-  }
-
-  let rawKey: RawKey;
-  try {
-    rawKey = JSON.parse(string);
-  } catch (error) {
-    throw new Error('Not a valid json string');
-  }
-
-  if(!KeyChecker.isRawKey(rawKey)){
+  
+  // throw error if not a raw key
+  if(!KeyChecker.isRawKey(key)){
     throw new Error('Not a valid raw key');
   }
 
-  if(rawKey.type !== KeyType.PrivateKey){
+  // throw error if not a private key
+  if(key.type !== KeyType.PrivateKey){
     throw new Error('Not a private key');
   }
 
-  // convert raw key to private key
-  return await keySmithStore.importKey(rawKey) as PrivateKey;
+  return key;
+}
+
+/**
+ * Sets the raw key and private key
+ */
+async function importKey(){
+  const input = form.files || form.text;
+
+  if(input === undefined){
+    throw new Error('Input is undefined');
+  }
+
+  try {
+    // convert file or string to raw key
+    const rawKey = await convertInputToKey(input);
+    
+    // set component raw key
+    data.rawKey = rawKey;
+
+    // convert raw key to private key
+    const privateKey = await keyStore.importKey(rawKey) as PrivateKey;
+    
+    // set component private key
+    data.privateKey = privateKey;
+
+    // set key store temporary key
+    keyStore.temporaryKey = privateKey;
+
+  } catch (error) {
+    const message = (error as Error).message || 'Failed to convert file to key';
+    notificationStore.error('Setup Import Flow', message);
+  }
 }
 </script>
 

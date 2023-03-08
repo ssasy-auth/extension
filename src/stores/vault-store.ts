@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import { useKeyStore } from './key-store';
 import { useNotificationStore } from '~/stores/app-store';
 import { VaultStorage } from '~/logic/storage';
 import { KeyChecker, KeyModule, CryptoModule } from '@this-oliver/ssasy';
@@ -9,19 +10,18 @@ const storedCiphertextString = VaultStorage;
 export const useVaultStore = defineStore('vaultStore', {
   getters: {
     hasKey(): boolean {
-      if(storedCiphertextString.value === undefined) {
+      if(storedCiphertextString.value === undefined || storedCiphertextString.value === 'undefined') {
         return false;
       }
-
-      let ciphertext;
       
+      let ciphertext;
       try {
         ciphertext = JSON.parse(storedCiphertextString.value);
       } catch (error) {
         const message = (error as Error).message || 'parsing error';
         
         const notificationStore = useNotificationStore();
-        notificationStore.notify('Vault Error', message, 500);
+        notificationStore.error('Vault Error', message);
         return false;
       }
 
@@ -29,16 +29,42 @@ export const useVaultStore = defineStore('vaultStore', {
     }
   },
   actions: {
-    async storeKey(key: PrivateKey, passphrase: string): Promise<void> {
+    async storeKey(key: PrivateKey, passphrase: string): Promise<boolean> {
+      const notificationStore = useNotificationStore();
+
       if(!KeyChecker.isAsymmetricKey(key)) {
-        throw new Error('Key is not an asymmetric key');
+        notificationStore.error('Vault Error', 'Key is not an asymmetric key');
       }
 
-      const rawKey = await KeyModule.exportKey(key); // converts key to json-like object
-      const plaintext = JSON.stringify(rawKey); // converts object to string
-      const ciphertext = await CryptoModule.encrypt(passphrase, plaintext);
-      const ciphertextString = JSON.stringify(ciphertext);
+      let plaintextString: string;
+      let ciphertextString: string;
+
+      try {
+        const rawKey = await KeyModule.exportKey(key); // converts key to json-like object
+        plaintextString = JSON.stringify(rawKey); // converts object to string
+      } catch (error) {
+        const message = (error as Error).message || 'failed to export key';
+        notificationStore.error('Vault Error', message, 500);
+        return false;
+      }
+
+      try {
+        const ciphertext = await CryptoModule.encrypt(passphrase, plaintextString);
+        ciphertextString = JSON.stringify(ciphertext);
+      } catch (error) {
+        const message = (error as Error).message || 'encryption error';
+        notificationStore.error('Vault Error', message, 500);
+        return false; 
+      }
+
+      // store ciphertext
       storedCiphertextString.value = ciphertextString;
+
+      // reset key store
+      const keyStore = useKeyStore();
+      keyStore.$reset();
+
+      return true;
     },
     async getStoreKey(passphrase: string): Promise<PrivateKey> {
       if(!this.hasKey){

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { reactive, computed, onMounted } from 'vue';
 import { KeyChecker, KeyType } from '@this-oliver/ssasy';
-import { useKeySmithStore } from '~/stores/key-store';
+import { useKeyStore } from '~/stores/key-store';
 import BaseCard from './Base/BaseCard.vue';
 import type { PropType, ComputedRef } from 'vue';
 import type { GenericKey, RawKey } from '@this-oliver/ssasy';
@@ -9,7 +9,7 @@ import type { ActionItem } from './Base/BaseCard.vue';
 
 const MSG_MISSING_VALUE = 'N/A';
 
-const keySmithStore = useKeySmithStore();
+const keyStore = useKeyStore();
 
 const props = defineProps({
   ssasyKey: {
@@ -139,7 +139,7 @@ function extractKeySpecification(rawKey: RawKey): KeyDetail[]{
 onMounted(async () => {
   data.rawKey = KeyChecker.isRawKey(props.ssasyKey) 
     ? props.ssasyKey 
-    : await keySmithStore.exportKey(props.ssasyKey);
+    : await keyStore.exportKey(props.ssasyKey);
 
   if(data.rawKey !== undefined){
     data.keySummary = extractKeySummary(data.rawKey);

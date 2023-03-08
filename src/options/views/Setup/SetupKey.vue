@@ -3,12 +3,12 @@
 import type { PrivateKey } from '@this-oliver/ssasy';
 import { reactive, computed } from 'vue';
 import { KeyChecker } from '@this-oliver/ssasy';
-import { useKeySmithStore } from '~/stores/key-store.js';
+import { useKeyStore } from '~/stores/key-store.js';
 import BasePage from '~/components/Base/BasePage.vue';
 import BaseBtn from '~/components/Base/BaseBtn.vue';
 import KeyViewer from '~/components/KeyViewer.vue';
 
-const keySmithStore = useKeySmithStore();
+const keyStore = useKeyStore();
 
 const data = reactive({
   key: {} as PrivateKey,
@@ -20,7 +20,7 @@ const isValidKey = computed(() => {
 });
 
 async function generateKey(){
-  data.key = await keySmithStore.createPrivateKey();
+  data.key = await keyStore.createPrivateKey();
 }
 </script>
 
