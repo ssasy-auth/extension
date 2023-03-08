@@ -12,8 +12,7 @@ const [ show, toggle ] = useToggle(false)
       p="x-4 y-2"
       m="y-auto r-2"
       transition="opacity duration-300"
-      :class="show ? 'opacity-100' : 'opacity-0'"
-    >
+      :class="show ? 'opacity-100' : 'opacity-0'">
       <h1 class="text-lg">
         Vitesse WebExt
       </h1>
@@ -22,8 +21,7 @@ const [ show, toggle ] = useToggle(false)
     <div
       class="flex w-10 h-10 rounded-full shadow cursor-pointer"
       bg="teal-600 hover:teal-700"
-      @click="toggle()"
-    >
+      @click="toggle()">
       <pixelarticons-power class="block m-auto text-white text-lg" />
     </div>
   </div>

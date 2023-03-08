@@ -6,17 +6,22 @@ const props = defineProps({
     defualt: undefined
   }
 });
-
 </script>
 
 <template>
-  <v-row justify="center" class="pa-1">
-    <v-col v-if="props.title" cols="auto">
+  <div>
+    <div
+      v-if="props.title"
+      class="text-center my-1">
       <h1>{{ props.title }}</h1>
-    </v-col>
-    <v-col cols="12" />
-    <v-col>
-      <slot />
-    </v-col>
-  </v-row>
+    </div>
+
+    <v-row
+      justify="center"
+      class="pa-1">
+      <v-col>
+        <slot />
+      </v-col>
+    </v-row>
+  </div>
 </template>

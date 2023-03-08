@@ -4,6 +4,8 @@ import { dirname, relative } from 'node:path'
 import type { UserConfig } from 'vite'
 import { defineConfig } from 'vite'
 import Vue from '@vitejs/plugin-vue'
+import Pages from 'vite-plugin-pages'
+import Layouts from 'vite-plugin-vue-layouts'
 import Icons from 'unplugin-icons/vite'
 import IconsResolver from 'unplugin-icons/resolver'
 import Components from 'unplugin-vue-components/vite'
@@ -23,6 +25,8 @@ export const sharedConfig: UserConfig = {
   },
   plugins: [
     Vue(),
+    Pages(),
+    Layouts(),
 
     AutoImport({
       imports: [

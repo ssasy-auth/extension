@@ -1,28 +1,21 @@
-<template>
-  <div>
-    <v-btn
-    flat
-    :color="color"
-    :size="getButtonSize"
-    :block="block"
-    :disabled="disabled"
-    :rounded="rounded"
-    :to="to"
-    class="pa-1"
-    @click="handleClick()">
-    <slot />
-  </v-btn>
-  </div>
-</template>
-
 <script setup lang="ts">
+import type { ComputedRef } from 'vue';
 import { computed } from 'vue';
 
 const props = defineProps({
   color: {
     type: String,
-    default: 'primary'
+    default: undefined
   },
+  block: {
+    type: Boolean,
+    default: undefined
+  },
+  elevation: {
+    type: String,
+    default: undefined
+  },
+  /* sizes */
   small: {
     type: Boolean,
     default: undefined
@@ -31,38 +24,28 @@ const props = defineProps({
     type: Boolean,
     default: undefined
   },
-  block: {
-    type: Boolean,
-    default: undefined
-  },
-  tonal: {
-    type: Boolean,
-    default: undefined
-  },
-  elevated: {
-    type: Boolean || String,
-    default: undefined
-  },
-  plain: {
-    type: Boolean,
-    default: undefined
-  },
+  /* styles */
   flat: {
-    type: Boolean,
-    default: undefined
-  },
-  text: {
     type: Boolean,
     default: undefined
   },
   outlined: {
     type: Boolean,
-    default: undefined
+    default: true
+  },
+  text: {
+    type: Boolean,
+    default: false
+  },
+  icon: {
+    type: Boolean,
+    default: false
   },
   rounded: {
-    type: Boolean,
+    type: String,
     default: undefined
   },
+  /* actionability */
   disabled: {
     type: Boolean,
     default: undefined
@@ -75,9 +58,19 @@ const props = defineProps({
 
 const emit = defineEmits([ 'click' ]);
 
-// computed
+type ButtonStyle = 'outlined' | 'tonal' | 'plain' | 'text';
+const getButtonStyle: ComputedRef<ButtonStyle | undefined> = computed(() => {
+  if (props.outlined === true) {
+    return 'outlined';
+  } else if (props.text === true) {
+    return 'text';
+  } else {
+    return undefined
+  }
+});
 
-const getButtonSize = computed(() => {
+type ButtonSize = 'small' | 'medium' | 'large';
+const getButtonSize: ComputedRef<ButtonSize> = computed(() => {
   if (props.small) {
     return 'small';
   } else if (props.large) {
@@ -87,10 +80,26 @@ const getButtonSize = computed(() => {
   }
 });
 
-// methods
-
 function handleClick() {
   // emit click event
   emit('click')
 }
 </script>
+
+<template>
+  <v-btn
+    flat
+    :icon="props.icon"
+    :variant="getButtonStyle"
+    :elevation="props.elevation"
+    :color="props.color"
+    :size="getButtonSize"
+    :block="props.block"
+    :disabled="props.disabled"
+    :rounded="props.rounded"
+    :to="props.to"
+    class="pa-1"
+    @click="handleClick()">
+    <slot />
+  </v-btn>
+</template>

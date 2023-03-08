@@ -86,16 +86,58 @@
     "function-call-argument-newline": [
       "error",
       "consistent"
-    ],
-    /* ================ vue ================ */
-    // disable multi-word component names
-    "vue/multi-word-component-names": [
-      "off"
-    ],
-    // use kebab-case for component names
-    "vue/component-name-in-template-casing": [
-      "error",
-      "kebab-case"
     ]
-  }
+  },
+  // rules for .vue files
+  "overrides": [
+    {
+      "files": [
+        "*.vue"
+      ],
+      "rules": {
+        // only one attribute per line
+        "vue/max-attributes-per-line": [
+          "error",
+          {
+            "singleline": {
+              "max": 1
+            },
+            "multiline": {
+              "max": 1
+            }
+          }
+        ],
+        // first attribute on the line below opening tag
+        "vue/first-attribute-linebreak": [
+          "error",
+          {
+            "singleline": "beside",
+            "multiline": "below"
+          }
+        ],
+        // closing tag on the same line as the last attribute
+        "vue/html-closing-bracket-newline": [
+          "error",
+          {
+            "singleline": "never",
+            "multiline": "never"
+          }
+        ],
+        // disable multi-word component names
+        "vue/multi-word-component-names": [
+          "off"
+        ],
+        // use kebab-case for component names
+        "vue/component-name-in-template-casing": [
+          "error",
+          "kebab-case"
+        ],
+        // indent template
+        "vue/html-indent": [
+          "error",
+          2
+        ]
+      }
+    }
+  ]
 }

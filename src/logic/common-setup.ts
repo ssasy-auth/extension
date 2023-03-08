@@ -1,6 +1,7 @@
 import type { App } from 'vue'
 import { getCurrentContext } from 'webext-bridge'
-import VuetifyPlugin from '~/plugins/vuetify'
+import VuetifyPlugin from '~/plugins/vuetify-plugin'
+import PiniaPlugin from '~/plugins/pinia-plugin'
 
 export function setupApp(app: App) {
   const context = getCurrentContext()
@@ -15,4 +16,5 @@ export function setupApp(app: App) {
   // example: app.use(i18n)
   // example excluding content-script context: if (context !== 'content-script') app.use(i18n)
   app.use(VuetifyPlugin);
+  app.use(PiniaPlugin);
 }

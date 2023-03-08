@@ -1,3 +1,4 @@
+import { RemovableRef } from '@vueuse/core'
 import { useStorageLocal } from '~/composables/useStorageLocal'
 
-export const storageDemo = useStorageLocal('webext-demo', 'Storage Demo')
+export const VaultStorage: RemovableRef<string|undefined> = useStorageLocal('ssasy-vault-key', undefined)
