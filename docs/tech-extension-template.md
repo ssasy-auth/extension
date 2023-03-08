@@ -1,4 +1,4 @@
-# WebExtension Vite Starter
+# Application Tech Stack: WebExtension Vite Starter
 
 > Note: This is a fork of `vitesse-webext` with some modifications to make it work with my particular use case. In doing so, I have modified the original template. I have also tried to update the README to reflect the changes I have made - you can spot the changes by looking for a '[🪖]' tag in the README.
 

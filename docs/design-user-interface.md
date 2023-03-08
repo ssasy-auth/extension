@@ -1,4 +1,4 @@
-# Building the user interface
+# Application Design: User Interface
 
 ## Color Palette
 
