@@ -16,7 +16,7 @@ const [ show, toggle ] = useToggle(false)
       <h1 class="text-lg">
         Vitesse WebExt
       </h1>
-      <SharedSubtitle />
+      <p class="mt-2 opacity-50">This is the {{ $app.context }} page</p>
     </div>
     <div
       class="flex w-10 h-10 rounded-full shadow cursor-pointer"

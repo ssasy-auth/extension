@@ -10,22 +10,34 @@ const storedCiphertextString = VaultStorage;
 export const useVaultStore = defineStore('vaultStore', {
   getters: {
     hasKey(): boolean {
-      if(storedCiphertextString.value === undefined || storedCiphertextString.value === 'undefined') {
-        return false;
-      }
-      
-      let ciphertext;
-      try {
-        ciphertext = JSON.parse(storedCiphertextString.value);
-      } catch (error) {
-        const message = (error as Error).message || 'parsing error';
-        
-        const notificationStore = useNotificationStore();
-        notificationStore.error('Vault Error', message);
+      const notificationStore = useNotificationStore();
+      const ciphertextString = storedCiphertextString.value;
+
+      if(ciphertextString === undefined || ciphertextString === 'undefined') {
+        notificationStore.error('Vault Error', 'No key stored');
         return false;
       }
 
-      return KeyChecker.isRawKey(ciphertext);
+      try {
+        // check if ciphertext string is valid json
+        const ciphertext = JSON.parse(ciphertextString);
+
+        // check if ciphertext has all required properties
+        if(
+          !ciphertext.iv || // iv is used to encrypt the data
+          !ciphertext.salt || // salt is used to generate the key that encrypts the ciphertext
+          !ciphertext.data // the encrypted data
+        ){
+          return false;
+        }
+
+        // confirm that ciphertext is valid
+        return true;
+      } catch (error) {
+        const message = (error as Error).message || 'parsing error';
+        notificationStore.error('Vault Error', message);
+        return false;
+      }
     }
   },
   actions: {
@@ -67,18 +79,32 @@ export const useVaultStore = defineStore('vaultStore', {
       return true;
     },
     async getStoreKey(passphrase: string): Promise<PrivateKey> {
-      if(!this.hasKey){
+      console.log('starting getStoreKey()...');
+      if(this.hasKey === false || !storedCiphertextString.value){
         throw new Error('No key stored');
       }
 
-      const ciphertext = JSON.parse(storedCiphertextString.value as string);
+      // convert ciphertext string to object
+      const ciphertext = JSON.parse(storedCiphertextString.value);
+
+      // decrypt ciphertext
       const plaintext = await CryptoModule.decrypt(passphrase, ciphertext);
+
+      // convert plaintext string to raw key object
       const rawKey = JSON.parse(plaintext);
+
+      // import raw key object to key
       const key = await KeyModule.importKey(rawKey) as PrivateKey;
+      
       return key;
     },
-    async removeKey(): Promise<void> {
+    async removeKey(): Promise<boolean> {
+      if(!this.hasKey) {
+        throw new Error('No key stored');
+      }
+
       storedCiphertextString.value = undefined;
+      return true;
     }
   }
 });

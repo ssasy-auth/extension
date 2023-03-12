@@ -4,5 +4,7 @@ import LogoImage from '~/assets/logo.svg';
 </script>
 
 <template>
-  <base-image :src="LogoImage" height="50px"/>
+  <base-image
+    :src="LogoImage"
+    height="50px"/>
 </template>

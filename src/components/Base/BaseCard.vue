@@ -43,6 +43,10 @@ const props = defineProps({
   actions: {
     type: Array as PropType<ActionItem[]>,
     default: () => []
+  },
+  actionCentered: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -78,17 +82,23 @@ const getActions: ComputedRef<ActionItem[]> = computed(() => {
 
     <template
       #actions
-      v-if="getActions.length > 0" >
-      <base-btn
-        v-for="item in getActions"
-        :key="item.label"
-        :color="item.color"
-        :hint="item.hint"
-        :outlined="item.outlined"
-        :loading="props.loading"
-        @click="item.action" >
-        {{ item.label }}
-      </base-btn >
+      v-if="getActions.length > 0">
+
+      <v-row :justify="props.actionCentered ? 'center' : undefined">
+        <v-col
+          cols="auto"
+          v-for="item in getActions"
+          :key="item.label">
+          <base-btn
+            :color="item.color"
+            :hint="item.hint"
+            :outlined="item.outlined"
+            :loading="props.loading"
+            @click="item.action" >
+            {{ item.label }}
+          </base-btn >
+        </v-col>
+      </v-row>
     </template >
   </v-card >
 </template>

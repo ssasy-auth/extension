@@ -14,7 +14,7 @@ const inPopup = computed(() => inPopupPage());
       class="my-1"
       no-gutters>
       <v-col cols="auto">
-        <SharedSubtitle />
+        <p class="mt-2 opacity-50">This is the {{ $app.context }} page</p>
       </v-col>
         
       <v-col

@@ -8,7 +8,7 @@ import { useNotificationStore } from '~/stores/app-store';
 import BasePage from '~/components/Base/BasePage.vue';
 import BaseBtn from '~/components/Base/BaseBtn.vue';
 import InputText from '~/components/Base/InputText.vue';
-import KeyViewer from '~/components/KeyViewer.vue';
+import KeyViewer from '~/components/Key/KeyViewer.vue';
 
 const router = useRouter();
 const keyStore = useKeyStore();

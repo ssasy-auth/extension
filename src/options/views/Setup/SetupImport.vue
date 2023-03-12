@@ -7,7 +7,7 @@ import { useNotificationStore } from '~/stores/app-store';
 import BasePage from '~/components/Base/BasePage.vue';
 import InputFile from '~/components/Base/InputFile.vue';
 import InputTextArea from '~/components/Base/InputTextArea.vue';
-import KeyViewer from '~/components/KeyViewer.vue';
+import KeyViewer from '~/components/Key/KeyViewer.vue';
 import { KeyType } from '@this-oliver/ssasy';
 import type { PrivateKey, RawKey } from '@this-oliver/ssasy';
 

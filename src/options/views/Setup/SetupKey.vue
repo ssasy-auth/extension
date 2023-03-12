@@ -3,10 +3,10 @@
 import type { PrivateKey } from '@this-oliver/ssasy';
 import { reactive, computed } from 'vue';
 import { KeyChecker } from '@this-oliver/ssasy';
-import { useKeyStore } from '~/stores/key-store.js';
+import { useKeyStore } from '~/stores/key-store';
 import BasePage from '~/components/Base/BasePage.vue';
 import BaseBtn from '~/components/Base/BaseBtn.vue';
-import KeyViewer from '~/components/KeyViewer.vue';
+import KeyViewer from '~/components/Key/KeyViewer.vue';
 
 const keyStore = useKeyStore();
 

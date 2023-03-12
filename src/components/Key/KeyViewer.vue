@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { reactive, computed, onMounted } from 'vue';
+import type { PropType, ComputedRef } from 'vue';
 import { KeyChecker, KeyType } from '@this-oliver/ssasy';
 import { useKeyStore } from '~/stores/key-store';
-import BaseCard from './Base/BaseCard.vue';
-import type { PropType, ComputedRef } from 'vue';
 import type { GenericKey, RawKey } from '@this-oliver/ssasy';
-import type { ActionItem } from './Base/BaseCard.vue';
+import BaseCard from '~/components/Base/BaseCard.vue';
+import type { ActionItem } from '~/components/Base/BaseCard.vue';
 
 const MSG_MISSING_VALUE = 'N/A';
 
