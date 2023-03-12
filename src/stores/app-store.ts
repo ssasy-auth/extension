@@ -1,4 +1,16 @@
 import { defineStore } from 'pinia';
+import { SESSION_STORAGE } from '~/logic';
+
+/**
+ * Returns a formatted notification
+ * 
+ * @param notification - Notification to format
+ * @returns string
+ */
+function formatNotification(notification: Notification){
+  const emoji = notification.type === 'error' ? '❗️' : '📣';
+  return `[ssasy ${emoji}] ${notification.title} - ${notification.message}`;
+}
 
 type NotificationType = 'info' | 'error';
 interface Notification {
@@ -10,7 +22,7 @@ interface Notification {
 interface NotificationStoreState {
   notifications: Notification[];
 }
-export const useNotificationStore = defineStore('notificationStore', {
+export const useNotificationStore = defineStore('notification', {
   state: (): NotificationStoreState => ({
     notifications: []
   }),
@@ -22,9 +34,14 @@ export const useNotificationStore = defineStore('notificationStore', {
         message 
       };
 
+      // push notification
       this.notifications.push(notification);
-      
-      logNotification(notification);
+
+      // format notification
+      const formattedNotification = formatNotification(notification);
+
+      // log notification
+      console.log(formattedNotification);
     },
     error(title: string, message: string, status?: number){
 
@@ -37,18 +54,33 @@ export const useNotificationStore = defineStore('notificationStore', {
 
       // push notification
       this.notifications.push(notification);
+
+      // format notification
+      const formattedNotification = formatNotification(notification);
       
       // log notification
-      logNotification(notification);
+      console.error(formattedNotification);
+
+      return formattedNotification;
     }
   }
 });
 
-function formatNotification(notification: Notification){
-  const emoji = notification.type === 'error' ? '❗️' : '📣';
-  return `[ssasy ${emoji}] ${notification.title} - ${notification.message}`;
+interface SessionStoreState {
+  session: string | undefined;
 }
-
-function logNotification(notification: Notification){
-  console.log(formatNotification(notification));
-}
+export const useSessionStore = defineStore('session', {
+  state: (): SessionStoreState => ({
+    session: SESSION_STORAGE.value || undefined
+  }),
+  getters: {
+    hasSession(): boolean {
+      return this.session !== undefined;
+    }
+  },
+  actions: {
+    setSession(session: string) {
+      this.session = session;
+    }
+  }
+});

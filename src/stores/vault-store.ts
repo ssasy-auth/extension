@@ -1,17 +1,15 @@
 import { defineStore } from 'pinia';
 import { useKeyStore } from './key-store';
 import { useNotificationStore } from '~/stores/app-store';
-import { VaultStorage } from '~/logic/storage';
+import { KEY_STORAGE } from '~/logic/storage';
 import { KeyChecker, KeyModule, CryptoModule } from '@this-oliver/ssasy';
 import type { PrivateKey } from '@this-oliver/ssasy';
-
-const storedCiphertextString = VaultStorage;
 
 export const useVaultStore = defineStore('vaultStore', {
   getters: {
     hasKey(): boolean {
       const notificationStore = useNotificationStore();
-      const ciphertextString = storedCiphertextString.value;
+      const ciphertextString = KEY_STORAGE.value;
 
       if(ciphertextString === undefined || ciphertextString === 'undefined') {
         notificationStore.error('Vault Error', 'No key stored');
@@ -45,7 +43,7 @@ export const useVaultStore = defineStore('vaultStore', {
       const notificationStore = useNotificationStore();
 
       if(!KeyChecker.isAsymmetricKey(key)) {
-        notificationStore.error('Vault Error', 'Key is not an asymmetric key');
+        throw notificationStore.error('Vault Error', 'Key is not an asymmetric key');
       }
 
       let plaintextString: string;
@@ -70,7 +68,7 @@ export const useVaultStore = defineStore('vaultStore', {
       }
 
       // store ciphertext
-      storedCiphertextString.value = ciphertextString;
+      KEY_STORAGE.value = ciphertextString;
 
       // reset key store
       const keyStore = useKeyStore();
@@ -79,13 +77,14 @@ export const useVaultStore = defineStore('vaultStore', {
       return true;
     },
     async getStoreKey(passphrase: string): Promise<PrivateKey> {
-      console.log('starting getStoreKey()...');
-      if(this.hasKey === false || !storedCiphertextString.value){
-        throw new Error('No key stored');
+      const notificationStore = useNotificationStore();
+
+      if(this.hasKey === false || !KEY_STORAGE.value){
+        throw notificationStore.error('Vault Error', 'No key stored');
       }
 
       // convert ciphertext string to object
-      const ciphertext = JSON.parse(storedCiphertextString.value);
+      const ciphertext = JSON.parse(KEY_STORAGE.value);
 
       // decrypt ciphertext
       const plaintext = await CryptoModule.decrypt(passphrase, ciphertext);
@@ -99,11 +98,13 @@ export const useVaultStore = defineStore('vaultStore', {
       return key;
     },
     async removeKey(): Promise<boolean> {
+      const notificationStore = useNotificationStore();
+
       if(!this.hasKey) {
-        throw new Error('No key stored');
+        throw notificationStore.error('Vault Error', 'No key stored');
       }
 
-      storedCiphertextString.value = undefined;
+      KEY_STORAGE.value = undefined;
       return true;
     }
   }

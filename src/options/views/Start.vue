@@ -3,6 +3,7 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useVaultStore } from '~/stores/vault-store.js'
+import { useWalletStore } from '~/stores/wallet-store';
 import { useNotificationStore } from '~/stores/app-store';
 import { inPopupPage, openOptionsPage, closePopup } from '~/logic/browser';
 import BasePage from '~/components/Base/BasePage.vue';
@@ -13,14 +14,17 @@ const router = useRouter()
 const hasKey = ref(false)
 
 const vaultStore = useVaultStore();
+const walletStore = useWalletStore();
 const notificationStore = useNotificationStore();
 
 async function handleLoginForm(password: string){
   try {
-    const key = await vaultStore.getStoreKey(password)
-    console.log({ key })
+    const key = await vaultStore.getStoreKey(password);
+    walletStore.setWallet(key);
+
+    router.push('/home');
   } catch (error) {
-    notificationStore.error('Start Page', (error as Error).message || 'Invalid password')
+    notificationStore.error('Start Page', (error as Error).message || 'Invalid password');
   }
 }
 

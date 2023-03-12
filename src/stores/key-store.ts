@@ -13,6 +13,7 @@ export const useKeyStore = defineStore('keyStore', {
   getters: {
     hasTemporaryKey(): boolean {
       const notificationStore = useNotificationStore();
+
       if(this.temporaryKey === undefined) {
         notificationStore.error('Key Error', 'No temporary key');
         return false;
@@ -32,28 +33,30 @@ export const useKeyStore = defineStore('keyStore', {
       return this.temporaryKey;
     },
     async exportKey(key: GenericKey) : Promise<RawKey> {
+      const notificationStore = useNotificationStore();
+
       if(!KeyChecker.isKey(key)) {
-        throw new Error('Key is not valid');
+        throw notificationStore.error('Key Error', 'Key is not valid');
       }
 
       if(KeyChecker.isRawKey(key)) {
-        return key;
+        return key as RawKey;
       }
 
       return await KeyModule.exportKey(key);
     },
     async importKey(key: RawKey) : Promise<GenericKey> {
-      if(KeyChecker.isKey(key) && !KeyChecker.isRawKey(key)) {
-        return key;
+      const notificationStore = useNotificationStore();
+
+      if(KeyChecker.isKey(key as GenericKey) && !KeyChecker.isRawKey(key as GenericKey)) {
+        return key as GenericKey;
       }
       
-      if(!KeyChecker.isRawKey(key)) {
-        throw new Error('Key is not valid raw key');
+      if(!KeyChecker.isRawKey(key as GenericKey)) {
+        throw notificationStore.error('Key Error', 'Key is not valid raw key');
       }
 
-      const importedKey = await KeyModule.importKey(key);
-
-      return importedKey;
+      return await KeyModule.importKey(key);
     }
   }
 });
