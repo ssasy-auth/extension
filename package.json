@@ -1,7 +1,7 @@
 {
   "name": "ssasy-browser-client",
   "displayName": "SSASy WebExt",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": true,
   "description": "A browser extension for the self-sovereign authentication scheme",
   "author": {
@@ -90,9 +90,7 @@
     "pre-commit": "pnpm lint-staged"
   },
   "lint-staged": {
-    "*.ts": "eslint --fix",
-    "src/**/*.js": "eslint --fix --ext .html,.vue,.js,.ts",
-    "scripts/**/*.js": "eslint --fix --ext .ts"
+    "*.ts": "eslint --fix"
   },
   "packageManager": "pnpm@7.29.0"
 }
