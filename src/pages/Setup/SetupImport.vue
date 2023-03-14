@@ -1,7 +1,7 @@
 <!-- generate key or import -->
 <script setup lang="ts">
 import { reactive, computed } from 'vue';
-import { KeyChecker } from '@this-oliver/ssasy';
+import { GenericKey, KeyChecker } from '@this-oliver/ssasy';
 import { useKeyStore } from '~/stores/key-store';
 import { useNotificationStore } from '~/stores/app-store';
 import BasePage from '~/components/Base/BasePage.vue';
@@ -69,7 +69,7 @@ async function convertInputToKey(input: string | Blob[]): Promise<RawKey>{
   }
   
   // throw error if not a raw key
-  if(!KeyChecker.isRawKey(key)){
+  if(!KeyChecker.isRawKey(key as GenericKey)){
     throw new Error('Not a valid raw key');
   }
 

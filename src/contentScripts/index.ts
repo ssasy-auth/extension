@@ -2,7 +2,7 @@
 import { onMessage } from 'webext-bridge'
 import { createApp } from 'vue'
 import { setupApp } from '~/logic/common-setup'
-import App from './views/App.vue'
+import App from './App.vue'
 
 // Firefox `browser.tabs.executeScript()` requires scripts return a primitive value
 (() => {
