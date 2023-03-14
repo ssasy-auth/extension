@@ -10,3 +10,7 @@ This browser extension is intended for use with [SSASy](https://github.com/this-
 - Encrypt credentials
 - Regsiter to websites
 - Login to websites
+
+## Documentation
+
+See the [docs](./docs/index.md) folder for more information.
