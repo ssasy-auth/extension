@@ -19,6 +19,7 @@ specifiers:
   crx: ^5.0.1
   eslint: ^8.35.0
   esno: ^0.16.3
+  fist-bump: ^1.1.0
   fs-extra: ^11.1.0
   jsdom: ^21.1.0
   kolorist: ^1.7.0
@@ -69,6 +70,7 @@ devDependencies:
   crx: 5.0.1
   eslint: 8.35.0
   esno: 0.16.3
+  fist-bump: 1.1.0
   fs-extra: 11.1.0
   jsdom: 21.1.0
   kolorist: 1.7.0
@@ -3362,6 +3364,13 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
+  /fist-bump/1.1.0:
+    resolution: {integrity: sha512-ZYAM/Ih0XZgSky1e0G0h7d5L5FzNl0k4dLizJuYqGssiTVBFR+EdWpwYSLMGhrHArjU3Trlz8pH/BOQ369PRqw==}
+    hasBin: true
+    dependencies:
+      shelljs: 0.8.5
+    dev: true
+
   /flat-cache/3.0.4:
     resolution: {integrity: sha512-dm9s5Pw7Jc0GvMYbshN6zchCA9RgQlzzEZX3vylR9IqFfS8XciblUXOKfW6SiuJ0e13eDYZoZV5wdrev7P3Nwg==}
     engines: {node: ^10.12.0 || >=12.0.0}
@@ -3945,6 +3954,11 @@ packages:
       get-intrinsic: 1.2.0
       has: 1.0.3
       side-channel: 1.0.4
+    dev: true
+
+  /interpret/1.4.0:
+    resolution: {integrity: sha512-agE4QfB2Lkp9uICn7BAqoscw4SZP9kTE2hxiFI3jBPmXJfdqiahTbUuKGsMoN2GtqL9AxhYioAcVvgsb1HvRbA==}
+    engines: {node: '>= 0.10'}
     dev: true
 
   /invert-kv/3.0.1:
@@ -5630,6 +5644,13 @@ packages:
     engines: {node: '>= 12.13.0'}
     dev: true
 
+  /rechoir/0.6.2:
+    resolution: {integrity: sha512-HFM8rkZ+i3zrV+4LQjwQ0W+ez98pApMGM3HUrN04j3CqzPOzl9nmP15Y8YXNm8QHGv/eacOVEjqhmWpkRV0NAw==}
+    engines: {node: '>= 0.10'}
+    dependencies:
+      resolve: 1.22.1
+    dev: true
+
   /regenerator-runtime/0.13.11:
     resolution: {integrity: sha512-kY1AZVr2Ra+t+piVaJ4gxaFaReZVH40AKNo7UCX6W+dEwBo/2oZJzqfuN1qLq1oL45o56cPaTXELwrTh8Fpggg==}
     dev: true
@@ -5923,6 +5944,16 @@ packages:
 
   /shell-quote/1.8.0:
     resolution: {integrity: sha512-QHsz8GgQIGKlRi24yFc6a6lN69Idnx634w49ay6+jA5yFh7a1UY+4Rp6HPx/L/1zcEDPEij8cIsiqR6bQsE5VQ==}
+    dev: true
+
+  /shelljs/0.8.5:
+    resolution: {integrity: sha512-TiwcRcrkhHvbrZbnRcFYMLl30Dfov3HKqzp5tO5b4pt6G/SezKcYhmDg15zXVBswHmctSAQKznqNW2LO5tTDow==}
+    engines: {node: '>=4'}
+    hasBin: true
+    dependencies:
+      glob: 7.2.3
+      interpret: 1.4.0
+      rechoir: 0.6.2
     dev: true
 
   /shellwords/0.1.1:

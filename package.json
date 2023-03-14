@@ -1,7 +1,7 @@
 {
   "name": "ssasy-browser-client",
   "displayName": "SSASy WebExt",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "private": true,
   "description": "A browser extension for the self-sovereign authentication scheme",
   "author": {
@@ -35,7 +35,7 @@
     "clear": "rimraf extension/dist extension/manifest.json extension.*",
     "lint": "eslint --cache --ext .html,.vue,.js,.ts",
     "lint:fix": "eslint --fix --ext .html,.vue,.js,.ts",
-    "bump": "./scripts/bump.sh",
+    "bump": "npx fistbump",
     "release": "npm run lint:fix && npm run build",
     "test": "vitest test",
     "postinstall": "simple-git-hooks"
@@ -65,6 +65,7 @@
     "crx": "^5.0.1",
     "eslint": "^8.35.0",
     "esno": "^0.16.3",
+    "fist-bump": "^1.1.0",
     "fs-extra": "^11.1.0",
     "jsdom": "^21.1.0",
     "kolorist": "^1.7.0",
