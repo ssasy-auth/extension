@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { useNotificationStore, useSessionStore } from './app';
+import { useNotificationStore } from './app';
 import { Wallet, CryptoModule } from '@this-oliver/ssasy';
 import type { PrivateKey, PublicKey } from '@this-oliver/ssasy';
 

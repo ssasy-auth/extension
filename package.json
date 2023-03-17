@@ -1,7 +1,7 @@
 {
   "name": "ssasy-browser-client",
   "displayName": "SSASy WebExt",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "private": true,
   "description": "A browser extension for the self-sovereign authentication scheme",
   "author": {

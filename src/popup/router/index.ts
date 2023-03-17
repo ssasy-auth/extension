@@ -1,5 +1,6 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
-import { AuthenticationGaurd } from '~/logic';
+import { createRouter, createWebHistory } from 'vue-router';
+import { AuthenticationGaurd, MessengerGuard } from '~/logic';
+import type { RouteRecordRaw } from 'vue-router';
 import HomeVue from '~/pages/Home.vue';
 
 const routes: Array<RouteRecordRaw> = [
@@ -10,8 +11,13 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/auth',
-    name: 'auth',
+    name: 'auth-session',
     component: () => import('~/pages/Auth.vue')
+  },
+  {
+    path: '/service/register',
+    name: 'service-register',
+    component: () => import('~/pages/Service/ServiceRegister.vue')
   },
   {
     path: '/setup',
@@ -31,6 +37,10 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
+  // handle messenger routing
+  MessengerGuard(to, from, next);
+
+  // handle authentication
   AuthenticationGaurd(to, from, next);
 });
 

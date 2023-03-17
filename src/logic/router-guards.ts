@@ -31,7 +31,6 @@ export function AuthenticationGaurd(
     return next();
   }
 
-  
   // save the current route and query params for redirecting
   const location: Location = {
     path: to.path,
@@ -78,4 +77,28 @@ export function AuthenticationGaurd(
       }
     });
   }
+}
+
+/**
+ * Redirects the user to the specified page based on the route query.
+ * 
+ * Note: this guard is specifically for messenger usecases - when the messenger
+ * opens a popup window for user approval
+ */
+export function MessengerGuard(
+  to: RouteLocationNormalized, 
+  from: RouteLocationNormalized, 
+  next: NavigationGuardNext
+) {
+  if(!to.query.route) {
+    return next();
+  }
+
+  const route = to.query.route as string;
+    
+  // remove the route query
+  delete to.query.route;
+  
+  // route to the appropriate page
+  return next({ path: route, query: to.query });
 }

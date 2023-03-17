@@ -55,7 +55,7 @@ export const PopupPage: PageController = {
 
     const windowOptions: Windows.CreateCreateDataType = {
       url: extensionURL,
-      type: 'detached_panel',
+      type: 'popup',
       top: 0,
       left: screen.width - 400,
       width: 400,
@@ -79,6 +79,16 @@ export const PopupPage: PageController = {
     for (const view of views) {
       view.close();
     }
+
+    browser.windows.getAll().then((windows) => {
+      for (const window of windows) {
+        if (window.type === 'popup') {
+          browser.windows.remove(window.id as number);
+
+          console.log(`closed popup window: ${window.id}`);
+        }
+      }
+    });
   }
 };
 
