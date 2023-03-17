@@ -1,0 +1,31 @@
+<!-- login user or redirect them to setup.vue -->
+<script setup lang="ts">
+import { openOptionsPage, closePopup } from '~/logic/browser';
+import BasePage from '~/components/Base/BasePage.vue';
+import BaseBtn from '~/components/Base/BaseBtn.vue';
+
+function goToSetup(){
+  openOptionsPage()
+  closePopup()
+}
+</script>
+
+<template>
+  <base-page title="Getting started">
+    <v-row justify="center">
+      <v-col
+        cols="10"
+        class="text-center">
+        You need to setup your wallet first.
+      </v-col>
+      <v-divider />
+      <v-col cols="auto">
+        <base-btn
+          large
+          @click="goToSetup()">
+          Setup Wallet
+        </base-btn>
+      </v-col>
+    </v-row>
+  </base-page>
+</template>

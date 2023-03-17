@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { KeyModule, KeyChecker } from '@this-oliver/ssasy';
 import type { GenericKey, PrivateKey, RawKey } from '@this-oliver/ssasy';
-import { useNotificationStore } from '~/stores/app-store';
+import { useNotificationStore } from '~/stores/app';
 
 interface KeyStoreState {
   temporaryKey: PrivateKey | undefined;

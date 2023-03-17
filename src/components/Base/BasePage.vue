@@ -1,10 +1,26 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 
 const props = defineProps({
   title: {
     type: String,
     defualt: undefined
   }
+});
+
+const isPopup = computed(() => {
+  return window.location.pathname.includes('popup');
+});
+
+const getStyle = computed(() => {
+  const styles = [ ];
+
+  if(isPopup.value) {
+    styles.push('padding-bottom: 40px');
+  }
+
+
+  return styles.join(' ');
 });
 </script>
 
@@ -18,7 +34,8 @@ const props = defineProps({
 
     <v-row
       justify="center"
-      class="pa-1">
+      class="pa-1"
+      :style="getStyle">
       <v-col>
         <slot />
       </v-col>

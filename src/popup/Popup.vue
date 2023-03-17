@@ -15,3 +15,21 @@ import AppFooter from '~/components/AppFooter.vue';
     <app-footer />
   </v-app>
 </template>
+
+<style scoped>
+#app-popup {
+  padding: 5px;
+
+  height: 600px;
+  max-height: 600px;
+  min-height: 600px;
+  
+  width: 400px;
+  max-width: 400px;
+  min-width: 400px;
+
+  /* allow overflow vertical scroll */
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+</style>

@@ -1,5 +1,3 @@
-export const inPopupPage = () => browser.extension.getViews({ type: 'popup' }).length > 0;
-
 /**
  * Closes the popup window
  */
@@ -10,11 +8,11 @@ export function closePopup() {
   }
 }
 
-
 interface openOptionsPageConfig {
   path?: string;
   closePopup?: boolean;
 }
+
 /**
  * Opens the options page in a new tab
  * 

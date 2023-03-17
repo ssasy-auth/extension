@@ -1,14 +1,18 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { inPopupPage, openOptionsPage } from '~/logic/browser';
+import { openOptionsPage, closePopup } from '~/logic/browser';
 import BaseBtn from '~/components/Base/BaseBtn.vue';
 
-const inPopup = computed(() => inPopupPage());
+function goToOptionPage() {
+  openOptionsPage();
+  closePopup();
+}
 
 </script>
 
 <template>
-  <v-footer class="popup-footer">
+  <v-footer
+    app
+    class="popup-footer">
     <v-row
       justify="space-between"
       class="my-1"
@@ -18,22 +22,14 @@ const inPopup = computed(() => inPopupPage());
       </v-col>
         
       <v-col
-        v-if="inPopup"
+        v-if="$app.context === 'popup'"
         cols="auto">
         <base-btn
           text
-          @click="openOptionsPage()">
+          @click="goToOptionPage()">
           Open Options
         </base-btn>
       </v-col>
     </v-row>
   </v-footer>
 </template>
-
-<style scoped>
-.popup-footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-}
-</style>

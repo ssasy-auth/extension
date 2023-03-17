@@ -1,47 +1,52 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
-import StartVue from '~/pages/Start.vue';
+import { AuthenticationGaurd } from '~/logic';
 import HomeVue from '~/pages/Home.vue';
-import SetupVue from '~/pages/Setup/Index.vue';
-import SetupKeyVue from '~/pages/Setup/SetupKey.vue';
-import SetupImportVue from '~/pages/Setup/SetupImport.vue';
-import SetupStorageVue from '~/pages/Setup/SetupStorage.vue';
 
 const routes: Array<RouteRecordRaw> = [
   { 
     path: '/', 
-    name: 'start', 
-    component: StartVue 
-  },
-  { 
-    path: '/home', 
     name: 'home', 
     component: HomeVue 
   },
   {
+    path: '/auth',
+    name: 'auth',
+    component: () => import('~/pages/Auth.vue')
+  },
+  {
     path: '/setup',
     name: 'setup',
-    component: SetupVue
+    component: () => import('~/pages/Setup/Index.vue')
   },
   {
     path: '/setup/key',
     name: 'setup-key',
-    component: SetupKeyVue
+    component: () => import('~/pages/Setup/SetupKey.vue')
   },
   {
     path: '/setup/import',
     name: 'setup-import',
-    component: SetupImportVue
+    component: () => import('~/pages/Setup/SetupImport.vue')
   },
   {
     path: '/setup/storage',
     name: 'setup-storage',
-    component: SetupStorageVue
+    component: () => import('~/pages/Setup/SetupStorage.vue')
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'wildcard',
+    component: () => import('~/pages/_.vue')
   }
 ];
 
 const router = createRouter({
   history: createWebHistory('/dist/options/index.html'),
   routes
+});
+
+router.beforeEach((to, from, next) => {
+  AuthenticationGaurd(to, from, next);
 });
 
 export default router;

@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router';
 import type { PrivateKey } from '@this-oliver/ssasy';
 import { useVaultStore } from '~/stores/vault-store';
 import { useKeyStore } from '~/stores/key-store';
-import { useNotificationStore } from '~/stores/app-store';
+import { useNotificationStore } from '~/stores/app';
 import BasePage from '~/components/Base/BasePage.vue';
 import BaseBtn from '~/components/Base/BaseBtn.vue';
 import InputText from '~/components/Base/InputText.vue';

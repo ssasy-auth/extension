@@ -3,7 +3,7 @@
 import { reactive, computed } from 'vue';
 import { GenericKey, KeyChecker } from '@this-oliver/ssasy';
 import { useKeyStore } from '~/stores/key-store';
-import { useNotificationStore } from '~/stores/app-store';
+import { useNotificationStore } from '~/stores/app';
 import BasePage from '~/components/Base/BasePage.vue';
 import InputFile from '~/components/Base/InputFile.vue';
 import InputTextArea from '~/components/Base/InputTextArea.vue';

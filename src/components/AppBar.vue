@@ -1,13 +1,10 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { inPopupPage, closePopup } from '~/logic/browser';
+import { closePopup } from '~/logic/browser';
 import Logo from '~/components/Logo.vue';
 import BaseBtn from './Base/BaseBtn.vue';
 
 const router = useRouter();
-
-const inPopup = computed(() => inPopupPage());
 
 function goBack() {
   if (router.currentRoute.value.path === '/') {
@@ -27,7 +24,7 @@ function goBack() {
     rounded="b-lg" 
     color="transparent">
     <base-btn
-      v-if="inPopup"
+      v-if="$app.context === 'popup'"
       id="bar-left"
       small
       rounded="pill"
