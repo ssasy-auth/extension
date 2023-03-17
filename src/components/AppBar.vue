@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
-import { closePopup } from '~/logic/browser';
+import { PopupPage } from '~/logic/browser';
 import Logo from '~/components/Logo.vue';
 import BaseBtn from './Base/BaseBtn.vue';
 
@@ -8,7 +8,7 @@ const router = useRouter();
 
 function goBack() {
   if (router.currentRoute.value.path === '/') {
-    closePopup();
+    PopupPage.close();
   } else {
     router.go(-1);
   }

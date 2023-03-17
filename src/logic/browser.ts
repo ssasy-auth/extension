@@ -1,35 +1,109 @@
-/**
- * Closes the popup window
- */
-export function closePopup() {
-  const views = browser.extension.getViews({ type: 'popup' });
-  for (const view of views) {
-    view.close();
+import type { Windows, Tabs } from 'webextension-polyfill';
+
+type PageType = 'popup' | 'option';
+
+interface PageRoute {
+	type: PageType;
+	route?: string;
+	query?: string;
+}
+
+function definePageRoute(config?: PageRoute): string {
+  const { type, route, query } = config || {};
+
+  const page = type === 'popup' ? 'popup' : 'option';
+  let pageUrl = browser.runtime.getURL(`dist/${page}/index.html`);
+
+  if (route) {
+    pageUrl += `#${route}`;
   }
+
+  if (query) {
+    pageUrl += `?${query}`;
+  }
+
+  return pageUrl;
 }
 
-interface openOptionsPageConfig {
-  path?: string;
-  closePopup?: boolean;
+interface PageConfig {
+	route?: string;
+	queryString?: string;
 }
 
-/**
- * Opens the options page in a new tab
- * 
- * @param path - The path to open in the options page
- */
-export function openOptionsPage (config?: openOptionsPageConfig) {
-  if(config?.path){
-    browser.tabs.create({ url: '/dist/options/index.html' }).then((tab) => {
-      browser.tabs.executeScript(tab.id, {
-        code: `window.location.hash = "#${config.path}"`
+interface PageController {
+	/**
+	 * opens the page
+   * 
+   * @param config - page config (optional)
+	 */
+	open(config?: PageConfig): Promise<Windows.Window | Tabs.Tab>;
+	/**
+	 * closes the page
+	 */
+	close(): void;
+}
+
+export const PopupPage: PageController = {
+  async open(config?): Promise<Windows.Window> {
+    const { route, queryString } = config || {};
+
+    const extensionURL = definePageRoute({
+      type: 'popup',
+      route,
+      query: queryString
+    });
+
+    const windowOptions: Windows.CreateCreateDataType = {
+      url: extensionURL,
+      type: 'detached_panel',
+      top: 0,
+      left: screen.width - 400,
+      width: 400,
+      height: 600
+    };
+
+    return await browser.windows
+      .create(windowOptions)
+      .then(function (popupWindow) {
+        if (popupWindow === undefined) {
+          throw new Error('popup window is undefined');
+        }
+
+        console.log(`created popup window: ${popupWindow.id}`);
+        return popupWindow;
       });
-    }); 
-  }else {
-    browser.runtime.openOptionsPage()
+  },
+  
+  close() {
+    const views = browser.extension.getViews({ type: 'popup' });
+    for (const view of views) {
+      view.close();
+    }
   }
+};
 
-  if(config?.closePopup === true){
-    closePopup();
+export const OptionPage: PageController = {
+  async open(config?): Promise<Tabs.Tab> {
+    const { route, queryString } = config || {};
+
+    const extensionURL = definePageRoute({
+      type: 'option',
+      route,
+      query: queryString
+    });
+
+    return await browser.tabs.create({
+      url: extensionURL
+    });
+  },
+  
+  close() {
+    const views = browser.extension.getViews({ type: 'tab' });
+    for (const view of views) {
+      // if view is an option page
+      if (view.location.href.includes('option')) {
+        view.close();
+      }
+    }
   }
-}
+};
