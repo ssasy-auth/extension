@@ -1,4 +1,4 @@
-import { useSessionStore, useVaultStore, useNotificationStore } from '~/stores'
+import { useSessionStore, useVaultStore, useNotificationStore } from '~/common/stores'
 import type { LocationQuery, RouteLocationNormalized, NavigationGuardNext } from 'vue-router'
 
 interface Location {

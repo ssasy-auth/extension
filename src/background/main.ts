@@ -1,12 +1,11 @@
 import { onMessage } from 'webext-bridge';
 import { Windows, Tabs } from 'webextension-polyfill';
+import { PopupPage, LocalStorage } from '~/common/utils';
 import {
-  LocalStorage,
-  PopupPage,
   SSASY_MESSAGE,
   SsasyMessenger
-} from '~/logic';
-import type { SsasyMessage } from '~/logic';
+} from '~/common/logic';
+import type { SsasyMessage } from '~/common/logic';
 
 // only on dev mode
 if (import.meta.hot) {

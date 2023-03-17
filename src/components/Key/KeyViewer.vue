@@ -2,7 +2,7 @@
 import { reactive, computed, onMounted } from 'vue';
 import type { PropType, ComputedRef } from 'vue';
 import { KeyChecker, KeyType } from '@this-oliver/ssasy';
-import { useKeyStore } from '~/stores/key-store';
+import { useKeyStore } from '~/common/stores/key-store';
 import type { GenericKey, RawKey } from '@this-oliver/ssasy';
 import BaseCard from '~/components/Base/BaseCard.vue';
 import type { ActionItem } from '~/components/Base/BaseCard.vue';

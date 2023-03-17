@@ -3,7 +3,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import type { LocationQuery } from 'vue-router';
-import { useVaultStore, useSessionStore, useWalletStore, useNotificationStore } from '~/stores'
+import { useVaultStore, useSessionStore, useWalletStore, useNotificationStore } from '~/common/stores'
 import BasePage from '~/components/Base/BasePage.vue';
 import BaseCard from '~/components/Base/BaseCard.vue';
 import AuthForm from '~/components/Auth/AuthForm.vue';

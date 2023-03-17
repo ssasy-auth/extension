@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
-import { PopupPage } from '~/logic/browser';
+import { PopupPage } from '~/common/utils/browser';
 import Logo from '~/components/Logo.vue';
 import BaseBtn from './Base/BaseBtn.vue';
 

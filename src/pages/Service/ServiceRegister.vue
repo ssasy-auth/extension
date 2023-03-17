@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { SsasyMessenger } from '~/logic';
-import { useSessionStore, useNotificationStore } from '~/stores';
+import { SsasyMessenger } from '~/common/logic';
+import { useSessionStore, useNotificationStore } from '~/common/stores';
 import { EncoderModule } from '@this-oliver/ssasy';
 import type { GenericKey } from '@this-oliver/ssasy';
 import type { ActionItem } from '~/components/Base/BaseCard.vue';

@@ -1,6 +1,6 @@
 <!-- login user or redirect them to setup.vue -->
 <script setup lang="ts">
-import { OptionPage, PopupPage } from '~/logic/browser';
+import { OptionPage, PopupPage } from '~/common/utils/browser.js';
 import BasePage from '~/components/Base/BasePage.vue';
 import BaseBtn from '~/components/Base/BaseBtn.vue';
 

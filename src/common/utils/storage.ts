@@ -1,16 +1,16 @@
-import { RemovableRef } from '@vueuse/core'
+import type { RemovableRef } from '@vueuse/core'
 import { useStorageLocal } from '~/composables/useStorageLocal'
 
 type StorageItem = string | undefined
-
-export const PRIVATE_KEY_CIPHERTEXT: RemovableRef<StorageItem> = useStorageLocal('ssasy-private-key', undefined)
-export const SESSION: RemovableRef<StorageItem> = useStorageLocal('ssasy-session', undefined)
-export const MessageSession: RemovableRef<StorageItem> = useStorageLocal('ssasy-message-session', undefined)
 
 interface ExtensionStorage {
   get: () => StorageItem
   set: (value: StorageItem) => void
 }
+
+const PRIVATE_KEY_CIPHERTEXT: RemovableRef<StorageItem> = useStorageLocal('ssasy-private-key', undefined)
+const SESSION: RemovableRef<StorageItem> = useStorageLocal('ssasy-session', undefined)
+const MessageSession: RemovableRef<StorageItem> = useStorageLocal('ssasy-message-session', undefined)
 
 export const LocalStorage = {
   Session: {

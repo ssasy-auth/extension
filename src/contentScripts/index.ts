@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
 import { sendMessage } from 'webext-bridge'
 import { createApp } from 'vue'
-import { setupApp } from '~/logic/common-setup'
-import { SSASY_MESSAGE, SsasyMessage } from '~/logic'
+import { setupApp } from '~/common/utils/setup'
+import { SSASY_MESSAGE, SsasyMessage } from '~/common/logic'
 import App from './App.vue'
 
 // Firefox `browser.tabs.executeScript()` requires scripts return a primitive value

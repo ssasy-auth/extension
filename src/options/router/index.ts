@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
-import { AuthenticationGaurd } from '~/logic';
+import { AuthenticationGaurd } from '~/common/routes';
 import HomeVue from '~/pages/Home.vue';
 
 const routes: Array<RouteRecordRaw> = [

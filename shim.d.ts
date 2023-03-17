@@ -1,6 +1,6 @@
 import type { ProtocolWithReturn } from 'webext-bridge'
-import { SSASY_MESSAGE } from '~/logic'
-import type { SsasyMessage } from '~/logic'
+import { SSASY_MESSAGE } from '~/common/utils'
+import type { SsasyMessage } from '~/common/utils'
 
 declare module 'webext-bridge' {
   export interface ProtocolMap {

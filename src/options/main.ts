@@ -1,8 +1,8 @@
 import { createApp } from 'vue'
-import { setupApp } from '~/logic/common-setup'
+import { setupApp } from '~/common/utils/setup'
 import App from './Options.vue'
 import Router from './router'
-import '../styles'
+import '../common/styles'
 
 const app = createApp(App)
 setupApp(app)

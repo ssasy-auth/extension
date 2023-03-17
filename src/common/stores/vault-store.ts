@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { useKeyStore } from './key-store';
-import { useNotificationStore } from '~/stores/app';
-import { LocalStorage } from '~/logic/storage';
+import { useNotificationStore } from '~/common/stores/app';
+import { LocalStorage } from '~/common/utils';
 import { KeyChecker, KeyModule, CryptoModule, CryptoChecker } from '@this-oliver/ssasy';
 import type { PrivateKey } from '@this-oliver/ssasy';
 
