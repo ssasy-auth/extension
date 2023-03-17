@@ -19,8 +19,6 @@ const options: ActionItem[] = [
   {
     label: 'Accept',
     action: async () => {
-      console.log('Accept');
-
       try {
         if(origin.value === undefined){
           throw new Error('Origin is undefined');
@@ -41,8 +39,6 @@ const options: ActionItem[] = [
   {
     label: 'Reject',
     action: () => {
-      console.log('Reject');
-
       try {
         if(origin.value === undefined){
           throw new Error('Origin is undefined');

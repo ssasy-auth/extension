@@ -85,13 +85,6 @@ const keyActions: ComputedRef<ActionItem[]> = computed(() => {
         }
       }
     });
-    //actions.push({
-    //  label: 'Delete',
-    //  color: 'error',
-    //  action: () => {
-    //    console.log('Delete');
-    //  }
-    //});
   }
   return actions;
 })
@@ -138,7 +131,7 @@ function extractKeySpecification(rawKey: RawKey): KeyDetail[]{
 
 onMounted(async () => {
   data.rawKey = KeyChecker.isRawKey(props.ssasyKey) 
-    ? props.ssasyKey 
+    ? props.ssasyKey  as RawKey
     : await keyStore.exportKey(props.ssasyKey);
 
   if(data.rawKey !== undefined){

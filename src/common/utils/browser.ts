@@ -69,7 +69,6 @@ export const PopupPage: PageController = {
           throw new Error('popup window is undefined');
         }
 
-        console.log(`created popup window: ${popupWindow.id}`);
         return popupWindow;
       });
   },
@@ -84,8 +83,6 @@ export const PopupPage: PageController = {
       for (const window of windows) {
         if (window.type === 'popup') {
           browser.windows.remove(window.id as number);
-
-          console.log(`closed popup window: ${window.id}`);
         }
       }
     });

@@ -59,8 +59,6 @@ export function AuthenticationGaurd(
     redirectPath = RedirectPath.Setup;
     notificationStore.error('Authentication Router Guard', (error as Error).message || 'Failed to authenticate')
   }
-
-  console.log('redirectPath', redirectPath);
   
   // if no redirect path is set, continue to the next route
   if(redirectPath === undefined) {
