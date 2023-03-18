@@ -15,57 +15,50 @@ export function AuthenticationGaurd(
   from: RouteLocationNormalized, 
   next: NavigationGuardNext
 ) {
-  
-  enum RedirectPath {
-    Setup = '/setup',
-    Auth = '/auth'
-  }
-
-  if(
-    to.path === RedirectPath.Auth ||
-    to.path === RedirectPath.Setup ||
-    to.path === '/setup/key' ||
-    to.path === '/setup/import' ||
-    to.path === '/setup/storage'
-  ) {
-    return next();
-  }
-
   // save the current route and query params for redirecting
   const location: Location = {
     path: to.path,
     query: to.query
   };
   
+  let redirectPath: '/setup' | '/auth' | undefined = undefined;
+
   const vaultStore = useVaultStore();
   const sessionStore = useSessionStore();
   const notificationStore = useNotificationStore();
   
-  let redirectPath: RedirectPath.Setup | RedirectPath.Auth | undefined = undefined;
-  
   try {
-    // if vault key is empty, redirect to setup
-    if(!vaultStore.hasKey){
-      redirectPath = RedirectPath.Setup;
+    // if vault key is missing and route is not setup, redirect to setup
+    if(
+      !vaultStore.hasKey && 
+      !inSetupPath(location.path)
+    ) {
+      redirectPath = '/setup';
       notificationStore.error('Authentication Router Guard', 'Vault key is empty or invalid')
-    } 
-    
-    // if session key is empty, redirect to login
-    else if(!sessionStore.verifySession()) {
-      redirectPath = RedirectPath.Auth;
+    }
+
+    // if session key is missing and route is not login, redirect to login
+    else if(
+      !sessionStore.verifySession() && 
+      !inAuthPath(location.path)
+    ) {
+      redirectPath = '/auth';
       notificationStore.error('Authentication Router Guard', 'Session is empty or invalid')
     }
+
   } catch (error) {
-    redirectPath = RedirectPath.Setup;
+    redirectPath = '/setup'
     notificationStore.error('Authentication Router Guard', (error as Error).message || 'Failed to authenticate')
   }
+
+  console.log('redirectPath', redirectPath);
   
-  // if no redirect path is set, continue to the next route
+  // continue to the route if no redirect path is set
   if(redirectPath === undefined) {
     return next();
-  } 
-  
-  // redirect to the redirect path
+  }
+
+  // redirect to the appropriate page
   else {
     return next({
       path: redirectPath,
@@ -99,4 +92,18 @@ export function MessengerGuard(
   
   // route to the appropriate page
   return next({ path: route, query: to.query });
+}
+
+
+function inSetupPath(path: string): boolean {
+  return (
+    path === '/setup' ||
+    path === '/setup/key' ||
+    path === '/setup/import' ||
+    path === '/setup/storage'
+  )
+}
+
+function inAuthPath(path: string): boolean {
+  return (path === '/auth')
 }
