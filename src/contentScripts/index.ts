@@ -2,7 +2,7 @@
 import { sendMessage } from 'webext-bridge'
 import { createApp } from 'vue'
 import { setupApp, Logger } from '~/common/utils'
-import { ExtensionMessage, SsasyMessage } from '~/common/logic'
+import { ExtensionMessage, SsasyMessage, MessageData } from '~/common/logic'
 import App from './App.vue'
 
 // Firefox `browser.tabs.executeScript()` requires scripts return a primitive value
@@ -26,39 +26,53 @@ import App from './App.vue'
       origin: event.origin,
       data: event.data
     };
-
-    // listen for extension ping
-    if(requestMessage.data.type === ExtensionMessage.RequestPing) {
-      const message: SsasyMessage = {
-        origin: requestMessage.origin,
-        data: {
-          type: ExtensionMessage.ResponsePing
+    console.info('[ext-content-script] received website message', requestMessage);
+    
+    try {
+      // listen for extension ping
+      if(requestMessage.data.type === ExtensionMessage.RequestPing) {
+        const message: SsasyMessage = {
+          origin: requestMessage.origin,
+          data: {
+            type: ExtensionMessage.ResponsePing
+          }
         }
+
+        console.info('[ext-content-script] sending ping response', message);
+
+        // response to website
+        return window.postMessage(message.data, requestMessage.origin);
       }
 
-      console.info('[ext-content-script] sending ping response', message);
+      // listen for public key request from website
+      if (requestMessage.data.type === ExtensionMessage.RequestPublicKey) {
+        const responseMessage: SsasyMessage = await sendMessage(
+          ExtensionMessage.RequestPublicKey, 
+        requestMessage as any
+        ) as unknown as SsasyMessage;
+
+        // replcae request type with response type
+        requestMessage.data.type = ExtensionMessage.ResponsePublicKey;
+
+        // send message to website
+        return window.postMessage(responseMessage.data, requestMessage.origin);
+      }
+
+      // TODO listen for solution request from website
+      if (requestMessage.data.type === ExtensionMessage.RequestSolution) {
+        throw new Error('not implemented');
+      }
+      
+    } catch (error) {
+      console.error('[ext-content-script] error', error);
 
       // response to website
-      return window.postMessage(message.data, requestMessage.origin);
-    }
+      const messageData: MessageData = {
+        type: ExtensionMessage.ResponseError,
+        description: (error as Error).message || `Failed to process request ${requestMessage?.data.type}`
+      }
 
-    // listen for public key request from website
-    if (requestMessage.data.type === ExtensionMessage.RequestPublicKey) {
-      const responseMessage: SsasyMessage = await sendMessage(
-        ExtensionMessage.RequestPublicKey, 
-        requestMessage as any
-      ) as unknown as SsasyMessage;
-
-      // replcae request type with response type
-      requestMessage.data.type = ExtensionMessage.ResponsePublicKey;
-
-      // send message to website
-      return window.postMessage(responseMessage.data, requestMessage.origin);
-    }
-
-    // TODO listen for solution request from website
-    if (requestMessage.data.type === ExtensionMessage.RequestSolution) {
-      throw new Error('not implemented');
+      window.postMessage(messageData, requestMessage?.origin);
     }
   });
 

@@ -4,7 +4,8 @@ export enum ExtensionMessage {
   RequestPing = 'request-ping',
   ResponsePublicKey = 'response-public-key',
   ResponseSolution = 'response-solution',
-  ResponsePing = 'response-ping'
+  ResponsePing = 'response-ping',
+  ResponseError = 'response-error'
 }
 
 export type MessageType = typeof ExtensionMessage[keyof typeof ExtensionMessage];
@@ -12,6 +13,7 @@ export type MessageType = typeof ExtensionMessage[keyof typeof ExtensionMessage]
 export interface MessageData {
 	type: MessageType;
 	key?: string | null;
+  description?: string;
 }
 
 /**

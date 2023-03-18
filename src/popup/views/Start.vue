@@ -1,12 +1,25 @@
 <!-- login user or redirect them to setup.vue -->
 <script setup lang="ts">
+import { ref } from 'vue';
+import { useRoute } from 'vue-router';
+import { SsasyMessenger } from '~/common/logic';
 import { OptionPage, PopupPage } from '~/common/utils/browser.js';
 import BasePage from '~/components/Base/BasePage.vue';
 import BaseBtn from '~/components/Base/BaseBtn.vue';
 
+const route = useRoute();
+const origin = ref<string | undefined>(route.query.origin as string);
+
 function goToSetup(){
-  OptionPage.open();
-  PopupPage.close();
+  if(origin.value){
+    OptionPage.open();
+    SsasyMessenger.broadcastPublicKeyResponse(origin.value, null);
+  } 
+  
+  else {
+    OptionPage.open();
+    PopupPage.close();
+  }
 }
 </script>
 
