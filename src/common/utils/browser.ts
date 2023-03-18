@@ -11,7 +11,7 @@ interface PageRoute {
 function definePageRoute(config?: PageRoute): string {
   const { type, route, query } = config || {};
 
-  const page = type === 'popup' ? 'popup' : 'option';
+  const page = type === 'popup' ? 'popup' : 'options';
   let pageUrl = browser.runtime.getURL(`dist/${page}/index.html`);
 
   if (route) {
