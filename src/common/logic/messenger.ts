@@ -1,11 +1,13 @@
-export const SSASY_MESSAGE = {
-  REQUEST_PUBLIC_KEY: 'request-public-key',
-  REQUEST_SOLUTION: 'request-solution',
-  RESPONSE_PUBLIC_KEY: 'response-public-key',
-  RESPONSE_SOLUTION: 'response-solution'
-};
+export enum ExtensionMessage {
+  RequestPublicKey = 'request-public-key',
+  RequestSolution = 'request-solution',
+  RequestPing = 'request-ping',
+  ResponsePublicKey = 'response-public-key',
+  ResponseSolution = 'response-solution',
+  ResponsePing = 'response-ping'
+}
 
-export type MessageType = typeof SSASY_MESSAGE[keyof typeof SSASY_MESSAGE];
+export type MessageType = typeof ExtensionMessage[keyof typeof ExtensionMessage];
 
 export interface MessageData {
 	type: MessageType;
@@ -39,7 +41,7 @@ function broadcastPublicKeyResponse(origin: string, key: string | null) {
   const message: SsasyMessage = {
     origin,
     data: {
-      type: SSASY_MESSAGE.RESPONSE_PUBLIC_KEY,
+      type: ExtensionMessage.ResponsePublicKey,
       key
     }
   };

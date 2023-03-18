@@ -2,7 +2,7 @@ import { onMessage } from 'webext-bridge';
 import { Windows, Tabs } from 'webextension-polyfill';
 import { PopupPage, LocalStorage, Logger } from '~/common/utils';
 import {
-  SSASY_MESSAGE,
+  ExtensionMessage,
   SsasyMessenger
 } from '~/common/logic';
 import type { SsasyMessage } from '~/common/logic';
@@ -46,8 +46,8 @@ export interface ActiveSession {
  * 2. opens popup window and waits for user approval (approve/deny)
  * 3. replies to content script with public key response after user makes a decision
  */
-onMessage(SSASY_MESSAGE.REQUEST_PUBLIC_KEY, async ({ data }) => {
-  Logger.info('received content script message', data, 'background');
+onMessage(ExtensionMessage.RequestPublicKey, async ({ data }) => {
+  console.info('[ext-background] received content script message', data);
   const requestMessage = data as unknown as SsasyMessage;
 
   // open popup window for user approval

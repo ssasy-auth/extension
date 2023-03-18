@@ -11,7 +11,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/auth',
-    name: 'auth-session',
+    name: 'auth',
     component: () => import('~/pages/Auth.vue')
   },
   {

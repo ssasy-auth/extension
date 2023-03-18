@@ -2,7 +2,7 @@
 import { sendMessage } from 'webext-bridge'
 import { createApp } from 'vue'
 import { setupApp, Logger } from '~/common/utils'
-import { SSASY_MESSAGE, SsasyMessage } from '~/common/logic'
+import { ExtensionMessage, SsasyMessage } from '~/common/logic'
 import App from './App.vue'
 
 // Firefox `browser.tabs.executeScript()` requires scripts return a primitive value
@@ -27,21 +27,37 @@ import App from './App.vue'
       data: event.data
     };
 
+    // listen for extension ping
+    if(requestMessage.data.type === ExtensionMessage.RequestPing) {
+      const message: SsasyMessage = {
+        origin: requestMessage.origin,
+        data: {
+          type: ExtensionMessage.ResponsePing
+        }
+      }
+
+      console.info('[ext-content-script] sending ping response', message);
+
+      // response to website
+      return window.postMessage(message.data, requestMessage.origin);
+    }
+
     // listen for public key request from website
-    if (requestMessage.data.type === SSASY_MESSAGE.REQUEST_PUBLIC_KEY) {
+    if (requestMessage.data.type === ExtensionMessage.RequestPublicKey) {
       const responseMessage: SsasyMessage = await sendMessage(
-        SSASY_MESSAGE.REQUEST_PUBLIC_KEY, 
+        ExtensionMessage.RequestPublicKey, 
         requestMessage as any
       ) as unknown as SsasyMessage;
 
-      // send message to website
-      window.postMessage(responseMessage.data, requestMessage.origin);
+      // replcae request type with response type
+      requestMessage.data.type = ExtensionMessage.ResponsePublicKey;
 
-      return;
+      // send message to website
+      return window.postMessage(responseMessage.data, requestMessage.origin);
     }
 
     // TODO listen for solution request from website
-    if (requestMessage.data.type === SSASY_MESSAGE.REQUEST_SOLUTION) {
+    if (requestMessage.data.type === ExtensionMessage.RequestSolution) {
       throw new Error('not implemented');
     }
   });
