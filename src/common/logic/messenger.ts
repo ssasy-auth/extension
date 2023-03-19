@@ -1,67 +1,49 @@
 export enum MessageType {
-  RequestPublicKey = 'request-public-key',
-  RequestSolution = 'request-solution',
-  RequestPing = 'request-ping',
-  ResponsePublicKey = 'response-public-key',
-  ResponseSolution = 'response-solution',
-  ResponsePing = 'response-ping',
-  ResponseError = 'response-error'
+  REQUEST_PUBLIC_KEY = 'request-public-key',
+  REQUEST_SOLUTION = 'request-solution',
+  REQUEST_PING = 'request-ping',
+  RESPONSE_PUBLIC_KEY = 'response-public-key',
+  RESPONSE_SOLUTION = 'response-solution',
+  RESPONSE_PING = 'response-ping',
+  RESPONSE_ERROR = 'response-error',
 }
 
-/**
- * the foundation of all messages (both requests and responses)
- */
-interface BaseMessage {
-  /**
-   * the description of the message
-   */
+export enum RequestMode {
+  REGISTRATION = 'registration',
+  LOGIN = 'login',
+}
+
+export interface BaseMessage {
+  type: MessageType;
   description?: string;
 }
 
-export interface GenericMessage extends BaseMessage {
-  /**
-   * the type of the message (can be any of the MessageType enum values)
-   */
-  type: typeof MessageType[keyof typeof MessageType];
-}
-
-export interface GenericRequest extends GenericMessage {
-  /**
-	 * the origin of the message. This should be the orgin of the website
-	 * that started the message.
-	 */
+export interface BaseRequest extends BaseMessage {
   origin: string;
 }
 
-/**
- * request messages for the user's public key
- */
-export interface KeyRequest extends GenericRequest {
-  type: MessageType.RequestPublicKey;
+export interface PublicKeyRequest extends BaseRequest {
+  type: MessageType.REQUEST_PUBLIC_KEY;
 }
 
-/**
- * response messages for the user's public key request
- */
-export interface KeyResponse extends BaseMessage {
-  type: MessageType.ResponsePublicKey;
+export interface PublicKeyResponse extends BaseMessage {
+  type: MessageType.RESPONSE_PUBLIC_KEY;
   key: string | null;
 }
 
-/**
- * request messages for the user's solution to a challenge/response
- */
-export interface ChallengeRequest extends GenericRequest {
-  type: MessageType.RequestSolution;
+export interface ChallengeRequest extends BaseRequest {
+  type: MessageType.REQUEST_SOLUTION;
   challenge: string;
 }
 
-/**
- * response messages to a challenge/response
- */
 export interface ChallengeResponse extends BaseMessage {
-  type: MessageType.ResponseSolution;
+  type: MessageType.RESPONSE_SOLUTION;
   solution: string | null;
+}
+
+export interface ErrorResponse extends BaseMessage {
+  type: MessageType.RESPONSE_ERROR;
+  error: string;
 }
 
 /**
@@ -72,8 +54,8 @@ export interface ChallengeResponse extends BaseMessage {
  */
 function broadcastPublicKeyResponse(key: string | null, error?: string) {
   // define message
-  const message: KeyResponse = {
-    type: MessageType.ResponsePublicKey,
+  const message: PublicKeyResponse = {
+    type: MessageType.RESPONSE_PUBLIC_KEY,
     key,
     description: error
   };
@@ -82,10 +64,16 @@ function broadcastPublicKeyResponse(key: string | null, error?: string) {
   browser.runtime.sendMessage(message);
 }
 
+/**
+ * Responds to a challenge request with the solution to the challenge and closes the popup window.
+ * 
+ * @param solution - the solution to the challenge
+ * @param error - an error message
+ */
 function broadcastChallengeResponse(solution: string | null, error?: string) {
   // define message
   const message: ChallengeResponse = {
-    type: MessageType.ResponseSolution,
+    type: MessageType.RESPONSE_SOLUTION,
     solution,
     description: error
   };

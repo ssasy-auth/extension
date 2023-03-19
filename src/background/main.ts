@@ -3,9 +3,9 @@ import { Windows, Tabs } from 'webextension-polyfill';
 import { PopupPage, Logger } from '~/common/utils';
 import { MessageType } from '~/common/logic';
 import type {
-  GenericMessage,
-  KeyRequest,
-  KeyResponse,
+  BaseMessage,
+  PublicKeyRequest,
+  PublicKeyResponse,
   ChallengeRequest,
   ChallengeResponse
 } from '~/common/logic';
@@ -40,7 +40,7 @@ browser.tabs.onActivated.addListener(async ({ tabId }) => {
 });
 
 export interface Session {
-	request: KeyRequest | ChallengeRequest;
+	request: PublicKeyRequest | ChallengeRequest;
 	popupPage: Windows.Window | Tabs.Tab;
 }
 
@@ -50,10 +50,10 @@ let sessionTab: number = 0;
  * Listen for public key requests from content scripts and 
  * responds with a public key response after user makes a decision (approve/deny)
  */
-onMessage(MessageType.RequestPublicKey, async ({ data }) => {
-  const request: KeyRequest = {
+onMessage(MessageType.REQUEST_PUBLIC_KEY, async ({ data }) => {
+  const request: PublicKeyRequest = {
     origin: data.origin,
-    type: MessageType.RequestPublicKey
+    type: MessageType.REQUEST_PUBLIC_KEY
   };
 
   // open popup window for user approval
@@ -73,8 +73,8 @@ onMessage(MessageType.RequestPublicKey, async ({ data }) => {
     // broadcast undefined response, if the messageSession is still active and popup window is closed
     browser.windows.onRemoved.addListener(async (windowId) => {
       if (session?.popupPage.id === windowId) {
-        const response: KeyResponse = {
-          type: MessageType.ResponsePublicKey,
+        const response: PublicKeyResponse = {
+          type: MessageType.RESPONSE_PUBLIC_KEY,
           key: null
         };
 
@@ -86,13 +86,13 @@ onMessage(MessageType.RequestPublicKey, async ({ data }) => {
     browser.runtime.onMessage.addListener(async (msg) => {
       
       // define message
-      const message: GenericMessage = {
+      const message: BaseMessage = {
         type: msg.type
       };
 
-      if(message.type === MessageType.ResponsePublicKey) {
-        const response: KeyResponse = {
-          type: MessageType.ResponsePublicKey,
+      if(message.type === MessageType.RESPONSE_PUBLIC_KEY) {
+        const response: PublicKeyResponse = {
+          type: MessageType.RESPONSE_PUBLIC_KEY,
           key: msg.key
         };
   
@@ -107,10 +107,10 @@ onMessage(MessageType.RequestPublicKey, async ({ data }) => {
  * Listen for challenge requests from content scripts and
  * responds with a challenge response after user makes a decision (approve/deny)
  */
-onMessage(MessageType.RequestSolution, async ({ data }) => {
+onMessage(MessageType.REQUEST_SOLUTION, async ({ data }) => {
   const request: ChallengeRequest = {
     origin: data.origin,
-    type: MessageType.RequestSolution,
+    type: MessageType.REQUEST_SOLUTION,
     challenge: data.challenge
   };
 
@@ -123,7 +123,7 @@ onMessage(MessageType.RequestSolution, async ({ data }) => {
     browser.windows.onRemoved.addListener(async (windowId) => {
       if (sessionTab === windowId) {
         const response: ChallengeResponse = {
-          type: MessageType.ResponseSolution,
+          type: MessageType.RESPONSE_SOLUTION,
           solution: null
         };
 
@@ -133,13 +133,13 @@ onMessage(MessageType.RequestSolution, async ({ data }) => {
 
     // listen for challenge response broadcast from [popup] and forward to [content script]
     browser.runtime.onMessage.addListener(async (msg) => {
-      const message: GenericMessage = {
+      const message: BaseMessage = {
         type: msg.type
       };
 
-      if(message.type === MessageType.ResponseSolution) {
+      if(message.type === MessageType.RESPONSE_SOLUTION) {
         const response: ChallengeResponse = {
-          type: MessageType.ResponseSolution,
+          type: MessageType.RESPONSE_SOLUTION,
           solution: msg.solution
         };
 

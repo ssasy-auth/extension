@@ -2,8 +2,15 @@
 import { sendMessage } from 'webext-bridge'
 import { createApp } from 'vue'
 import { setupApp, Logger } from '~/common/utils'
-import { MessageType } from '~/common/logic'
-import type { GenericRequest, GenericMessage, KeyRequest, KeyResponse, ChallengeRequest, ChallengeResponse } from '~/common/logic'
+import { MessageType, PublicKeyRequest } from '~/common/logic'
+import type { 
+  BaseMessage,
+  BaseRequest,
+  PublicKeyResponse,
+  ChallengeRequest,
+  ChallengeResponse,
+  ErrorResponse
+} from '~/common/logic'
 import App from './App.vue'
 
 // Firefox `browser.tabs.executeScript()` requires scripts return a primitive value
@@ -19,7 +26,7 @@ import App from './App.vue'
    */
   window.addEventListener('message', async (event: MessageEvent) => {
     
-    const request: GenericRequest = {
+    const request: BaseRequest = {
       origin: event.origin,
       type: event.data.type
     };
@@ -28,9 +35,9 @@ import App from './App.vue'
     
     try {
       // listen for [extension ping] and returns a response
-      if(request.type === MessageType.RequestPing) {
-        const response: GenericMessage = {
-          type: MessageType.ResponsePing
+      if(request.type === MessageType.REQUEST_PING) {
+        const response: BaseMessage = {
+          type: MessageType.RESPONSE_PING
         };
 
         // response to website
@@ -38,51 +45,59 @@ import App from './App.vue'
       }
 
       // listen for [public key request] from website
-      if (request.type === MessageType.RequestPublicKey) {
-        const keyRequest: KeyRequest = {
+      if (request.type === MessageType.REQUEST_PUBLIC_KEY) {
+        const keyRequest: PublicKeyRequest = {
           origin: request.origin,
-          type: MessageType.RequestPublicKey
+          type: MessageType.REQUEST_PUBLIC_KEY
         }
         
-        const publicKeyResponsetMsg: KeyResponse = await sendMessage(
-          MessageType.RequestPublicKey, 
+        const response: PublicKeyResponse | ErrorResponse = await sendMessage(
+          MessageType.REQUEST_PUBLIC_KEY, 
           keyRequest
         );
 
-        // send message to website
-        return window.postMessage(publicKeyResponsetMsg, request.origin);
+        if(response.type === MessageType.RESPONSE_ERROR) {
+          throw new Error(response.error);
+        } else {
+          
+          // send message to website
+          return window.postMessage(response, request.origin);
+        }
       }
 
       // listen for [challenge request] from website
-      if (request.type === MessageType.RequestSolution) {
+      if (request.type === MessageType.REQUEST_SOLUTION) {
         const challengeRequest: ChallengeRequest = {
           origin: request.origin,
-          type: MessageType.RequestSolution,
+          type: MessageType.REQUEST_SOLUTION,
           challenge: event.data.challenge
         }
 
-        const challengeResponse: ChallengeResponse = await sendMessage(
-          MessageType.RequestSolution,
+        const response: ChallengeResponse | ErrorResponse = await sendMessage(
+          MessageType.REQUEST_SOLUTION,
           challengeRequest
         );
 
-        // send message to website
-        return window.postMessage(challengeResponse, request.origin);
+        if(response.type === MessageType.RESPONSE_ERROR) {
+          throw new Error(response.error);
+        } else {
+          // send message to website
+          return window.postMessage(response, request.origin);
+        }
+
       }
       
     } catch (error) {
       const errorMessage = (error as Error).message || `Failed to process request ${request.type}`
-      
-      
-      Logger.error(errorMessage, null, 'content-script');
+      Logger.error('SSASy Channel', errorMessage, 'content-script');
 
       // response to website
-      const response: GenericMessage = {
-        type: MessageType.ResponseError,
-        description: errorMessage
+      const errorResponse: ErrorResponse = {
+        type: MessageType.RESPONSE_ERROR,
+        error: errorMessage
       }
 
-      window.postMessage(response, request.origin);
+      window.postMessage(errorResponse, request.origin);
     }
   });
 

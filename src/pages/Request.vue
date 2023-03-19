@@ -4,7 +4,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { SsasyMessenger, MessageType } from '~/common/logic';
 import { PopupPage } from '~/common/utils';
 import { useVaultStore, useSessionStore, useWalletStore, useNotificationStore } from '~/common/stores';
-import type { GenericMessage, ChallengeRequest } from '~/common/logic';
+import type { BaseMessage, ChallengeRequest } from '~/common/logic';
 import type { ActionItem } from '~/components/Base/BaseCard.vue';
 import BasePage from '~/components/Base/BasePage.vue';
 import BaseCard from '~/components/Base/BaseCard.vue';
@@ -170,14 +170,14 @@ onMounted(async () => {
     // listen for challenge response broadcast from [popup] and forward to [content script]
     // eslint-disable-next-line no-undef
     browser.runtime.onMessage.addListener(async (msg) => {      
-      const message: GenericMessage = {
+      const message: BaseMessage = {
         type: msg.type
       };
 
-      if(message.type === MessageType.RequestSolution) {
+      if(message.type === MessageType.REQUEST_SOLUTION) {
         const request: ChallengeRequest = {
           origin: msg.origin,
-          type: MessageType.RequestSolution,
+          type: MessageType.REQUEST_SOLUTION,
           challenge: msg.challenge
         };
         
