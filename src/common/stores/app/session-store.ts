@@ -21,18 +21,8 @@ export const useSessionStore = defineStore('session', {
   state: () => ({
     session: setupSession() as SsasySession | undefined
   }),
-  actions: {
-    async setSession(publicKey: PublicKey) {
-      this.resetSession();
-      
-      this.session = {
-        publicKey: await KeyModule.exportKey(publicKey),
-        timestamp: new Date().getTime() + SESSION_DURATION
-      };
-
-      LocalStorage.Session.set(JSON.stringify(this.session));
-    },
-    verifySession(): boolean {
+  getters: {
+    hasSession(): boolean {
       const notificationStore = useNotificationStore();
 
       if(this.session === undefined) {
@@ -56,6 +46,18 @@ export const useSessionStore = defineStore('session', {
       }
 
       return true;
+    }
+  },
+  actions: {
+    async setSession(publicKey: PublicKey) {
+      this.resetSession();
+      
+      this.session = {
+        publicKey: await KeyModule.exportKey(publicKey),
+        timestamp: new Date().getTime() + SESSION_DURATION
+      };
+
+      LocalStorage.Session.set(JSON.stringify(this.session));
     },
     resetSession() {
       this.session = undefined;

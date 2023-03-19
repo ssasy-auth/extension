@@ -13,7 +13,7 @@ const origin = ref<string | undefined>(route.query.origin as string);
 function goToSetup(){
   if(origin.value){
     OptionPage.open();
-    SsasyMessenger.broadcastPublicKeyResponse(origin.value, null);
+    SsasyMessenger.broadcastPublicKeyResponse(null);
   } 
   
   else {

@@ -6,7 +6,8 @@ const routes: Array<RouteRecordRaw> = [
   { 
     path: '/', 
     name: 'home', 
-    component: HomeVue 
+    component: HomeVue,
+    beforeEnter: [ AuthenticationGaurd ]
   },
   {
     path: '/auth',
@@ -43,10 +44,6 @@ const routes: Array<RouteRecordRaw> = [
 const router = createRouter({
   history: createWebHistory('/dist/options/index.html'),
   routes
-});
-
-router.beforeEach((to, from, next) => {
-  AuthenticationGaurd(to, from, next);
 });
 
 export default router;

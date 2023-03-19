@@ -7,7 +7,13 @@ const routes: Array<RouteRecordRaw> = [
   { 
     path: '/', 
     name: 'home', 
-    component: HomeVue 
+    component: HomeVue,
+    beforeEnter: [ AuthenticationGaurd ]
+  },
+  {
+    path: '/setup',
+    name: 'setup',
+    component: () => import('~/popup/views/Start.vue')
   },
   {
     path: '/auth',
@@ -17,12 +23,8 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/service/register',
     name: 'service-register',
-    component: () => import('~/pages/Service/ServiceRegister.vue')
-  },
-  {
-    path: '/setup',
-    name: 'setup',
-    component: () => import('~/popup/views/Start.vue')
+    component: () => import('~/pages/Service/ServiceRegister.vue'),
+    beforeEnter: [ AuthenticationGaurd ]
   },
   {
     path: '/:pathMatch(.*)*',
@@ -39,9 +41,6 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   // handle messenger routing
   MessengerGuard(to, from, next);
-
-  // handle authentication
-  AuthenticationGaurd(to, from, next);
 });
 
 export default router;

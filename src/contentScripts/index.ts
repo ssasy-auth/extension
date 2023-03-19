@@ -2,7 +2,8 @@
 import { sendMessage } from 'webext-bridge'
 import { createApp } from 'vue'
 import { setupApp, Logger } from '~/common/utils'
-import { ExtensionMessage, SsasyMessage, MessageData } from '~/common/logic'
+import { MessageType } from '~/common/logic'
+import type { GenericRequest, GenericMessage, KeyRequest, KeyResponse, ChallengeRequest, ChallengeResponse } from '~/common/logic'
 import App from './App.vue'
 
 // Firefox `browser.tabs.executeScript()` requires scripts return a primitive value
@@ -10,8 +11,6 @@ import App from './App.vue'
   Logger.info('content-script initiated', null, 'content-script')
 
   // ======== ssasy logic - request channel ========
-
-  let requestMessage: SsasyMessage | undefined = undefined;
 
   /**
    * Listen for public key requests from websites. For every request,
@@ -22,57 +21,65 @@ import App from './App.vue'
     Logger.info('received website message', event, 'content-script');
 
     // define message
-    requestMessage = {
+    const request: GenericRequest = {
       origin: event.origin,
-      data: event.data
+      type: event.data.type
     };
-    console.info('[ext-content-script] received website message', requestMessage);
     
     try {
-      // listen for extension ping
-      if(requestMessage.data.type === ExtensionMessage.RequestPing) {
-        const message: SsasyMessage = {
-          origin: requestMessage.origin,
-          data: {
-            type: ExtensionMessage.ResponsePing
-          }
-        }
-
-        console.info('[ext-content-script] sending ping response', message);
+      // listen for [extension ping] and returns a response
+      if(request.type === MessageType.RequestPing) {
+        const response: GenericMessage = {
+          type: MessageType.ResponsePing
+        };
 
         // response to website
-        return window.postMessage(message.data, requestMessage.origin);
+        return window.postMessage(response, request.origin);
       }
 
-      // listen for public key request from website
-      if (requestMessage.data.type === ExtensionMessage.RequestPublicKey) {
-        const responseMessage: SsasyMessage = await sendMessage(
-          ExtensionMessage.RequestPublicKey, 
-        requestMessage as any
-        ) as unknown as SsasyMessage;
-
-        // replcae request type with response type
-        requestMessage.data.type = ExtensionMessage.ResponsePublicKey;
+      // listen for [public key request] from website
+      if (request.type === MessageType.RequestPublicKey) {
+        const keyRequest: KeyRequest = {
+          origin: request.origin,
+          type: MessageType.RequestPublicKey
+        }
+        
+        const publicKeyResponsetMsg: KeyResponse = await sendMessage(
+          MessageType.RequestPublicKey, 
+          keyRequest
+        );
 
         // send message to website
-        return window.postMessage(responseMessage.data, requestMessage.origin);
+        return window.postMessage(publicKeyResponsetMsg, request.origin);
       }
 
-      // TODO listen for solution request from website
-      if (requestMessage.data.type === ExtensionMessage.RequestSolution) {
-        throw new Error('not implemented');
+      // listen for [challenge request] from website
+      if (request.type === MessageType.RequestSolution) {
+        const challengeRequest: ChallengeRequest = {
+          origin: request.origin,
+          type: MessageType.RequestSolution,
+          challenge: event.data.challenge
+        }
+
+        const challengeResponse: ChallengeResponse = await sendMessage(
+          MessageType.RequestSolution,
+          challengeRequest
+        );
+
+        // send message to website
+        return window.postMessage(challengeResponse, request.origin);
       }
       
     } catch (error) {
       console.error('[ext-content-script] error', error);
 
       // response to website
-      const messageData: MessageData = {
-        type: ExtensionMessage.ResponseError,
-        description: (error as Error).message || `Failed to process request ${requestMessage?.data.type}`
+      const response: GenericMessage = {
+        type: MessageType.ResponseError,
+        description: (error as Error).message || `Failed to process request ${request.type}`
       }
 
-      window.postMessage(messageData, requestMessage?.origin);
+      window.postMessage(response, request.origin);
     }
   });
 

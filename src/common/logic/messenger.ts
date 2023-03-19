@@ -1,4 +1,4 @@
-export enum ExtensionMessage {
+export enum MessageType {
   RequestPublicKey = 'request-public-key',
   RequestSolution = 'request-solution',
   RequestPing = 'request-ping',
@@ -8,28 +8,60 @@ export enum ExtensionMessage {
   ResponseError = 'response-error'
 }
 
-export type MessageType = typeof ExtensionMessage[keyof typeof ExtensionMessage];
-
-export interface MessageData {
-	type: MessageType;
-	key?: string | null;
+/**
+ * the foundation of all messages (both requests and responses)
+ */
+interface BaseMessage {
+  /**
+   * the description of the message
+   */
   description?: string;
 }
 
-/**
- * Message interface for communication within the extension and between
- * the extension and websites
- */
-export interface SsasyMessage {
-	/**
+export interface GenericMessage extends BaseMessage {
+  /**
+   * the type of the message (can be any of the MessageType enum values)
+   */
+  type: typeof MessageType[keyof typeof MessageType];
+}
+
+export interface GenericRequest extends GenericMessage {
+  /**
 	 * the origin of the message. This should be the orgin of the website
 	 * that started the message.
 	 */
-	origin: string;
-  /**
-   * the data of the message
-   */
-	data: MessageData;
+  origin: string;
+}
+
+/**
+ * request messages for the user's public key
+ */
+export interface KeyRequest extends GenericRequest {
+  type: MessageType.RequestPublicKey;
+}
+
+/**
+ * response messages for the user's public key request
+ */
+export interface KeyResponse extends BaseMessage {
+  type: MessageType.ResponsePublicKey;
+  key: string | null;
+}
+
+/**
+ * request messages for the user's solution to a challenge/response
+ */
+export interface ChallengeRequest extends GenericRequest {
+  type: MessageType.RequestSolution;
+  challenge: string;
+}
+
+/**
+ * response messages to a challenge/response
+ */
+export interface ChallengeResponse extends BaseMessage {
+  type: MessageType.ResponseSolution;
+  solution: string | null;
 }
 
 /**
@@ -38,21 +70,29 @@ export interface SsasyMessage {
  * @param origin - the origin of the website that started the message
  * @param key - the public key of the user
  */
-function broadcastPublicKeyResponse(origin: string, key: string | null) {
+function broadcastPublicKeyResponse(key: string | null) {
   // define message
-  const message: SsasyMessage = {
-    origin,
-    data: {
-      type: ExtensionMessage.ResponsePublicKey,
-      key
-    }
+  const message: KeyResponse = {
+    type: MessageType.ResponsePublicKey,
+    key
   };
 
   // send message to [background script]
-  browser.runtime.sendMessage(message).then();
+  browser.runtime.sendMessage(message);
 }
 
+function broadcastChallengeResponse(solution: string | null) {
+  // define message
+  const message: ChallengeResponse = {
+    type: MessageType.ResponseSolution,
+    solution
+  };
+
+  // send message to [background script]
+  browser.runtime.sendMessage(message);
+}
 
 export const SsasyMessenger = {
-  broadcastPublicKeyResponse
+  broadcastPublicKeyResponse,
+  broadcastChallengeResponse
 };

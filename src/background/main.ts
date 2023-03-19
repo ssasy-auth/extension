@@ -1,11 +1,14 @@
 import { onMessage } from 'webext-bridge';
 import { Windows, Tabs } from 'webextension-polyfill';
-import { PopupPage, LocalStorage, Logger } from '~/common/utils';
-import {
-  ExtensionMessage,
-  SsasyMessenger
+import { PopupPage, Logger } from '~/common/utils';
+import { MessageType } from '~/common/logic';
+import type {
+  GenericMessage,
+  KeyRequest,
+  KeyResponse,
+  ChallengeRequest,
+  ChallengeResponse
 } from '~/common/logic';
-import type { SsasyMessage } from '~/common/logic';
 
 // only on dev mode
 if (import.meta.hot) {
@@ -36,85 +39,113 @@ browser.tabs.onActivated.addListener(async ({ tabId }) => {
   currentTabId = tabId;
 });
 
-export interface ActiveSession {
-	message: SsasyMessage;
+export interface Session {
+	request: KeyRequest | ChallengeRequest;
 	popupPage: Windows.Window | Tabs.Tab;
 }
 
+let sessionTab: number = 0;
+
 /**
- * 1. listens for public key requests from content scripts
- * 2. opens popup window and waits for user approval (approve/deny)
- * 3. replies to content script with public key response after user makes a decision
+ * Listen for public key requests from content scripts and 
+ * responds with a public key response after user makes a decision (approve/deny)
  */
-onMessage(ExtensionMessage.RequestPublicKey, async ({ data }) => {
-  console.info('[ext-background] received content script message', data);
-  const requestMessage = data as unknown as SsasyMessage;
+onMessage(MessageType.RequestPublicKey, async ({ data }) => {
+  const request: KeyRequest = {
+    origin: data.origin,
+    type: MessageType.RequestPublicKey
+  };
 
   // open popup window for user approval
   const route = '/service/register';
-  const query = `route=${route}&origin=${requestMessage.origin}`;
-  const popupWindo = await PopupPage.open({
-    queryString: query
-  });
+  const query = `route=${route}&origin=${request.origin}`;
 
-  // set messageSession
-  setMessageSession({
-    message: requestMessage,
-    popupPage: popupWindo
-  });
+  const session: Session = {
+    request,
+    popupPage: await PopupPage.open({ queryString: query })
+  }
 
-  // broadcast undefined response, if the messageSession is still active and popup window is closed
-  browser.windows.onRemoved.addListener(async (windowId) => {
-    if (getMessageSession()?.popupPage.id === windowId) {
-      // broadcast undefined response
-      SsasyMessenger.broadcastPublicKeyResponse(requestMessage.origin, null);
-    }
-  });
+  sessionTab = session.popupPage.id || 0;
+  console.log('[background] sessionTab set to ', sessionTab);
 
   // wait for response from popup window
   return new Promise((resolve) => {
+    // broadcast undefined response, if the messageSession is still active and popup window is closed
+    browser.windows.onRemoved.addListener(async (windowId) => {
+      if (session?.popupPage.id === windowId) {
+        const response: KeyResponse = {
+          type: MessageType.ResponsePublicKey,
+          key: null
+        };
+
+        resolve(response);
+      }
+    });
+
     // listen for public key response broadcast from [popup] and forward to [content script]
     browser.runtime.onMessage.addListener(async (msg) => {
       
       // define message
-      const responseMessage = msg as unknown as SsasyMessage;
-      Logger.info('received popup message', responseMessage, 'background');
+      const message: GenericMessage = {
+        type: msg.type
+      };
 
-      // reset session
-      resetMessageSession();
-
-      // respond to content script
-      return resolve(responseMessage);
+      if(message.type === MessageType.ResponsePublicKey) {
+        const response: KeyResponse = {
+          type: MessageType.ResponsePublicKey,
+          key: msg.key
+        };
+  
+        // respond to content script
+        return resolve(response);
+      }
     });
   });
 });
 
-function resetMessageSession() {
-  if (getMessageSession() === undefined) {
-    Logger.info('no active message session to reset', null, 'background');
-    return;
-  }
+/**
+ * Listen for challenge requests from content scripts and
+ * responds with a challenge response after user makes a decision (approve/deny)
+ */
+onMessage(MessageType.RequestSolution, async ({ data }) => {
+  const request: ChallengeRequest = {
+    origin: data.origin,
+    type: MessageType.RequestSolution,
+    challenge: data.challenge
+  };
 
-  // close popup window
-  PopupPage.close();
+  // send message to [popup]
+  await browser.runtime.sendMessage(request);
 
-  // set session to undefined
-  setMessageSession(undefined);
-  Logger.info('deactivating message session', null, 'background');
-}
+  // wait for response from popup window
+  return new Promise((resolve) => {
+    // broadcast undefined response, if the messageSession is still active and popup window is closed
+    browser.windows.onRemoved.addListener(async (windowId) => {
+      if (sessionTab === windowId) {
+        const response: ChallengeResponse = {
+          type: MessageType.ResponseSolution,
+          solution: null
+        };
 
-function getMessageSession(): ActiveSession | undefined {
-  try {
-    return JSON.parse(LocalStorage.MessageSession.get() as string);
-  } catch (error) {
-    return undefined;
-  }
-}
+        resolve(response);
+      }
+    });
 
-function setMessageSession(session: ActiveSession | undefined) {
-  if (session === undefined) {
-    LocalStorage.MessageSession.set(undefined);
-  } else {
-    LocalStorage.MessageSession.set(JSON.stringify(session));
-  }
-}
+    // listen for challenge response broadcast from [popup] and forward to [content script]
+    browser.runtime.onMessage.addListener(async (msg) => {
+      const message: GenericMessage = {
+        type: msg.type
+      };
+
+      if(message.type === MessageType.ResponseSolution) {
+        const response: ChallengeResponse = {
+          type: MessageType.ResponseSolution,
+          solution: msg.solution
+        };
+
+        // respond to content script
+        return resolve(response);
+      }
+    });
+  });
+});
