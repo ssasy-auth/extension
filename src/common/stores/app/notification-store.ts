@@ -1,16 +1,10 @@
 import { defineStore } from 'pinia';
+import type { GenericLog, ErrorLog, InfoLog } from '~/common/utils'
+import { Logger } from '~/common/utils'
 
-type NotificationType = 'info' | 'error';
-
-interface Notification {
-  type: NotificationType;
-  title: string;
-  message: string;
-  status?: number
-}
 
 interface NotificationStoreState {
-  notifications: Notification[];
+  notifications: GenericLog[];
 }
 
 export const useNotificationStore = defineStore('notification', {
@@ -19,7 +13,7 @@ export const useNotificationStore = defineStore('notification', {
   }),
   actions: {
     notify(title: string, message: string){
-      const notification: Notification = { 
+      const notification: InfoLog = { 
         type: 'info', 
         title, 
         message 
@@ -28,15 +22,13 @@ export const useNotificationStore = defineStore('notification', {
       // push notification
       this.notifications.push(notification);
 
-      // format notification
-      const formattedNotification = formatNotification(notification);
-
       // log notification
-      console.log(formattedNotification);
+      return Logger.info(notification);
     },
+    
     error(title: string, message: string, status?: number){
 
-      const notification: Notification = { 
+      const notification: ErrorLog = { 
         type: 'error', 
         title, 
         message,
@@ -46,24 +38,8 @@ export const useNotificationStore = defineStore('notification', {
       // push notification
       this.notifications.push(notification);
 
-      // format notification
-      const formattedNotification = formatNotification(notification);
-      
       // log notification
-      console.error(formattedNotification);
-
-      return formattedNotification;
+      return Logger.error(notification);
     }
   }
 });
-
-/**
- * Returns a formatted notification
- * 
- * @param notification - Notification to format
- * @returns string
- */
-function formatNotification(notification: Notification){
-  const emoji = notification.type === 'error' ? '❗️' : '📣';
-  return `[ssasy ${emoji}] ${notification.title} - ${notification.message}`;
-}

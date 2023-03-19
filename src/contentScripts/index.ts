@@ -1,13 +1,13 @@
 /* eslint-disable no-console */
 import { sendMessage } from 'webext-bridge'
 import { createApp } from 'vue'
-import { setupApp } from '~/common/utils/setup'
+import { setupApp, Logger } from '~/common/utils'
 import { SSASY_MESSAGE, SsasyMessage } from '~/common/logic'
 import App from './App.vue'
 
 // Firefox `browser.tabs.executeScript()` requires scripts return a primitive value
 (() => {
-  console.info('[vitesse-webext] Hello world from content script')
+  Logger.info('content-script initiated', null, 'content-script')
 
   // ======== ssasy logic - request channel ========
 
@@ -19,7 +19,7 @@ import App from './App.vue'
    * 
    */
   window.addEventListener('message', async (event: MessageEvent) => {
-    console.info('[ext-content-script] received website message', event);
+    Logger.info('received website message', event, 'content-script');
 
     // define message
     requestMessage = {

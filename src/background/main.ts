@@ -1,6 +1,6 @@
 import { onMessage } from 'webext-bridge';
 import { Windows, Tabs } from 'webextension-polyfill';
-import { PopupPage, LocalStorage } from '~/common/utils';
+import { PopupPage, LocalStorage, Logger } from '~/common/utils';
 import {
   SSASY_MESSAGE,
   SsasyMessenger
@@ -21,8 +21,7 @@ let currentTabId = 0;
  * Listen for extension install and log to console
  */
 browser.runtime.onInstalled.addListener((): void => {
-  // eslint-disable-next-line no-console
-  console.log('Extension installed');
+  Logger.info('Extension installed', null, 'background');
 });
 
 /**
@@ -48,7 +47,7 @@ export interface ActiveSession {
  * 3. replies to content script with public key response after user makes a decision
  */
 onMessage(SSASY_MESSAGE.REQUEST_PUBLIC_KEY, async ({ data }) => {
-  console.info('[ext-background] received content script message', data);
+  Logger.info('received content script message', data, 'background');
   const requestMessage = data as unknown as SsasyMessage;
 
   // open popup window for user approval
@@ -78,8 +77,8 @@ onMessage(SSASY_MESSAGE.REQUEST_PUBLIC_KEY, async ({ data }) => {
     browser.runtime.onMessage.addListener(async (msg) => {
       
       // define message
-      console.info('[ext-background] received popup message', msg);
       const responseMessage = msg as unknown as SsasyMessage;
+      Logger.info('received popup message', responseMessage, 'background');
 
       // reset session
       resetMessageSession();
@@ -90,12 +89,9 @@ onMessage(SSASY_MESSAGE.REQUEST_PUBLIC_KEY, async ({ data }) => {
   });
 });
 
-// TODO: listen for solution request broadcast from [content script]
-// TODO: listen for solution response broadcast from [popup]
-
 function resetMessageSession() {
   if (getMessageSession() === undefined) {
-    console.info('[ext-background] no active message session to reset');
+    Logger.info('no active message session to reset', null, 'background');
     return;
   }
 
@@ -104,8 +100,7 @@ function resetMessageSession() {
 
   // set session to undefined
   setMessageSession(undefined);
-
-  console.info('[ext-background] deactivating message session');
+  Logger.info('deactivating message session', null, 'background');
 }
 
 function getMessageSession(): ActiveSession | undefined {
