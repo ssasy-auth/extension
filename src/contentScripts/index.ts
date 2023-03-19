@@ -18,13 +18,13 @@ import App from './App.vue'
    * 
    */
   window.addEventListener('message', async (event: MessageEvent) => {
-    Logger.info('received website message', event, 'content-script');
-
-    // define message
+    
     const request: GenericRequest = {
       origin: event.origin,
       type: event.data.type
     };
+    
+    Logger.info('received website request', request, 'content-script');
     
     try {
       // listen for [extension ping] and returns a response

@@ -16,6 +16,12 @@ export type InfoLog = Log & { type: 'info' };
 
 export type ErrorLog = Log & { type: 'error', status?: number };
 
+/**
+ * Returns an abbreviated context label
+ * 
+ * @param context - Runtime context
+ * @returns abbreviated context label
+ */
 function getContextLabel(context?: RuntimeContext): string | undefined{
   let label: string | undefined = undefined;
 
@@ -41,12 +47,26 @@ function getContextLabel(context?: RuntimeContext): string | undefined{
 }
 
 /**
+ * Converts text to JSON string if it is an object
+ * 
+ * @param text - Text to format
+ * @returns text
+ */
+function formatText(text: any){
+  if(typeof text === 'object'){
+    return JSON.stringify(text);
+  }
+
+  return text;
+}
+
+/**
  * Returns a formatted notification
  * 
  * @param notification - Notification to format
  * @returns string
  */
-export function formatLog(log: Log, context?: RuntimeContext){
+export function formatLog(log: Log, context?: RuntimeContext): string {
   /**
    * emoji for log type
    */
@@ -63,32 +83,74 @@ export function formatLog(log: Log, context?: RuntimeContext){
   const label = contextLabel ? `[${LOG_LABEL}-${contextLabel}]` : `[${LOG_LABEL}]`;
 
   /**
-   * text for log. shows title and message if they are provided
+   * text for log. shows title and message if they are provided and converts message to JSON string if it is an object
    */
-  const text = log.title && log.message ? `${log.title} - ${log.message}` : log.title || log.message;
-
+  const text = log.title && log.message ? `${log.title} - ${formatText(log.message)}` : log.title || formatText(log.message);
 
   return `${label} ${emoji} ${text}`;
+}
+
+/**
+ * Returns log and context from arguments passed to log function
+ * @param args - arguments passed to the log function
+ * @param type - type of log
+ * @returns 
+ */
+function extractLogDetails(args: any[], type: LogType): { log: Log, context?: RuntimeContext } {
+  let log: Log;
+  let context: RuntimeContext | undefined;
+
+  // only title or log was provided
+  if(args.length === 1){
+    if(typeof args[0] === 'string'){
+      log = {
+        type: type,
+        title: args[0],
+        message: undefined
+      }
+    } else {
+      log = args[0];
+    }
+
+    context = undefined;
+  }
+
+  // title and message or log and context were provided
+  else if(args.length === 2){
+    if(typeof args[0] === 'string'){
+      log = {
+        type: type,
+        title: args[0],
+        message: args[1]
+      }
+
+      context = undefined;
+
+    } else {
+      log = args[0];
+      context = args[1];
+    }
+  } 
+  
+  // title, message, and context were provided
+  else {
+    log = {
+      type: type,
+      title: args[0],
+      message: args[1]
+    }
+
+    context = args[2];
+  }
+
+  return { log, context };
 }
 
 function logInfo (log: InfoLog, context?: RuntimeContext): string;
 function logInfo (title: string, message: unknown, context?: RuntimeContext): string;
 function logInfo (...args: any[]): string {
-  let log: InfoLog;
-  let context: RuntimeContext | undefined;
   
-  if(args.length === 2){
-    log = args[0];
-    context = args[1];
-  } else {
-    log = {
-      type: 'info',
-      title: args[0],
-      message: args[1]
-    }
-    context = args[2];
-  }
-
+  const { log, context } = extractLogDetails(args, 'info');
   const formattedLog: string = formatLog(log, context);
   console.info(formattedLog);
   return formattedLog;
@@ -97,21 +159,8 @@ function logInfo (...args: any[]): string {
 function logError (log: ErrorLog, context?: RuntimeContext): string;
 function logError (title: string, message: unknown, context?: RuntimeContext): string;
 function logError (...args: any[]): string {
-  let log: ErrorLog;
-  let context: RuntimeContext | undefined;
   
-  if(args.length === 2){
-    log = args[0];
-    context = args[1];
-  } else {
-    log = {
-      type: 'error',
-      title: args[0],
-      message: args[1]
-    }
-    context = args[2];
-  }
-
+  const { log, context } = extractLogDetails(args, 'error');
   const formattedLog: string = formatLog(log, context);
   console.warn(formattedLog);
   return formattedLog;
