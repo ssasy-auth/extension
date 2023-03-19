@@ -21,10 +21,9 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('~/pages/Auth.vue')
   },
   {
-    path: '/service/register',
-    name: 'service-register',
-    component: () => import('~/pages/Service/ServiceRegister.vue'),
-    beforeEnter: [ AuthenticationGaurd ]
+    path: '/request',
+    name: 'request',
+    component: () => import('~/pages/Request.vue')
   },
   {
     path: '/:pathMatch(.*)*',

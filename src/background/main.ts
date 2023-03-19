@@ -57,8 +57,8 @@ onMessage(MessageType.RequestPublicKey, async ({ data }) => {
   };
 
   // open popup window for user approval
-  const route = '/service/register';
-  const query = `route=${route}&origin=${request.origin}`;
+  const route = '/request';
+  const query = `route=${route}&mode=registration&origin=${request.origin}`;
 
   const session: Session = {
     request,

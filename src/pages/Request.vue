@@ -10,12 +10,15 @@ import BasePage from '~/components/Base/BasePage.vue';
 import BaseCard from '~/components/Base/BaseCard.vue';
 import AuthForm from '~/components/Auth/AuthForm.vue';
 
+type RequestMode = 'registration' | 'login';
+
 const route = useRoute();
 const router = useRouter();
 const loading = ref<boolean>(false);
 const error = ref<string | undefined>(undefined);
 
-const origin = ref<string | undefined>(route.query.origin as string);
+const mode = ref<RequestMode | undefined>(undefined);
+const origin = ref<string | undefined>(undefined);
 const publicKeyString = ref<string | undefined>(undefined);
 const challengeCiphertextString = ref<string | undefined>(undefined);
 
@@ -115,6 +118,24 @@ onMounted(async () => {
   const notificationStore = useNotificationStore();
   
   try {
+    // set mode
+    if(
+      (route.query.mode as RequestMode) === 'registration' ||
+      (route.query.mode as RequestMode) === 'login'
+    ){
+      mode.value = route.query.mode as RequestMode;
+    } else {
+      throw new Error('Invalid request mode');
+    }
+
+    // set origin
+    if(typeof route.query.origin === 'string'){
+      origin.value = route.query.origin;
+    } else {
+      throw new Error('Invalid origin');
+    }
+    
+    
     // set public key
     const vaultStore = useVaultStore();
     const sessionStore = useSessionStore();
@@ -166,7 +187,9 @@ onMounted(async () => {
     });
 
   } catch (error) {
-    throw notificationStore.error('Service Registration', (error as Error).message || 'Failed to setup public key.')
+    const errorMessage = (error as Error).message || 'Failed to setup public key.';
+    notificationStore.error('Service Registration', errorMessage)
+    SsasyMessenger.broadcastPublicKeyResponse(null, errorMessage);
   }
 });
 </script>
