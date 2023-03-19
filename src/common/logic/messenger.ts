@@ -70,22 +70,24 @@ export interface ChallengeResponse extends BaseMessage {
  * @param origin - the origin of the website that started the message
  * @param key - the public key of the user
  */
-function broadcastPublicKeyResponse(key: string | null) {
+function broadcastPublicKeyResponse(key: string | null, error?: string) {
   // define message
   const message: KeyResponse = {
     type: MessageType.ResponsePublicKey,
-    key
+    key,
+    description: error
   };
 
   // send message to [background script]
   browser.runtime.sendMessage(message);
 }
 
-function broadcastChallengeResponse(solution: string | null) {
+function broadcastChallengeResponse(solution: string | null, error?: string) {
   // define message
   const message: ChallengeResponse = {
     type: MessageType.ResponseSolution,
-    solution
+    solution,
+    description: error
   };
 
   // send message to [background script]

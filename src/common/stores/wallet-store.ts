@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia';
 import { useNotificationStore } from './app';
-import { Wallet, CryptoModule } from '@this-oliver/ssasy';
+import { Wallet } from '@this-oliver/ssasy';
 import type { PrivateKey, PublicKey } from '@this-oliver/ssasy';
+import { EncoderModule } from '@this-oliver/ssasy';
 
 interface WalletStoreState {
   wallet: Wallet | undefined;
@@ -16,7 +17,7 @@ export const useWalletStore = defineStore('wallet', {
     }
   },
   actions: {
-    async setWallet(privateKey: PrivateKey) {
+    setWallet(privateKey: PrivateKey): void {
       const notificationStore = useNotificationStore();
 
       if(this.hasWallet){
@@ -40,14 +41,21 @@ export const useWalletStore = defineStore('wallet', {
       
       return await this.wallet!.getPublicKey();
     },
-    async hashMessage(message: string): Promise<string> {
+    async solveChallenge(challengeCiphertextString: string): Promise<string> {
       const notificationStore = useNotificationStore();
 
       if(!this.hasWallet){
         throw notificationStore.error('Wallet Store', 'Wallet not set')
       }
 
-      return await CryptoModule.hash(message);
+      // decode ciphertext
+      const decodedCiphertext = await EncoderModule.decodeCiphertext(challengeCiphertextString);
+      
+      // solve challenge
+      const solutionCiphertext = await this.wallet!.solveChallenge(decodedCiphertext);
+
+      // encode ciphertext and return
+      return await EncoderModule.encodeCiphertext(solutionCiphertext);
     }
   }
 });

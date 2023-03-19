@@ -64,9 +64,10 @@ watch(() => props.value, (newValue) => {
     :outlined="outlined"
     :success="isValid === true"
     :error="isValid === false">
-    <template #append>
+    <template #append-inner>
       <base-btn
         small
+        :hide-from-tab="true"
         @click="data.showPassword = !data.showPassword">
         {{ data.showPassword ? 'hide' : 'show' }}
       </base-btn>

@@ -9,10 +9,14 @@ const props = defineProps({
   registerMode: {
     type: Boolean,
     default: false
+  },
+  confirmationMode: {
+    type: Boolean,
+    default: false
   }
 });
 
-const emits = defineEmits([ 'login', 'register' ]);
+const emits = defineEmits([ 'input' ]);
 
 const form = reactive({
   password: '',
@@ -33,23 +37,41 @@ const isValidPasswordConfirmation: ComputedRef<boolean | null> = computed(() => 
 );
 
 const formActions: ComputedRef<ActionItem[]> = computed(() => {
-  const action: ActionItem = props.registerMode
-    ? {
-      label: 'Confirm',
-      disabled: !isValidPasswordConfirmation.value,
-      action: () => {
-        emits('register', form.password);
-      }
+  const registrationBtn: ActionItem = {
+    label: 'Register',
+    disabled: !isValidPasswordConfirmation.value,
+    action: () => {
+      emits('input', form.password);
     }
-    : {
-      label: 'Login',
-      disabled: !isValidPassword.value,
-      action: () => {
-        emits('login', form.password);
-      }
-    };
+  };
 
-  return [ action ];
+  const loginBtn: ActionItem = {
+    label: 'Login',
+    disabled: !isValidPassword.value,
+    action: () => {
+      emits('input', form.password);
+    }
+  };
+
+  const confirmBtn: ActionItem = {
+    label: 'Confirm Action',
+    disabled: !isValidPassword.value,
+    action: () => {
+      emits('input', form.password);
+    }
+  };
+
+  if(props.registerMode) {
+    return [ registrationBtn ];
+  }
+
+  else if (props.confirmationMode) {
+    return [ confirmBtn ];
+  }
+
+  else {
+    return [ loginBtn ];
+  }
 });
 
 function isEmptyString(string: string): boolean {

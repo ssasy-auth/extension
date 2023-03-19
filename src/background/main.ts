@@ -66,7 +66,7 @@ onMessage(MessageType.RequestPublicKey, async ({ data }) => {
   }
 
   sessionTab = session.popupPage.id || 0;
-  console.log('[background] sessionTab set to ', sessionTab);
+  Logger.info('sessionTab set to ', sessionTab, 'background');
 
   // wait for response from popup window
   return new Promise((resolve) => {

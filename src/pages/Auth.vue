@@ -61,7 +61,7 @@ async function handleLoginForm(password: string){
       <v-col
         cols="10"
         md="6">
-        <auth-form @login="handleLoginForm" />
+        <auth-form @input="handleLoginForm" />
       </v-col>
     </v-row>
   </base-page>

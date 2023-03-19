@@ -71,12 +71,15 @@ import App from './App.vue'
       }
       
     } catch (error) {
-      console.error('[ext-content-script] error', error);
+      const errorMessage = (error as Error).message || `Failed to process request ${request.type}`
+      
+      
+      Logger.error(errorMessage, null, 'content-script');
 
       // response to website
       const response: GenericMessage = {
         type: MessageType.ResponseError,
-        description: (error as Error).message || `Failed to process request ${request.type}`
+        description: errorMessage
       }
 
       window.postMessage(response, request.origin);
