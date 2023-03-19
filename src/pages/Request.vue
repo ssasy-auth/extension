@@ -1,21 +1,19 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { SsasyMessenger, MessageType } from '~/common/logic';
 import { PopupPage } from '~/common/utils';
 import { useVaultStore, useSessionStore, useWalletStore, useNotificationStore } from '~/common/stores';
-import type { BaseMessage, ChallengeRequest } from '~/common/logic';
+import type { RequestMode, BaseMessage, ChallengeRequest } from '~/common/logic';
 import type { ActionItem } from '~/components/Base/BaseCard.vue';
 import BasePage from '~/components/Base/BasePage.vue';
 import BaseCard from '~/components/Base/BaseCard.vue';
 import AuthForm from '~/components/Auth/AuthForm.vue';
 
-type RequestMode = 'registration' | 'login';
-
 const route = useRoute();
 const router = useRouter();
 const loading = ref<boolean>(false);
-const error = ref<string | undefined>(undefined);
+const requestError = ref<string | undefined>(undefined);
 
 const mode = ref<RequestMode | undefined>(undefined);
 const origin = ref<string | undefined>(undefined);
@@ -40,9 +38,17 @@ const options: ActionItem[] = [
   }
 ];
 
+const requestText = computed(() => {
+  return mode.value === 'login' ? 'login' : 'register';
+});
+
 async function approvePublicKeyRequest(){
   try {
     loading.value = true;
+    if(mode.value === undefined){
+      throw new Error('Mode is undefined');
+    }
+
     if(origin.value === undefined){
       throw new Error('Origin is undefined');
     }
@@ -81,11 +87,18 @@ async function handleAuthentication(password: string){
   loading.value = true;
   const vaultStore = useVaultStore();
   const walletStore = useWalletStore();
+  const notificationStore = useNotificationStore();
 
   try {
     const privateKey = await vaultStore.getStoreKey(password);
     walletStore.setWallet(privateKey);
+  } catch (error) {
+    const errorMessage = (error as Error).message || 'Failed to unlock wallet.';
+    requestError.value = errorMessage;
+    return notificationStore.error('Service Registration', errorMessage);
+  }
 
+  try {
     if(challengeCiphertextString.value === undefined){
       throw new Error('Challenge ciphertext is undefined');
     }
@@ -95,7 +108,6 @@ async function handleAuthentication(password: string){
     
     loading.value = false;
   } catch (error) {
-    const notificationStore = useNotificationStore();
     const errorMessage = notificationStore.error('Service Registration', (error as Error).message || 'Failed to solve challenge.');
     SsasyMessenger.broadcastChallengeResponse(null, errorMessage);  
   }
@@ -177,6 +189,7 @@ onMounted(async () => {
       if(message.type === MessageType.REQUEST_SOLUTION) {
         const request: ChallengeRequest = {
           origin: msg.origin,
+          mode: msg.mode,
           type: MessageType.REQUEST_SOLUTION,
           challenge: msg.challenge
         };
@@ -198,19 +211,6 @@ onMounted(async () => {
   <base-page title="Registration Request">
     <v-row justify="center">
       <v-col
-        v-if="error"
-        cols="11"
-        md="6">
-        <base-card
-          title="Oops"
-          class="pa-1">
-          <p>
-            {{ error }}
-          </p>
-        </base-card>
-      </v-col>
-
-      <v-col
         v-if="challengeCiphertextString"
         cols="11"
         md="6">
@@ -230,8 +230,22 @@ onMounted(async () => {
         md="6">
         <base-card
           :actions="options"
-          class="pa-1 text center">
-          <p><b><code>{{ origin }}</code></b> want to register your account with their service.</p>
+          class="text-center pa-1">
+          <p><b><code>{{ origin }}</code></b> wants to <b>{{ requestText }}</b> your account with their service.</p>
+        </base-card>
+      </v-col>
+
+      <v-divider class="border-opacity-0" />
+
+      <v-col
+        v-if="requestError"
+        cols="auto">
+        <base-card
+          color="error"
+          class="text-center pa-1">
+          <p>
+            {{ requestError }}
+          </p>
         </base-card>
       </v-col>
     </v-row>

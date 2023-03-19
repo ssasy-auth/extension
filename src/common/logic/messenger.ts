@@ -8,10 +8,7 @@ export enum MessageType {
   RESPONSE_ERROR = 'response-error',
 }
 
-export enum RequestMode {
-  REGISTRATION = 'registration',
-  LOGIN = 'login',
-}
+export type RequestMode = 'registration' | 'login';
 
 export interface BaseMessage {
   type: MessageType;
@@ -24,6 +21,7 @@ export interface BaseRequest extends BaseMessage {
 
 export interface PublicKeyRequest extends BaseRequest {
   type: MessageType.REQUEST_PUBLIC_KEY;
+  mode: RequestMode;
 }
 
 export interface PublicKeyResponse extends BaseMessage {
@@ -33,6 +31,7 @@ export interface PublicKeyResponse extends BaseMessage {
 
 export interface ChallengeRequest extends BaseRequest {
   type: MessageType.REQUEST_SOLUTION;
+  mode: RequestMode;
   challenge: string;
 }
 
@@ -56,7 +55,7 @@ function broadcastPublicKeyResponse(key: string | null, error?: string) {
   // define message
   const message: PublicKeyResponse = {
     type: MessageType.RESPONSE_PUBLIC_KEY,
-    key,
+    key: key,
     description: error
   };
 

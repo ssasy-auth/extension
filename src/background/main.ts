@@ -53,12 +53,13 @@ let sessionTab: number = 0;
 onMessage(MessageType.REQUEST_PUBLIC_KEY, async ({ data }) => {
   const request: PublicKeyRequest = {
     origin: data.origin,
-    type: MessageType.REQUEST_PUBLIC_KEY
+    type: MessageType.REQUEST_PUBLIC_KEY,
+    mode: data.mode
   };
 
   // open popup window for user approval
   const route = '/request';
-  const query = `route=${route}&mode=registration&origin=${request.origin}`;
+  const query = `route=${route}&mode=${request.mode}&origin=${request.origin}`;
 
   const session: Session = {
     request,
@@ -111,6 +112,7 @@ onMessage(MessageType.REQUEST_SOLUTION, async ({ data }) => {
   const request: ChallengeRequest = {
     origin: data.origin,
     type: MessageType.REQUEST_SOLUTION,
+    mode: data.mode,
     challenge: data.challenge
   };
 

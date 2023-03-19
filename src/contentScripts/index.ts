@@ -48,6 +48,7 @@ import App from './App.vue'
       if (request.type === MessageType.REQUEST_PUBLIC_KEY) {
         const keyRequest: PublicKeyRequest = {
           origin: request.origin,
+          mode: event.data.mode,
           type: MessageType.REQUEST_PUBLIC_KEY
         }
         
@@ -70,6 +71,7 @@ import App from './App.vue'
         const challengeRequest: ChallengeRequest = {
           origin: request.origin,
           type: MessageType.REQUEST_SOLUTION,
+          mode: event.data.mode,
           challenge: event.data.challenge
         }
 
