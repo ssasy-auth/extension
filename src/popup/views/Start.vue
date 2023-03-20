@@ -12,8 +12,9 @@ const origin = ref<string | undefined>(route.query.origin as string);
 
 function goToSetup(){
   if(origin.value){
-    OptionPage.open();
     SsasyMessenger.broadcastPublicKeyResponse(null);
+    OptionPage.open();
+    PopupPage.close();
   } 
   
   else {

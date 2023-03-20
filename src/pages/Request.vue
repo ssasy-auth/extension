@@ -3,7 +3,12 @@ import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { SsasyMessenger, MessageType } from '~/common/logic';
 import { PopupPage } from '~/common/utils';
-import { useVaultStore, useSessionStore, useWalletStore, useNotificationStore } from '~/common/stores';
+import { 
+  useVaultStore,
+  useWalletStore,
+  useSessionStore,
+  useNotificationStore 
+} from '~/common/stores';
 import type { RequestMode, BaseMessage, ChallengeRequest } from '~/common/logic';
 import type { ActionItem } from '~/components/Base/BaseCard.vue';
 import BasePage from '~/components/Base/BasePage.vue';
@@ -146,7 +151,6 @@ onMounted(async () => {
     } else {
       throw new Error('Invalid origin');
     }
-    
     
     // set public key
     const vaultStore = useVaultStore();

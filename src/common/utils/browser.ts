@@ -25,9 +25,13 @@ function definePageRoute(config?: PageRoute): string {
   return pageUrl;
 }
 
-interface PageConfig {
+interface OpenConfig {
 	route?: string;
 	queryString?: string;
+}
+
+interface CloseConfig {
+  id?: number;
 }
 
 interface PageController {
@@ -36,11 +40,11 @@ interface PageController {
    * 
    * @param config - page config (optional)
 	 */
-	open(config?: PageConfig): Promise<Windows.Window | Tabs.Tab>;
+	open(config?: OpenConfig): Promise<Windows.Window | Tabs.Tab>;
 	/**
 	 * closes the page
 	 */
-	close(): void;
+	close(config?: CloseConfig): void;
 }
 
 export const PopupPage: PageController = {
@@ -73,19 +77,31 @@ export const PopupPage: PageController = {
       });
   },
   
-  close() {
-    const views = browser.extension.getViews({ type: 'popup' });
-    for (const view of views) {
-      view.close();
-    }
-
-    browser.windows.getAll().then((windows) => {
-      for (const window of windows) {
-        if (window.type === 'popup') {
-          browser.windows.remove(window.id as number);
+  close(config?) {
+    if(config?.id) {
+      browser.windows.getAll().then((windows) => {
+        for (const window of windows) {
+          if (window.type === 'popup' && window.id === config.id) {
+            browser.windows.remove(window.id as number);
+          }
         }
+      });
+    } 
+    
+    else {
+      const views = browser.extension.getViews({ type: 'popup' });
+      for (const view of views) {
+        view.close();
       }
-    });
+  
+      browser.windows.getAll().then((windows) => {
+        for (const window of windows) {
+          if (window.type === 'popup') {
+            browser.windows.remove(window.id as number);
+          }
+        }
+      });
+    }
   }
 };
 

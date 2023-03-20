@@ -7,7 +7,8 @@ import type {
   PublicKeyRequest,
   PublicKeyResponse,
   ChallengeRequest,
-  ChallengeResponse
+  ChallengeResponse,
+  ErrorResponse
 } from '~/common/logic';
 
 // only on dev mode
@@ -18,8 +19,6 @@ if (import.meta.hot) {
   import('./contentScriptHMR');
 }
 
-let currentTabId = 0;
-
 /**
  * Listen for extension install and log to console
  */
@@ -27,24 +26,30 @@ browser.runtime.onInstalled.addListener((): void => {
   Logger.info('Extension installed', null, 'background');
 });
 
-/**
- * Listen for tab changes and update currentTabId
- */
-browser.tabs.onActivated.addListener(async ({ tabId }) => {
-  if (!currentTabId) {
-    currentTabId = tabId;
-    return;
-  }
-
-  currentTabId = tabId;
-});
-
 export interface Session {
 	request: PublicKeyRequest | ChallengeRequest;
 	popupPage: Windows.Window | Tabs.Tab;
 }
 
-let sessionTab: number = 0;
+let currentRequestTab: number = -1;
+
+/**
+ * Listen for current tab requests from content scripts
+ */
+onMessage('close-request-tab', ({ data }) => {
+  Logger.info('close-request-tab channel', 'close popup message recieved', 'background');
+  
+  if(data){
+    // show error message to user
+    const error: ErrorResponse = data;
+    Logger.error(error.error, null, 'background');
+  }
+
+  // close popup window
+  if(currentRequestTab !== -1) {
+    PopupPage.close({ id: currentRequestTab });
+  }
+})
 
 /**
  * Listen for public key requests from content scripts and 
@@ -66,8 +71,8 @@ onMessage(MessageType.REQUEST_PUBLIC_KEY, async ({ data }) => {
     popupPage: await PopupPage.open({ queryString: query })
   }
 
-  sessionTab = session.popupPage.id || 0;
-  Logger.info('sessionTab set to ', sessionTab, 'background');
+  currentRequestTab = session.popupPage.id || 0;
+  Logger.info('currentRequestTab set to ', currentRequestTab, 'background');
 
   // wait for response from popup window
   return new Promise((resolve) => {
@@ -96,6 +101,9 @@ onMessage(MessageType.REQUEST_PUBLIC_KEY, async ({ data }) => {
           type: MessageType.RESPONSE_PUBLIC_KEY,
           key: msg.key
         };
+
+        // reset current request tab
+        currentRequestTab = -1;
   
         // respond to content script
         return resolve(response);
@@ -123,13 +131,16 @@ onMessage(MessageType.REQUEST_SOLUTION, async ({ data }) => {
   return new Promise((resolve) => {
     // broadcast undefined response, if the messageSession is still active and popup window is closed
     browser.windows.onRemoved.addListener(async (windowId) => {
-      if (sessionTab === windowId) {
+      if (currentRequestTab === windowId) {
         const response: ChallengeResponse = {
           type: MessageType.RESPONSE_SOLUTION,
           solution: null
         };
 
-        resolve(response);
+        // reset current request tab
+        currentRequestTab = -1;
+
+        return resolve(response);
       }
     });
 
