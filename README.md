@@ -1,4 +1,4 @@
-# SSASy Browser Client
+# ssasy ext
 
 > A browser extension for the self-sovereign authentication scheme
 
