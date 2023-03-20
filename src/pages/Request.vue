@@ -105,7 +105,7 @@ async function handleAuthentication(password: string){
 
   try {
     if(challengeCiphertextString.value === undefined){
-      throw new Error('Challenge ciphertext is undefined');
+      throw new Error('Challenge encryption is undefined');
     }
 
     const solutionCiphertextString = await walletStore.solveChallenge(challengeCiphertextString.value);

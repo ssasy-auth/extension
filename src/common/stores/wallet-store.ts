@@ -41,7 +41,7 @@ export const useWalletStore = defineStore('wallet', {
       
       return await this.wallet!.getPublicKey();
     },
-    async solveChallenge(challengeCiphertextString: string): Promise<string> {
+    async solveChallenge(encryptedChallengeString: string): Promise<string> {
       const notificationStore = useNotificationStore();
 
       if(!this.hasWallet){
@@ -49,13 +49,13 @@ export const useWalletStore = defineStore('wallet', {
       }
 
       // decode ciphertext
-      const decodedCiphertext = await EncoderModule.decodeCiphertext(challengeCiphertextString);
+      const encryptedChallenge = await EncoderModule.decodeCiphertext(encryptedChallengeString);
       
       // solve challenge
-      const solutionCiphertext = await this.wallet!.solveChallenge(decodedCiphertext);
-
+      const encryptedSolution = await this.wallet!.solveChallenge(encryptedChallenge);
+      
       // encode ciphertext and return
-      return await EncoderModule.encodeCiphertext(solutionCiphertext);
+      return await EncoderModule.encodeCiphertext(encryptedSolution);
     }
   }
 });

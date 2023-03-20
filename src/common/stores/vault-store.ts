@@ -9,19 +9,19 @@ export const useVaultStore = defineStore('vaultStore', {
   getters: {
     hasKey(): boolean {
       const notificationStore = useNotificationStore();
-      const ciphertextString = LocalStorage.PrivateKeyCiphertext.get();
+      const encryptedPrivateKeyString = LocalStorage.EncryptedPrivateKeyString.get();
 
-      if(ciphertextString === undefined || ciphertextString === 'undefined') {
+      if(encryptedPrivateKeyString === undefined || encryptedPrivateKeyString === 'undefined') {
         notificationStore.error('Vault Error', 'No key stored');
         return false;
       }
 
       try {
         // check if ciphertext string is valid json
-        const ciphertext = JSON.parse(ciphertextString);
+        const encryptedPrivateKey = JSON.parse(encryptedPrivateKeyString);
 
         // check if ciphertext has all required properties
-        if(!CryptoChecker.isCiphertext(ciphertext)) {
+        if(!CryptoChecker.isCiphertext(encryptedPrivateKey)) {
           return false;
         }
 
@@ -43,7 +43,7 @@ export const useVaultStore = defineStore('vaultStore', {
       }
 
       let plaintextString: string;
-      let ciphertextString: string;
+      let encryptedPrivateKeyString: string;
 
       try {
         const rawKey = await KeyModule.exportKey(key); // converts key to json-like object
@@ -55,8 +55,8 @@ export const useVaultStore = defineStore('vaultStore', {
       }
 
       try {
-        const ciphertext = await CryptoModule.encrypt(passphrase, plaintextString);
-        ciphertextString = JSON.stringify(ciphertext);
+        const encryptedPrivateKey = await CryptoModule.encrypt(passphrase, plaintextString);
+        encryptedPrivateKeyString = JSON.stringify(encryptedPrivateKey);
       } catch (error) {
         const message = (error as Error).message || 'encryption error';
         notificationStore.error('Vault Error', message, 500);
@@ -64,7 +64,7 @@ export const useVaultStore = defineStore('vaultStore', {
       }
 
       // store ciphertext
-      LocalStorage.PrivateKeyCiphertext.set(ciphertextString);
+      LocalStorage.EncryptedPrivateKeyString.set(encryptedPrivateKeyString);
 
       // reset key store
       const keyStore = useKeyStore();
@@ -75,15 +75,15 @@ export const useVaultStore = defineStore('vaultStore', {
     async getStoreKey(passphrase: string): Promise<PrivateKey> {
       const notificationStore = useNotificationStore();
 
-      if(this.hasKey === false || LocalStorage.PrivateKeyCiphertext.get() === undefined){
+      if(this.hasKey === false || LocalStorage.EncryptedPrivateKeyString.get() === undefined){
         throw notificationStore.error('Vault Error', 'No key stored');
       }
 
       // convert ciphertext string to object
-      const ciphertext = JSON.parse(LocalStorage.PrivateKeyCiphertext.get() as string);
+      const encryptedPrivateKey = JSON.parse(LocalStorage.EncryptedPrivateKeyString.get() as string);
 
       // decrypt ciphertext
-      const plaintext = await CryptoModule.decrypt(passphrase, ciphertext);
+      const plaintext = await CryptoModule.decrypt(passphrase, encryptedPrivateKey);
 
       // convert plaintext string to raw key object
       const rawKey = JSON.parse(plaintext);
@@ -100,7 +100,7 @@ export const useVaultStore = defineStore('vaultStore', {
         throw notificationStore.error('Vault Error', 'No key stored');
       }
 
-      LocalStorage.PrivateKeyCiphertext.set(undefined);
+      LocalStorage.EncryptedPrivateKeyString.set(undefined);
       return true;
     }
   }

@@ -8,16 +8,16 @@ interface ExtensionStorage {
   set: (value: StorageItem) => void
 }
 
-const PRIVATE_KEY_CIPHERTEXT: RemovableRef<StorageItem> = useStorageLocal('ssasy-private-key', undefined)
-const SESSION: RemovableRef<StorageItem> = useStorageLocal('ssasy-session', undefined)
+const ENCRYPTED_PRIVATE_KEY: RemovableRef<StorageItem> = useStorageLocal('encrypted-private-key', undefined)
+const PLAINTEXT_PUBLIC_KEY: RemovableRef<StorageItem> = useStorageLocal('plaintext-public-key', undefined)
 
 export const LocalStorage = {
-  Session: {
-    get: () => SESSION.value,
-    set: (value: StorageItem) => SESSION.value = value
+  EncryptedPrivateKeyString: {
+    get: () => ENCRYPTED_PRIVATE_KEY.value,
+    set: (value: StorageItem) => ENCRYPTED_PRIVATE_KEY.value = value
   } as ExtensionStorage,
-  PrivateKeyCiphertext: {
-    get: () => PRIVATE_KEY_CIPHERTEXT.value,
-    set: (value: StorageItem) => PRIVATE_KEY_CIPHERTEXT.value = value
+  PlaintextPublicKeyString: {
+    get: () => PLAINTEXT_PUBLIC_KEY.value,
+    set: (value: StorageItem) => PLAINTEXT_PUBLIC_KEY.value = value
   } as ExtensionStorage
 }
