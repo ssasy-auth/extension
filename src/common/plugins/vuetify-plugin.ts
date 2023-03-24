@@ -1,6 +1,5 @@
 import 'vuetify/styles'
 import { createVuetify, type ThemeDefinition } from 'vuetify'
-import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 
@@ -21,13 +20,6 @@ export default createVuetify({
     defaultTheme: 'AppTheme', // other options are 'light' or 'dark'
     themes: {
       AppTheme
-    }
-  },
-  icons: {
-    defaultSet: 'mdi',
-    aliases,
-    sets: {
-      mdi
     }
   }
 })

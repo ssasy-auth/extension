@@ -1,7 +1,7 @@
 {
   "name": "ssasy-ext",
   "displayName": "SSASy WebExt",
-  "version": "0.12.4",
+  "version": "0.12.5",
   "description": "A browser extension for the self-sovereign authentication",
   "author": "hello@oliverrr.net",
   "license": "MIT",
