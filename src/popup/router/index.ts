@@ -23,7 +23,14 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/request',
     name: 'request',
-    component: () => import('~/pages/Request.vue')
+    component: () => import('~/pages/Request.vue'),
+    beforeEnter: [ AuthenticationGaurd ]
+  },
+  {
+    path: '/key',
+    name: 'key',
+    component: () => import('~/pages/PublicKey.vue'),
+    beforeEnter: [ AuthenticationGaurd ]
   },
   {
     path: '/settings/key',

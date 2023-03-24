@@ -15,6 +15,12 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('~/pages/Auth.vue')
   },
   {
+    path: '/key',
+    name: 'key',
+    component: () => import('~/pages/PublicKey.vue'),
+    beforeEnter: [ AuthenticationGaurd ]
+  },
+  {
     path: '/setup',
     name: 'setup',
     component: () => import('~/pages/Setup/Index.vue')

@@ -24,10 +24,8 @@ function goBack() {
 <template>
   <v-app-bar
     id="bar-wrapper"
-    absolute
     flat 
-    rounded="b-lg" 
-    color="transparent">
+    rounded="b-lg">
     <base-btn
       v-if="$app.context === 'popup'"
       id="bar-left"
