@@ -7,12 +7,15 @@ import BaseBtn from './Base/BaseBtn.vue';
 const router = useRouter();
 
 function goBack() {
-  const inSetup = router.currentRoute.value.path.includes('/setup');
+  const inRoot = router.currentRoute.value.path === '/';
   const inAuth = router.currentRoute.value.path.includes('/auth');
+  const inSetup = router.currentRoute.value.path.includes('/setup');
 
-  if (inSetup || inAuth) {
+  if (inRoot || inSetup || inAuth) {
     PopupPage.close();
-  } else{
+  } 
+
+  else{
     router.go(-1);
   }
 }
