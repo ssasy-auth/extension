@@ -7,8 +7,6 @@ import type { GenericKey, RawKey } from '@this-oliver/ssasy';
 import BaseCard from '~/components/Base/BaseCard.vue';
 import type { ActionItem } from '~/components/Base/BaseCard.vue';
 
-const MSG_MISSING_VALUE = 'N/A';
-
 const keyStore = useKeyStore();
 
 const props = defineProps({
@@ -28,8 +26,7 @@ const props = defineProps({
 
 const data = reactive({
   rawKey: undefined as RawKey | undefined,
-  keySummary: [] as KeyDetail[],
-  keySpecifications: [] as KeyDetail[]
+  keySummary: [] as KeyDetail[]
 })
 
 const KeyTypeName: ComputedRef<string> = computed(() => {
@@ -105,29 +102,6 @@ function extractKeySummary(rawKey: RawKey): KeyDetail[]{
   details.push({ label: 'Domain', value: rawKey.domain || MSG_MISSING_VALUE });
   return details;
 }
-function extractKeySpecification(rawKey: RawKey): KeyDetail[]{
-  const details: KeyDetail[] = [];
-  
-  if(props.showSecrets && rawKey){
-    const isSymmetric = props.ssasyKey.type === KeyType.SecretKey || props.ssasyKey.type === KeyType.SharedKey;
-    
-    if(isSymmetric){
-      details.push({ label: 'K-value', value: rawKey.crypto.k?.toString() || MSG_MISSING_VALUE });
-
-      if(props.ssasyKey.type === KeyType.PassKey){
-        details.push({ label: 'Salt', value: rawKey.salt?.toString() || MSG_MISSING_VALUE });
-        details.push({ label: 'Hash', value: rawKey.hash || MSG_MISSING_VALUE });
-        details.push({ label: 'Itterations', value: rawKey.iterations?.toString() || MSG_MISSING_VALUE });
-      }
-    } else {
-      details.push({ label: 'Curve', value: rawKey.crypto.crv || MSG_MISSING_VALUE });
-      details.push({ label: 'D-value', value: rawKey.crypto.d || MSG_MISSING_VALUE });
-      details.push({ label: 'X-value', value: rawKey.crypto.x || MSG_MISSING_VALUE });
-      details.push({ label: 'Y-value', value: rawKey.crypto.y || MSG_MISSING_VALUE });
-    }
-  }
-  return details;
-}
 
 onMounted(async () => {
   data.rawKey = KeyChecker.isRawKey(props.ssasyKey) 
@@ -136,7 +110,6 @@ onMounted(async () => {
 
   if(data.rawKey !== undefined){
     data.keySummary = extractKeySummary(data.rawKey);
-    data.keySpecifications = extractKeySpecification(data.rawKey);
   }
 })
 </script>
