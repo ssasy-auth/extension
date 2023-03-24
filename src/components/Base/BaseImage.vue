@@ -1,21 +1,21 @@
 <template>
-	<v-img
-		v-if="lazy"
-		:src="src"
-		:lazy-src="src"
-		:alt="alt"
-		:height="height"
-		:width="width"
-		:max-height="maxHeight"
-		:max-width="maxWidth"
-		:aspect-ratio="aspectRatio"
-		:style="getStyle" />
-	<img
-		v-else
-		:src="src"
-		:width="width"
-		:height="height"
-		:style="getStyle">
+  <v-img
+    v-if="lazy"
+    :src="src"
+    :lazy-src="src"
+    :alt="alt"
+    :height="height"
+    :width="width"
+    :max-height="maxHeight"
+    :max-width="maxWidth"
+    :aspect-ratio="aspectRatio"
+    :style="getStyle" />
+  <img
+    v-else
+    :src="src"
+    :width="width"
+    :height="height"
+    :style="getStyle">
 </template>
 
 <script setup lang="ts">

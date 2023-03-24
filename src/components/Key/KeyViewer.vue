@@ -13,7 +13,7 @@ const keyStore = useKeyStore();
 
 const props = defineProps({
   ssasyKey: {
-    type: Object as PropType<GenericKey>,
+    type: Object as PropType<GenericKey | RawKey>,
     required: true
   },
   showSecrets: {
@@ -142,7 +142,9 @@ onMounted(async () => {
 </script>
 
 <template>
-  <base-card :actions="keyActions">
+  <base-card
+    :actions="keyActions"
+    class="pa-1">
     <v-card-title>{{ KeyTypeName }} Key</v-card-title>
     <v-card-text>
       <v-list lines="one">
@@ -151,12 +153,19 @@ onMounted(async () => {
           :key="detail.label" 
           :title="detail.label" 
           :subtitle="detail.value" />
-        <v-list-item 
-          v-for="detail in data.keySpecifications" 
-          :key="detail.label" 
-          :title="detail.label" 
-          :subtitle="detail.value"/>
       </v-list>
     </v-card-text>
+
+    <div
+      v-if="props.showSecrets"
+      class="json-string mt-2">
+      <pre><code>{{ data.rawKey }}</code></pre>
+    </div>
   </base-card>
 </template>
+
+<style>
+.json-string {
+  overflow: auto;
+}
+</style>

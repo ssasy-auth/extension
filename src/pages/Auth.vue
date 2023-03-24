@@ -26,7 +26,10 @@ async function handleLoginForm(password: string){
       await walletStore.getPublicKey()
     );
   } catch (error) {
-    errorMessage.value = notificationStore.error('Start Page', (error as Error).message || 'Invalid password');
+    const message = (error as Error).message || 'Invalid password';
+    notificationStore.error('Authentication', message);
+    
+    errorMessage.value = message;
   }
 
   // if wallet is not set, return
@@ -51,17 +54,20 @@ async function handleLoginForm(password: string){
   <base-page title="Start Page">
     <v-row justify="center">
       <v-col
-        v-if="errorMessage !== undefined"
-        cols="10"
-        md="6">
-        <base-card color="warning">
-          {{ errorMessage }}
-        </base-card>
-      </v-col>
-      <v-col
         cols="10"
         md="6">
         <auth-form @input="handleLoginForm" />
+      </v-col>
+      <v-divider class="opacity-0" />
+      <v-col
+        v-if="errorMessage !== undefined"
+        cols="10"
+        md="auto">
+        <base-card
+          color="warning"
+          class="pa-2">
+          {{ errorMessage }}
+        </base-card>
       </v-col>
     </v-row>
   </base-page>

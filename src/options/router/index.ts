@@ -35,6 +35,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('~/pages/Setup/SetupStorage.vue')
   },
   {
+    path: '/settings/key',
+    name: 'settings-key',
+    component: () => import('~/pages/Settings/PublicKey.vue')
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: 'wildcard',
     component: () => import('~/pages/_.vue')
