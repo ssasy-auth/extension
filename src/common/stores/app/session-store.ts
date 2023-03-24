@@ -57,19 +57,19 @@ export const useSessionStore = defineStore('session', {
         timestamp: new Date().getTime() + SESSION_DURATION
       };
 
-      LocalStorage.PlaintextPublicKeyString.set(JSON.stringify(this.session));
+      LocalStorage.KeyPublicPlaintextString.set(JSON.stringify(this.session));
     },
     resetSession() {
       this.session = undefined;
-      LocalStorage.PlaintextPublicKeyString.set(undefined);
+      LocalStorage.KeyPublicPlaintextString.set(undefined);
     }
   }
 });
 
 function setupSession(): SsasySession | undefined {
   try {
-    if(LocalStorage.PlaintextPublicKeyString.get()) {
-      return JSON.parse(LocalStorage.PlaintextPublicKeyString.get() as string);
+    if(LocalStorage.KeyPublicPlaintextString.get()) {
+      return JSON.parse(LocalStorage.KeyPublicPlaintextString.get() as string);
     }
   } catch (error) {
     return undefined;

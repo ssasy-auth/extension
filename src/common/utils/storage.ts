@@ -8,16 +8,16 @@ interface ExtensionStorage {
   set: (value: StorageItem) => void
 }
 
-const ENCRYPTED_PRIVATE_KEY: RemovableRef<StorageItem> = useStorageLocal('encrypted-private-key', undefined)
-const PLAINTEXT_PUBLIC_KEY: RemovableRef<StorageItem> = useStorageLocal('plaintext-public-key', undefined)
+const KEY_PRIVATE_ENCRYPTED: RemovableRef<StorageItem> = useStorageLocal('encrypted-private-key', undefined)
+const KEY_PUBLIC_PLAINTEXT: RemovableRef<StorageItem> = useStorageLocal('plaintext-public-key', undefined)
 
 export const LocalStorage = {
-  EncryptedPrivateKeyString: {
-    get: () => ENCRYPTED_PRIVATE_KEY.value,
-    set: (value: StorageItem) => ENCRYPTED_PRIVATE_KEY.value = value
+  KeyPrivateEncryptedString: {
+    get: () => KEY_PRIVATE_ENCRYPTED.value,
+    set: (value: StorageItem) => KEY_PRIVATE_ENCRYPTED.value = value
   } as ExtensionStorage,
-  PlaintextPublicKeyString: {
-    get: () => PLAINTEXT_PUBLIC_KEY.value,
-    set: (value: StorageItem) => PLAINTEXT_PUBLIC_KEY.value = value
+  KeyPublicPlaintextString: {
+    get: () => KEY_PUBLIC_PLAINTEXT.value,
+    set: (value: StorageItem) => KEY_PUBLIC_PLAINTEXT.value = value
   } as ExtensionStorage
 }
