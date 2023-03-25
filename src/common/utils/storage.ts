@@ -9,7 +9,7 @@ interface ExtensionStorage {
 const KEY_PRIVATE_ENCRYPTED: RemovableRef<string | undefined> = useStorageLocal('key-private-encrypted', undefined)
 const KEY_PUBLIC_PLAINTEXT: RemovableRef<string | undefined> = useStorageLocal('key-public-plaintext', undefined)
 
-const SETTING_REQUIRE_SIGNATURE: RemovableRef<string | undefined> = useStorageLocal('setting-require-signature', undefined)
+const SETTING_REQUIRE_SIGNATURE: RemovableRef<string | undefined> = useStorageLocal('setting-require-signature', 'true')
 const SETTING_DARK_MODE: RemovableRef<string | undefined> = useStorageLocal('setting-dark-mode', undefined)
 
 export const LocalStorage = {
