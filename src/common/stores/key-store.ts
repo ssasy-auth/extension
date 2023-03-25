@@ -20,7 +20,7 @@ export const useKeyStore = defineStore('keyStore', {
       }
       
       if(!KeyChecker.isAsymmetricKey(this.temporaryKey)) {
-        notificationStore.error('Key Error', 'Key is not assymetric');
+        notificationStore.error('Key Error', 'Key is not asymmetric');
         return false;
       }
       
