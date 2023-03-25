@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { useVaultStore } from '~/common/stores';
+import { useVaultStore, useNotificationStore } from '~/common/stores';
 
 interface Prompt {
   id: string;
@@ -118,7 +118,9 @@ async function updatePassword(){
     // redirect to the vault page
     router.push('/');
   } catch (err) {
+    const notificationStore = useNotificationStore();
     error.value = (err as Error).message || 'Failed to update vault password.';
+    notificationStore.error('Vault Settings', error.value)
   }
 }
 

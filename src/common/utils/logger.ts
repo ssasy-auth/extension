@@ -8,6 +8,7 @@ interface Log {
   type: LogType;
   title: string;
   message: unknown;
+  timestamp: number;
 }
 
 export type GenericLog = Log;
@@ -106,7 +107,8 @@ function extractLogDetails(args: any[], type: LogType): { log: Log, context?: Ru
       log = {
         type: type,
         title: args[0],
-        message: undefined
+        message: undefined,
+        timestamp: Date.now()
       }
     } else {
       log = args[0];
@@ -121,7 +123,8 @@ function extractLogDetails(args: any[], type: LogType): { log: Log, context?: Ru
       log = {
         type: type,
         title: args[0],
-        message: args[1]
+        message: args[1],
+        timestamp: Date.now()
       }
 
       context = undefined;
@@ -132,12 +135,13 @@ function extractLogDetails(args: any[], type: LogType): { log: Log, context?: Ru
     }
   } 
   
-  // title, message, and context were provided
+  // title, message and context were provided
   else {
     log = {
       type: type,
       title: args[0],
-      message: args[1]
+      message: args[1],
+      timestamp: Date.now()
     }
 
     context = args[2];

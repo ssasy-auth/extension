@@ -33,6 +33,12 @@ const routes: Array<RouteRecordRaw> = [
     beforeEnter: [ AuthenticationGaurd ]
   },
   {
+    path: '/settings/logs',
+    name: 'settings-logs',
+    component: () => import('~/pages/Settings/Logs.vue'),
+    beforeEnter: [ AuthenticationGaurd ]
+  },
+  {
     path: '/setup',
     name: 'setup',
     component: () => import('~/pages/Setup/Index.vue')
