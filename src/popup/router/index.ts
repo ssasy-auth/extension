@@ -39,6 +39,12 @@ const routes: Array<RouteRecordRaw> = [
     beforeEnter: [ AuthenticationGaurd ]
   },
   {
+    path: '/settings/vault',
+    name: 'settings-vault',
+    component: () => import('~/pages/Settings/Vault.vue'),
+    beforeEnter: [ AuthenticationGaurd ]
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: 'wildcard',
     component: () => import('~/pages/_.vue')

@@ -27,6 +27,12 @@ const routes: Array<RouteRecordRaw> = [
     beforeEnter: [ AuthenticationGaurd ]
   },
   {
+    path: '/settings/vault',
+    name: 'settings-vault',
+    component: () => import('~/pages/Settings/Vault.vue'),
+    beforeEnter: [ AuthenticationGaurd ]
+  },
+  {
     path: '/setup',
     name: 'setup',
     component: () => import('~/pages/Setup/Index.vue')
