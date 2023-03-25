@@ -1,19 +1,33 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
+import { computed } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import { PopupPage } from '~/common/utils/browser';
 import Logo from '~/components/Logo.vue';
 import BaseBtn from './Base/BaseBtn.vue';
 
 const router = useRouter();
+const route = useRoute();
+
+const inRoot = computed(() => {
+  return route.path === '/';
+});
+
+const inAuth = computed(() => {
+  return route.path.includes('/auth');
+});
+
+const inSetup = computed(() => {
+  return route.path.includes('/setup');
+});
 
 function goBack() {
-  const inRoot = router.currentRoute.value.path === '/';
-  const inAuth = router.currentRoute.value.path.includes('/auth');
-  const inSetup = router.currentRoute.value.path.includes('/setup');
-
-  if (inRoot || inSetup || inAuth) {
+  if(
+    inRoot.value ||
+    inAuth.value ||
+    inSetup.value
+  ){
     PopupPage.close();
-  } 
+  }
 
   else{
     router.go(-1);
@@ -27,7 +41,7 @@ function goBack() {
     flat 
     rounded="b-lg">
     <base-btn
-      v-if="$app.context === 'popup'"
+      v-if="!inRoot"
       id="bar-left"
       small
       rounded="pill"

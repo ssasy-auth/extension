@@ -1,17 +1,9 @@
 import 'vuetify/styles'
-import { createVuetify, type ThemeDefinition } from 'vuetify'
+import { createVuetify } from 'vuetify'
+import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
-
-const AppTheme: ThemeDefinition = {
-  dark: false,
-  colors: {
-    primary: '#3D58F2',
-    secondary: '#09030D',
-    warning: '#F2B705',
-    error: '#F25E3D'
-  }
-}
+import { AppTheme, AppThemeDark } from '../utils/theme'
 
 export default createVuetify({
   components,
@@ -19,7 +11,15 @@ export default createVuetify({
   theme: {
     defaultTheme: 'AppTheme', // other options are 'light' or 'dark'
     themes: {
-      AppTheme
+      AppTheme,
+      AppThemeDark
+    }
+  },
+  icons: {
+    defaultSet: 'mdi',
+    aliases,
+    sets: {
+      mdi
     }
   }
 })

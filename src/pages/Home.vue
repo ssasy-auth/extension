@@ -7,6 +7,10 @@ const options: ActionItem[] = [
   {
     label: 'Key',
     to: '/key'
+  },
+  {
+    label: 'Settings',
+    to: '/settings'
   }
 ];
 </script>
@@ -19,8 +23,8 @@ const options: ActionItem[] = [
       </v-col>
 
       <v-divider class="opacity-0" />
-      
-      <v-col v-for="option in options" :key="option.label" cols="7" md="auto" class="mt-1">
+
+      <v-col v-for="option in options" :key="option.label" cols="7" md="4" class="mt-1">
         <base-btn large block :to="option.to">
           {{ option.label }}
         </base-btn>

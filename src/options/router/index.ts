@@ -21,6 +21,12 @@ const routes: Array<RouteRecordRaw> = [
     beforeEnter: [ AuthenticationGaurd ]
   },
   {
+    path: '/settings',
+    name: 'settings',
+    component: () => import('~/pages/Settings/Index.vue'),
+    beforeEnter: [ AuthenticationGaurd ]
+  },
+  {
     path: '/setup',
     name: 'setup',
     component: () => import('~/pages/Setup/Index.vue')
@@ -39,11 +45,6 @@ const routes: Array<RouteRecordRaw> = [
     path: '/setup/storage',
     name: 'setup-storage',
     component: () => import('~/pages/Setup/SetupStorage.vue')
-  },
-  {
-    path: '/settings/key',
-    name: 'settings-key',
-    component: () => import('~/pages/Settings/PublicKey.vue')
   },
   {
     path: '/:pathMatch(.*)*',

@@ -25,7 +25,7 @@ const getStyle = computed(() => {
 </script>
 
 <template>
-  <div>
+  <div style="padding-bottom: 20px;">
     <div
       v-if="props.title"
       class="text-center my-1">

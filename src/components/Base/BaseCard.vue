@@ -10,10 +10,12 @@ export interface ActionItem {
   label: string;
   description?: string;
   color?: string;
+  icon?: string;
   disabled?: boolean;
   outlined?: boolean;
   hint?: string;
-  action: () => void;
+  to?: string;
+  action?: () => void;
 }
 const props = defineProps({
   title: {
@@ -64,7 +66,9 @@ const getActions: ComputedRef<ActionItem[]> = computed(() => {
     return {
       ...item,
       action: () => {
-        item.action();
+        if (item.action) {
+          item.action();
+        }
       }
     };
   });

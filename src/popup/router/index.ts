@@ -33,9 +33,10 @@ const routes: Array<RouteRecordRaw> = [
     beforeEnter: [ AuthenticationGaurd ]
   },
   {
-    path: '/settings/key',
-    name: 'settings-key',
-    component: () => import('~/pages/Settings/PublicKey.vue')
+    path: '/settings',
+    name: 'settings',
+    component: () => import('~/pages/Settings/Index.vue'),
+    beforeEnter: [ AuthenticationGaurd ]
   },
   {
     path: '/:pathMatch(.*)*',

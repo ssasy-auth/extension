@@ -1,11 +1,22 @@
 <script setup lang="ts">
+import { ref, watch } from 'vue';
+import { useSettingStore } from '~/common/stores';
 import AppBar from '~/components/AppBar.vue';
 import AppFooter from '~/components/AppFooter.vue';
+
+type Theme = 'AppTheme' | 'AppThemeDark';
+
+const settingStore = useSettingStore();
+const theme = ref<Theme>(settingStore.darkMode ? 'AppThemeDark' : 'AppTheme');
+
+watch(() => settingStore.darkMode, (value) => {
+  theme.value = value ? 'AppThemeDark' : 'AppTheme';
+});
 
 </script>
 
 <template>
-  <v-app id="app-options">
+  <v-app id="app-options" :theme="theme">
     <app-bar />
     
     <v-main>

@@ -5,7 +5,7 @@ import { computed } from 'vue';
 const props = defineProps({
   color: {
     type: String,
-    default: undefined
+    default: 'primary'
   },
   block: {
     type: Boolean,
@@ -31,15 +31,23 @@ const props = defineProps({
   },
   outlined: {
     type: Boolean,
-    default: true
+    default: undefined
   },
   text: {
     type: Boolean,
-    default: false
+    default: undefined
+  },
+  plain: {
+    type: Boolean,
+    default: undefined
+  },
+  tonal: {
+    type: Boolean,
+    default: undefined
   },
   icon: {
     type: Boolean,
-    default: false
+    default: undefined
   },
   rounded: {
     type: String,
@@ -62,14 +70,18 @@ const props = defineProps({
 
 const emit = defineEmits([ 'click' ]);
 
-type ButtonStyle = 'outlined' | 'tonal' | 'plain' | 'text';
+type ButtonStyle = 'outlined' | 'tonal' | 'plain' | 'text' | 'elevated';
 const getButtonStyle: ComputedRef<ButtonStyle | undefined> = computed(() => {
   if (props.outlined === true) {
     return 'outlined';
   } else if (props.text === true) {
     return 'text';
+  } else if (props.plain === true) {
+    return 'plain';
+  } else if (props.tonal === true) {
+    return 'tonal';
   } else {
-    return undefined
+    return 'elevated'
   }
 });
 
