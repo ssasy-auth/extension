@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { useNotificationStore } from './notification-store';
 import { KeyChecker, KeyType, KeyModule, GenericKey } from '@this-oliver/ssasy';
 import type { PublicKey, RawKey } from '@this-oliver/ssasy';
-import { LocalStorage } from '~/common/utils';
+import { LocalStorage, processSsasyLikeError } from '~/common/utils';
 
 const SESSION_DURATION = 12 * 60 * 60 * 1000; // 12 hours
 
@@ -51,11 +51,16 @@ export const useSessionStore = defineStore('session', {
   actions: {
     async setSession(publicKey: PublicKey) {
       this.resetSession();
-      
-      this.session = {
-        publicKey: await KeyModule.exportKey(publicKey),
-        timestamp: new Date().getTime() + SESSION_DURATION
-      };
+
+      try {
+        this.session = {
+          publicKey: await KeyModule.exportKey(publicKey),
+          timestamp: new Date().getTime() + SESSION_DURATION
+        };
+        
+      } catch (err) {
+        throw processSsasyLikeError(err);
+      }
 
       LocalStorage.KeyPublicPlaintextString.set(JSON.stringify(this.session));
     },

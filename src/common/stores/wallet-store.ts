@@ -36,11 +36,11 @@ export const useWalletStore = defineStore('wallet', {
     async getPublicKey(): Promise<PublicKey> {
       const notificationStore = useNotificationStore();
 
-      if (!this.hasWallet) {
+      if (!this.hasWallet || !this.wallet) {
         throw notificationStore.error('Wallet Store', 'Wallet not set')
       }
 
-      return await this.wallet!.getPublicKey();
+      return await this.wallet.getPublicKey();
     },
     async solveChallenge(encryptedChallengeString: string): Promise<string> {
       const notificationStore = useNotificationStore();
