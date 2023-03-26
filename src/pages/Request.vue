@@ -9,7 +9,11 @@ import {
   useSessionStore,
   useNotificationStore
 } from '~/common/stores';
-import type { RequestMode, BaseMessage, ChallengeRequest } from '~/common/logic';
+import type {
+  RequestMode,
+  BaseMessage,
+  ChallengeRequest
+} from '~/common/logic';
 import type { ActionItem } from '~/components/Base/BaseCard.vue';
 import BasePage from '~/components/Base/BasePage.vue';
 import BaseCard from '~/components/Base/BaseCard.vue';
@@ -47,6 +51,9 @@ const requestText = computed(() => {
   return mode.value === 'login' ? 'login' : 'register';
 });
 
+/**
+ * Sends the public key to the origin
+ */
 async function approvePublicKeyRequest() {
   try {
     loading.value = true;
@@ -74,6 +81,9 @@ async function approvePublicKeyRequest() {
   }
 }
 
+/**
+ * Sends a null response to the origin
+ */
 function rejectPublicKeyRequest() {
   if (origin.value === undefined) {
     const notificationStore = useNotificationStore();
@@ -88,7 +98,12 @@ function rejectPublicKeyRequest() {
   closePopup();
 }
 
-async function handleAuthentication(password: string) {
+/**
+ * Solves the challenge and sends the solution to the origin
+ * 
+ * @param password - password to unlock wallet
+ */
+async function handleRequestChallenge(password: string) {
   loading.value = true;
   const vaultStore = useVaultStore();
   const walletStore = useWalletStore();
@@ -222,7 +237,7 @@ onMounted(async () => {
           <p>Enter your password to confirm the registration request.</p>
         </base-card>
 
-        <auth-form class="mt-2" style="padding-top: 20px;" @input="handleAuthentication" />
+        <auth-form class="mt-2" style="padding-top: 20px;" @input="handleRequestChallenge" />
       </v-col>
 
       <v-col v-else cols="11" md="6">

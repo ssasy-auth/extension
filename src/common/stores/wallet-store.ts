@@ -47,19 +47,19 @@ export const useWalletStore = defineStore('wallet', {
       const settingStore = useSettingStore();
 
 
-      if (!this.hasWallet) {
+      if (!this.hasWallet || !this.wallet) {
         throw notificationStore.error('Wallet Store', 'Wallet not set')
       }
+
+      // set requireSignature to false if registrationMode is true, otherwise use settingStore.requireSignature
+      const requireSignature = config?.registrationMode === true ? false : settingStore.requireSignature;
 
       try {
         // decode ciphertext
         const encryptedChallenge = await EncoderModule.decodeCiphertext(encryptedChallengeString);
 
         // solve challenge
-        const encryptedSolution = await this.wallet!.solveChallenge(
-          encryptedChallenge, 
-          { requireSignature: config?.registrationMode === true ? false : settingStore.requireSignature }
-        );
+        const encryptedSolution = await this.wallet.solveChallenge(encryptedChallenge, { requireSignature });
 
         // encode ciphertext and return
         return await EncoderModule.encodeCiphertext(encryptedSolution);
