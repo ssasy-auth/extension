@@ -3,7 +3,7 @@ lockfileVersion: 5.4
 specifiers:
   '@ffflorian/jszip-cli': ^3.1.9
   '@iconify/json': ^2.2.31
-  '@this-oliver/ssasy': 1.8.4
+  '@this-oliver/ssasy': 1.8.5
   '@types/fs-extra': ^11.0.1
   '@types/node': ^18.14.6
   '@types/webextension-polyfill': ^0.10.0
@@ -46,7 +46,7 @@ specifiers:
   webextension-polyfill: ^0.10.0
 
 dependencies:
-  '@this-oliver/ssasy': 1.8.4
+  '@this-oliver/ssasy': 1.8.5
   pinia: 2.0.33_hmuptsblhheur2tugfgucj7gc4
   vue: 3.2.47
   vue-router: 4.1.6_vue@3.2.47
@@ -1032,8 +1032,8 @@ packages:
       defer-to-connect: 2.0.1
     dev: true
 
-  /@this-oliver/ssasy/1.8.4:
-    resolution: {integrity: sha512-iZr51v4YGeX+530DCaS+WBN0m8JXXBnnapX9H6H8hQCbn4Il8pImk1Dg4kTe8eG3QkTCtHdouJtKbHEl7Ym5BQ==, tarball: download/@this-oliver/ssasy/1.8.4/acbe68c35aae98826c31cd1f3003f3737bf19bf6}
+  /@this-oliver/ssasy/1.8.5:
+    resolution: {integrity: sha512-OY9i0v1hIZwoR+dq3U9kuMKB3SPVLJzUzl1sSYNjob4MOx+K+/OSTw8VS6aVeUsoFRS4UjX/4vV5qsh6v1EthQ==, tarball: download/@this-oliver/ssasy/1.8.5/c3c4c80782ef93c8d1cb53f14c75ed33c992d625}
     dependencies:
       buffer: 6.0.3
     dev: false
