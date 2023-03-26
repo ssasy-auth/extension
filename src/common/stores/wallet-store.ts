@@ -2,8 +2,8 @@ import { defineStore } from 'pinia';
 import { useSettingStore, useNotificationStore } from './app';
 import { Wallet } from '@this-oliver/ssasy';
 import { processSsasyLikeError } from '../utils';
-import type { PrivateKey, PublicKey } from '@this-oliver/ssasy';
 import { EncoderModule } from '@this-oliver/ssasy';
+import type { PrivateKey, PublicKey } from '@this-oliver/ssasy';
 
 interface WalletStoreState {
   wallet: Wallet | undefined;
@@ -42,7 +42,7 @@ export const useWalletStore = defineStore('wallet', {
 
       return await this.wallet.getPublicKey();
     },
-    async solveChallenge(encryptedChallengeString: string): Promise<string> {
+    async solveChallenge(encryptedChallengeString: string, config?: { registrationMode: boolean }): Promise<string> {
       const notificationStore = useNotificationStore();
       const settingStore = useSettingStore();
 
@@ -56,7 +56,10 @@ export const useWalletStore = defineStore('wallet', {
         const encryptedChallenge = await EncoderModule.decodeCiphertext(encryptedChallengeString);
 
         // solve challenge
-        const encryptedSolution = await this.wallet!.solveChallenge(encryptedChallenge, { requireSignature: settingStore.requireSignature });
+        const encryptedSolution = await this.wallet!.solveChallenge(
+          encryptedChallenge, 
+          { requireSignature: config?.registrationMode === true ? false : settingStore.requireSignature }
+        );
 
         // encode ciphertext and return
         return await EncoderModule.encodeCiphertext(encryptedSolution);

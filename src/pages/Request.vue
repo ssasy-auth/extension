@@ -108,7 +108,10 @@ async function handleAuthentication(password: string) {
       throw new Error('Challenge encryption is undefined');
     }
 
-    const solutionCiphertextString = await walletStore.solveChallenge(challengeCiphertextString.value);
+    const solutionCiphertextString = await walletStore.solveChallenge(
+      challengeCiphertextString.value,
+      { registrationMode: mode.value === 'registration' }
+    );
     SsasyMessenger.broadcastChallengeResponse(solutionCiphertextString);
 
     loading.value = false;
