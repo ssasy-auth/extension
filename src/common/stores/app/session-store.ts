@@ -17,9 +17,13 @@ interface SsasySession {
   timestamp: number;
 }
 
+interface SessionStoreState {
+  session: SsasySession | undefined;
+}
+
 export const useSessionStore = defineStore('session', {
-  state: () => ({
-    session: setupSession() as SsasySession | undefined
+  state: (): SessionStoreState => ({
+    session: LocalStorage.Session.get() as SsasySession || undefined
   }),
   getters: {
     hasSession(): boolean {
@@ -62,21 +66,11 @@ export const useSessionStore = defineStore('session', {
         throw processSsasyLikeError(err);
       }
 
-      LocalStorage.KeyPublicPlaintextString.set(JSON.stringify(this.session));
+      LocalStorage.Session.set(this.session);
     },
     resetSession() {
       this.session = undefined;
-      LocalStorage.KeyPublicPlaintextString.set(undefined);
+      LocalStorage.Session.set(undefined);
     }
   }
 });
-
-function setupSession(): SsasySession | undefined {
-  try {
-    if(LocalStorage.KeyPublicPlaintextString.get()) {
-      return JSON.parse(LocalStorage.KeyPublicPlaintextString.get() as string);
-    }
-  } catch (error) {
-    return undefined;
-  }
-}

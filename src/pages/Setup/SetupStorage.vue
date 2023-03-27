@@ -60,7 +60,7 @@ async function saveKey(){
   }
   
   try {
-    const stored = await vaultStore.storeKey(data.privateKey, form.password);
+    const stored = await vaultStore.wrapKey(data.privateKey, form.password);
 
     if(!stored){
       throw new Error();

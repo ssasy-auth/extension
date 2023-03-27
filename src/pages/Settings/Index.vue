@@ -65,8 +65,8 @@ const tabs = computed<SettingTab[]>(() => {
 });
 
 const form = reactive({
-  [signatureOption.value.id]: settingStore.requireSignature,
-  [darkModeOption.value.id]: settingStore.darkMode
+  [signatureOption.value.id]: settingStore.getRequireSignature,
+  [darkModeOption.value.id]: settingStore.getDarkMode
 });
 
 watch(() => form[darkModeOption.value.id], (value) => {

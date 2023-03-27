@@ -110,7 +110,7 @@ async function handleRequestChallenge(password: string) {
   const notificationStore = useNotificationStore();
 
   try {
-    const privateKey = await vaultStore.getStoreKey(password);
+    const privateKey = await vaultStore.unwrapKey(password);
     walletStore.setWallet(privateKey);
   } catch (error) {
     const errorMessage = (error as Error).message || 'Failed to unlock wallet.';
@@ -175,7 +175,8 @@ onMounted(async () => {
     const sessionStore = useSessionStore();
 
     // if no key, redirect to setup
-    if (!vaultStore.hasKey) {
+    const hasKey: boolean = await vaultStore.hasKey();
+    if (!hasKey) {
       return router.push({
         path: '/setup',
         query: {

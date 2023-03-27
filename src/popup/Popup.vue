@@ -7,15 +7,17 @@ import AppFooter from '~/components/AppFooter.vue';
 type Theme = 'AppTheme' | 'AppThemeDark';
 
 const settingStore = useSettingStore();
-const theme = ref<Theme>(settingStore.darkMode ? 'AppThemeDark' : 'AppTheme');
+const theme = ref<Theme>(settingStore.getDarkMode ? 'AppThemeDark' : 'AppTheme');
 
-watch(() => settingStore.darkMode, (value) => {
+watch(() => settingStore.getDarkMode, (value) => {
   theme.value = value ? 'AppThemeDark' : 'AppTheme';
 });
 </script>
 
 <template>
-  <v-app id="app-popup" :theme="theme">
+  <v-app
+    id="app-popup"
+    :theme="theme">
     <app-bar />
     
     <v-main>

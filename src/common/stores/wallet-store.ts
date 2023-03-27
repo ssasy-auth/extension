@@ -52,7 +52,7 @@ export const useWalletStore = defineStore('wallet', {
       }
 
       // set requireSignature to false if registrationMode is true, otherwise use settingStore.requireSignature
-      const requireSignature = config?.registrationMode === true ? false : settingStore.requireSignature;
+      const requireSignature = config?.registrationMode === true ? false : settingStore.getRequireSignature;
 
       try {
         // decode ciphertext

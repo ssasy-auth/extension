@@ -23,7 +23,7 @@ async function handleLoginForm(password: string) {
   const sessionStore = useSessionStore();
 
   try {
-    const privateKey = await vaultStore.getStoreKey(password);
+    const privateKey = await vaultStore.unwrapKey(password);
     walletStore.setWallet(privateKey);
 
     // extract public key

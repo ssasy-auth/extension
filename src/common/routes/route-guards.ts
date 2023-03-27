@@ -10,7 +10,7 @@ interface Location {
  * Verifies that the user has setup their vault AND that 
  * they have a valid session
  */
-export function AuthenticationGaurd(
+export async function AuthenticationGaurd(
   to: RouteLocationNormalized, 
   from: RouteLocationNormalized, 
   next: NavigationGuardNext
@@ -29,7 +29,8 @@ export function AuthenticationGaurd(
   
   try {
     // redirect the user to the setup page if they are missing a vault key
-    if(!vaultStore.hasKey && !inSetupPath(location.path)) {
+    const hasKey: boolean = await vaultStore.hasKey();
+    if(!hasKey && !inSetupPath(location.path)) {
       redirectPath = '/setup';
       notificationStore.error('Router Guard - Authentication', 'Vault key is empty or invalid')
     }

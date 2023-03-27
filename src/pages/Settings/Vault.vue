@@ -38,7 +38,7 @@ const form = reactive({
 });
 
 const prompts = computed<Prompt[]>(() => {
-  return [currentPassword, newPassword, newPasswordConfirm];
+  return [ currentPassword, newPassword, newPasswordConfirm ];
 });
 
 const isValidCurrentPassword = computed<boolean | null>(() => {
@@ -105,10 +105,10 @@ async function updatePassword(){
 
   try {
     const vaultStore = useVaultStore();
-    const privateKey = await vaultStore.getStoreKey(form[currentPassword.id]);
+    const privateKey = await vaultStore.unwrapKey(form[currentPassword.id]);
 
     // update the vault password
-    const success = await vaultStore.storeKey(privateKey, form[newPassword.id]);
+    const success = await vaultStore.wrapKey(privateKey, form[newPassword.id]);
 
     if(!success){
       error.value = 'Failed to update vault password.';

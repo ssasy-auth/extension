@@ -1,44 +1,41 @@
 import { defineStore } from 'pinia';
 import { LocalStorage } from '~/common/utils';
 
-interface SettingStoreState {
-  darkMode: boolean;
+interface SystemSetting {
+  /**
+   * Whether or not the signature is required
+   */
   requireSignature: boolean;
+  /**
+   * Whether or not the dark mode is enabled
+   */
+  darkMode: boolean;
+}
+
+interface SettingStoreState {
+  setting: SystemSetting;
 }
 
 export const useSettingStore = defineStore('setting', {
   state: (): SettingStoreState => ({
-    darkMode: setupDarkMode(),
-    requireSignature: setupRequireSignature()
+    setting: LocalStorage.Setting.get() as SystemSetting || { requireSignature : true, darkMode: false }
   }),
+  getters: {
+    getDarkMode(): boolean {
+      return this.setting.darkMode;
+    },
+    getRequireSignature(): boolean {
+      return this.setting.requireSignature;
+    }
+  },
   actions: {
     setDarkMode(value: boolean) {
-      this.darkMode = value;
-      LocalStorage.SettingDarkMode.set(value.toString());
+      this.setting.darkMode = value;
+      LocalStorage.Setting.set(this.setting)
     },
     setRequireSignature(value: boolean) {
-      this.requireSignature = value;
-      LocalStorage.SettingRequireSignature.set(value.toString());
+      this.setting.requireSignature = value;
+      LocalStorage.Setting.set(this.setting)
     }
   }
 });
-
-function setupDarkMode(): boolean {
-  const darkMode = LocalStorage.SettingDarkMode.get();
-
-  if(darkMode === undefined) {
-    return false;
-  }
-
-  return darkMode === 'true' ? true : false;
-}
-
-function setupRequireSignature(): boolean {
-  const requireSignature = LocalStorage.SettingRequireSignature.get();
-
-  if(requireSignature === undefined) {
-    return false;
-  }
-
-  return requireSignature === 'true' ? true : false;
-}
