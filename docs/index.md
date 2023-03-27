@@ -1,8 +1,19 @@
-# Documentation
+# Extension architecture
 
-1. [Architecture](./architecture.md)
-2. [Design](./design.md)
-3. Tech stack
-   1. [extension](./extension.md)
-   2. [vue](./vue.md)
-   3. [vitesse-webext](./vitesse-webext.md)
+The purpose of this extension is to provide a user-friendly way to interact with [this-oliver/ssasy](https://github.com/this-oliver/ssasy), a self-sovereign user authentication scheme that uses public key cryptography to provide a secure and practical alternative to federated identities and passwords.
+
+In order to acheive this goal, the extension must be able to:
+
+- [x] Generate a private key and store it securely
+- [x] Communicate with websites that want to authenticate the user
+- [x] Handle challenge-response authentication if the user approves an authentication request
+
+The tasks above are implemented using five 'components':
+
+1. `core` - handles the generation, storage and retrieval of the private key
+2. `content-script` - listens and responds to authentication requests from websites
+3. `background-script` - prompts the user to approve or deny authentication requests
+4. `popup` - interact with the extension (e.g. approve/deny authentication requests)
+5. `options` - configure the extension settings (e.g. change password, dark mode, etc.)
+
+To learn more about the extension, check out the [extension documentation](./extension.md).

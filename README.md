@@ -1,16 +1,41 @@
 # ssasy ext
 
-> A browser extension for the self-sovereign authentication scheme
+<img src="./extension/assets/logo.png" width="150">
+<br><br>
 
-This browser extension is intended for use with [SSASy](https://github.com/this-oliver/ssasy). It allows you to setup an authenticator which can be used to authenticate to websites that support SSASy.
+`ssasy-ext` is a browser extension that provides a secure and practical alternative to federated identities and passwords using public key cryptography.
+
+## Why use `ssasy`?
+
+Nowadays, the average internet user is registered to dozens of websites. Each of these websites requires a password. This means that the average internet user has to remember dozens of passwords.
+
+This is a problem because:
+
+- **strong passwords are hard to remember**. Usually, this means that users choose weak passwords which are easy to remember but easy to guess. Or they re-use one strong password for all their accounts.
+- **it only takes one data breach**. If a service that you use gets hacked, your password is potentially leaked. If you use the same password for other services, you are at risk of having your other accounts compromised.
+
+You may be thinking: "I use my Google account to log in to all my other accounts. I don't need to remember any passwords!". This is a good solution but it has a few problems:
+
+- **you are not in control of your identity**. Federated Identities, like Google, control your identity. If you want to change your password, you have to go through Google. If you want to delete your account, you have to go through Google. If Google decides to delete your account, you have no say in the matter.
+- **you can be locked out of your account**. If you have registered your other accounts with your Google account, you can be locked out of your other accounts if you lose access to your Google account.
+
+With `ssasy`, you no longer have to remember dozens of passwords. You also no longer have to trust a third party with your identity. Instead, you can use a single credential to authenticate to all your web services in a secure and user-friendly way thanks to cryptography!
 
 ## Features
 
-- Setup an authenticator
-- Encrypt credentials
-- Regsiter to websites
-- Login to websites
+- **Secure**. Your credentials never leave your device thanks to public key cryptography.
+- **Practical**. One password for all your accounts means you no longer need to remember dozens of passwords.
+- **Easy to use**. The extension is designed to be as easy to use as possible. Setup your password in less than 2 minutes.
+
+<br><br>
+<img src="./docs/assets/ssasy-setup.png" width="300" alt="setting up key">
+
+<br><br>
+<img src="./docs/assets/ssasy-home.png" width="300" alt="home page">
+
+<br><br>
+<img src="./docs/assets/ssasy-request.png" width="300" alt="aithentication request">
 
 ## Documentation
 
-See the [docs](./docs/index.md) folder for more information.
+To learn more about the extension, check out the [documentation](docs/index.md).
