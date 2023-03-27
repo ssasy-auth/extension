@@ -1,24 +1,28 @@
 import { defineStore } from 'pinia';
 import { useKeyStore } from './key-store';
 import { useNotificationStore } from '~/common/stores/app';
-import { LocalStorage, processSsasyLikeError } from '~/common/utils';
+import { StorageUtil, processSsasyLikeError } from '~/common/utils';
 import { KeyChecker, KeyModule, CryptoModule, CryptoChecker } from '@this-oliver/ssasy';
 import type { PrivateKey, StandardCiphertext } from '@this-oliver/ssasy';
 
-export const useVaultStore = defineStore('vaultStore', {
-  actions: {
-    async hasKey(): Promise<boolean> {
-      const notificationStore = useNotificationStore();
-      const encryptedPrivateKey: StandardCiphertext = await LocalStorage.Auth.get();
+const LocalAuth = StorageUtil.Auth;
 
-      if (encryptedPrivateKey === undefined) {
+export const useVaultStore = defineStore('vaultStore', {
+  state: () => ({
+    encryptedPrivateKey: LocalAuth.value as StandardCiphertext | undefined
+  }),
+  getters: {
+    hasKey(): boolean {
+      const notificationStore = useNotificationStore();
+
+      if (this.encryptedPrivateKey === undefined) {
         notificationStore.error('Vault Check Error', 'No key stored');
         return false;
       }
 
       try {
         // check if ciphertext has all required properties
-        if (!CryptoChecker.isCiphertext(encryptedPrivateKey)) {
+        if (!CryptoChecker.isCiphertext(this.encryptedPrivateKey)) {
           return false;
         }
 
@@ -31,7 +35,9 @@ export const useVaultStore = defineStore('vaultStore', {
 
         return false;
       }
-    },
+    }
+  },
+  actions: {
     async wrapKey(key: PrivateKey, passphrase: string): Promise<boolean> {
       const notificationStore = useNotificationStore();
 
@@ -64,7 +70,7 @@ export const useVaultStore = defineStore('vaultStore', {
       }
 
       // store ciphertext
-      LocalStorage.Auth.set(encryptedPrivateKey);
+      LocalAuth.value = encryptedPrivateKey;
 
       // reset key store
       const keyStore = useKeyStore();
@@ -74,7 +80,7 @@ export const useVaultStore = defineStore('vaultStore', {
     },
     async unwrapKey(passphrase: string): Promise<PrivateKey> {
       const notificationStore = useNotificationStore();
-      const encryptedPrivateKey: StandardCiphertext = await LocalStorage.Auth.get();
+      const encryptedPrivateKey: StandardCiphertext = await LocalAuth.value;
 
       if (encryptedPrivateKey === undefined) {
         throw notificationStore.error('Vault Key Retrieval Error', 'No key stored');
@@ -105,7 +111,7 @@ export const useVaultStore = defineStore('vaultStore', {
       return key;
     },
     async removeKey(): Promise<boolean> {
-      LocalStorage.Auth.set(undefined);
+      LocalAuth.value = undefined;
       return true;
     }
   }

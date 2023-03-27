@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
-import { LocalStorage } from '~/common/utils';
+import { StorageUtil } from '~/common/utils';
 
+const LocalSetting = StorageUtil.Setting;
 interface SystemSetting {
   /**
    * Whether or not the signature is required
@@ -18,7 +19,7 @@ interface SettingStoreState {
 
 export const useSettingStore = defineStore('setting', {
   state: (): SettingStoreState => ({
-    setting: LocalStorage.Setting.get() as SystemSetting || { requireSignature : true, darkMode: false }
+    setting: LocalSetting.value as SystemSetting || { requireSignature : true, darkMode: false }
   }),
   getters: {
     getDarkMode(): boolean {
@@ -31,11 +32,11 @@ export const useSettingStore = defineStore('setting', {
   actions: {
     setDarkMode(value: boolean) {
       this.setting.darkMode = value;
-      LocalStorage.Setting.set(this.setting)
+      LocalSetting.value = this.setting;
     },
     setRequireSignature(value: boolean) {
       this.setting.requireSignature = value;
-      LocalStorage.Setting.set(this.setting)
+      LocalSetting.value = this.setting;
     }
   }
 });

@@ -175,8 +175,7 @@ onMounted(async () => {
     const sessionStore = useSessionStore();
 
     // if no key, redirect to setup
-    const hasKey: boolean = await vaultStore.hasKey();
-    if (!hasKey) {
+    if (!vaultStore.hasKey) {
       return router.push({
         path: '/setup',
         query: {

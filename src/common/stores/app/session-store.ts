@@ -2,9 +2,11 @@ import { defineStore } from 'pinia';
 import { useNotificationStore } from './notification-store';
 import { KeyChecker, KeyType, KeyModule, GenericKey } from '@this-oliver/ssasy';
 import type { PublicKey, RawKey } from '@this-oliver/ssasy';
-import { LocalStorage, processSsasyLikeError } from '~/common/utils';
+import { StorageUtil, processSsasyLikeError } from '~/common/utils';
 
 const SESSION_DURATION = 12 * 60 * 60 * 1000; // 12 hours
+
+const LocalSession = StorageUtil.Session;
 
 interface SsasySession {
   /**
@@ -23,7 +25,7 @@ interface SessionStoreState {
 
 export const useSessionStore = defineStore('session', {
   state: (): SessionStoreState => ({
-    session: LocalStorage.Session.get() as SsasySession || undefined
+    session: LocalSession.value as SsasySession || undefined
   }),
   getters: {
     hasSession(): boolean {
@@ -66,11 +68,11 @@ export const useSessionStore = defineStore('session', {
         throw processSsasyLikeError(err);
       }
 
-      LocalStorage.Session.set(this.session);
+      LocalSession.value = this.session;
     },
     resetSession() {
       this.session = undefined;
-      LocalStorage.Session.set(undefined);
+      LocalSession.value = undefined;
     }
   }
 });
