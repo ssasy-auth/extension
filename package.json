@@ -1,7 +1,7 @@
 {
   "name": "ssasy-ext",
-  "displayName": "SSASy WebExt",
-  "version": "0.17.6",
+  "nickname": "ssasy",
+  "version": "0.17.7",
   "description": "A browser extension for the self-sovereign authentication",
   "author": "hello@oliverrr.net",
   "license": "MIT",
@@ -22,7 +22,7 @@
     "pack:xpi": "cross-env WEB_EXT_ARTIFACTS_DIR=./ web-ext build --source-dir ./extension --filename extension.xpi --overwrite-dest",
     "start:chromium": "web-ext run --source-dir ./extension --target=chromium",
     "start:firefox": "web-ext run --source-dir ./extension --target=firefox-desktop --firefox=firefoxdeveloperedition",
-    "clear": "rimraf extension/dist extension/manifest.json extension.*",
+    "clear": "rimraf extension/dist extension/manifest.json extension.* *.tgz",
     "lint": "eslint --cache --ext .html,.vue,.js,.ts",
     "lint:fix": "eslint --fix --ext .html,.vue,.js,.ts",
     "bump": "npx fistbump",

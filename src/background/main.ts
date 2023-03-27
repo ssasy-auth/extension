@@ -27,8 +27,8 @@ browser.runtime.onInstalled.addListener((): void => {
 });
 
 export interface Session {
-	request: PublicKeyRequest | ChallengeRequest;
-	popupPage: Windows.Window | Tabs.Tab;
+  request: PublicKeyRequest | ChallengeRequest;
+  popupPage: Windows.Window | Tabs.Tab;
 }
 
 let currentRequestTab: number = -1;
@@ -38,15 +38,15 @@ let currentRequestTab: number = -1;
  */
 onMessage('close-request-tab', ({ data }) => {
   Logger.info('close-request-tab channel', 'close popup message recieved', 'background');
-  
-  if(data){
+
+  if (data) {
     // show error message to user
     const error: ErrorResponse = data;
     Logger.error(error.error, null, 'background');
   }
 
   // close popup window
-  if(currentRequestTab !== -1) {
+  if (currentRequestTab !== -1) {
     PopupPage.close({ id: currentRequestTab });
   }
 })
@@ -90,13 +90,13 @@ onMessage(MessageType.REQUEST_PUBLIC_KEY, async ({ data }) => {
 
     // listen for public key response broadcast from [popup] and forward to [content script]
     browser.runtime.onMessage.addListener(async (msg) => {
-      
+
       // define message
       const message: BaseMessage = {
         type: msg.type
       };
 
-      if(message.type === MessageType.RESPONSE_PUBLIC_KEY) {
+      if (message.type === MessageType.RESPONSE_PUBLIC_KEY) {
         const response: PublicKeyResponse = {
           type: MessageType.RESPONSE_PUBLIC_KEY,
           key: msg.key
@@ -104,7 +104,7 @@ onMessage(MessageType.REQUEST_PUBLIC_KEY, async ({ data }) => {
 
         // reset current request tab
         currentRequestTab = -1;
-  
+
         // respond to content script
         return resolve(response);
       }
@@ -150,7 +150,7 @@ onMessage(MessageType.REQUEST_SOLUTION, async ({ data }) => {
         type: msg.type
       };
 
-      if(message.type === MessageType.RESPONSE_SOLUTION) {
+      if (message.type === MessageType.RESPONSE_SOLUTION) {
         const response: ChallengeResponse = {
           type: MessageType.RESPONSE_SOLUTION,
           solution: msg.solution
