@@ -232,17 +232,31 @@ onMounted(async () => {
 
 <template>
   <base-page title="Registration Request">
-    <v-row justify="center" class="request">
-      <v-col v-if="challengeCiphertextString" cols="11" md="6">
+    <v-row
+      justify="center"
+      class="request">
+      <v-col
+        v-if="challengeCiphertextString"
+        cols="11"
+        md="6">
         <base-card class="mt-2 pa-1">
           <p>Enter your password to confirm the registration request.</p>
         </base-card>
 
-        <auth-form class="mt-2" style="padding-top: 20px;" @input="handleRequestChallenge" />
+        <auth-form
+          class="mt-2"
+          style="padding-top: 20px;"
+          @input="handleRequestChallenge" />
       </v-col>
 
-      <v-col v-else cols="11" md="6">
-        <base-card :actions="options" :action-centered="true" class="text-center pa-1">
+      <v-col
+        v-else
+        cols="11"
+        md="6">
+        <base-card
+          :actions="options"
+          :action-centered="true"
+          class="text-center pa-1">
           <p class="request-promt">Do you grant permission to <b class="underline">{{ requestText }}</b> with the
             <b><code>{{ origin }}</code></b> service?
           </p>
@@ -251,8 +265,12 @@ onMounted(async () => {
 
       <v-divider class="border-opacity-0" />
 
-      <v-col v-if="requestError" cols="auto">
-        <base-card color="error" class="text-center pa-1">
+      <v-col
+        v-if="requestError"
+        cols="auto">
+        <base-card
+          color="error"
+          class="text-center pa-1">
           <p>
             {{ requestError }}
           </p>

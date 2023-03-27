@@ -58,12 +58,19 @@ async function handleLoginForm(password: string) {
 <template>
   <base-page title="Start Page">
     <v-row justify="center">
-      <v-col cols="10" md="6">
+      <v-col
+        cols="10"
+        md="6">
         <auth-form @input="handleLoginForm" />
       </v-col>
       <v-divider class="opacity-0" />
-      <v-col v-if="errorMessage !== undefined" cols="10" md="auto">
-        <base-card color="warning" class="pa-2">
+      <v-col
+        v-if="errorMessage !== undefined"
+        cols="10"
+        md="auto">
+        <base-card
+          color="warning"
+          class="pa-2">
           {{ errorMessage }}
         </base-card>
       </v-col>

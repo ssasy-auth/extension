@@ -14,9 +14,13 @@ function getHumanReadableTime(timestamp: number): string {
 </script>
 
 <template>
-  <BasePage title="Extension Logs">
+  <base-page title="Extension Logs">
     <v-row justify="center">
-      <v-col v-for="notification, index in notifications" :key="notification.title + index" cols="11" md="7">
+      <v-col
+        v-for="notification, index in notifications"
+        :key="notification.title + index"
+        cols="11"
+        md="7">
         <BaseCard :color="notification.type === 'info' ? 'primary' : 'error'">
           <small class="mt-2 ml-1 pa-2">{{ getHumanReadableTime(notification.timestamp) }}</small>
           <v-card-title>
@@ -28,7 +32,10 @@ function getHumanReadableTime(timestamp: number): string {
         </BaseCard>
       </v-col>
 
-      <v-col v-if="notifications.length === 0" cols="11" md="7">
+      <v-col
+        v-if="notifications.length === 0"
+        cols="11"
+        md="7">
         <BaseCard>
           <v-card-title>
             <h3>Logs are empty</h3>
@@ -41,5 +48,5 @@ function getHumanReadableTime(timestamp: number): string {
         </BaseCard>
       </v-col>
     </v-row>
-  </BasePage>
+  </base-page>
 </template>

@@ -18,14 +18,25 @@ const options: ActionItem[] = [
 <template>
   <base-page title="Home">
     <v-row justify="center">
-      <v-col cols="11" md="6" class="home-welcome text-center">
+      <v-col
+        cols="11"
+        md="6"
+        class="home-welcome text-center">
         <h1>🎉 Welcome!</h1>
       </v-col>
 
       <v-divider class="opacity-0" />
 
-      <v-col v-for="option in options" :key="option.label" cols="7" md="4" class="mt-1">
-        <base-btn large block :to="option.to">
+      <v-col
+        v-for="option in options"
+        :key="option.label"
+        cols="7"
+        md="4"
+        class="mt-1">
+        <base-btn
+          large
+          block
+          :to="option.to">
           {{ option.label }}
         </base-btn>
       </v-col>

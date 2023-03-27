@@ -15,7 +15,7 @@ interface SettingItem extends ActionItem {
   tab: SettingTab;
   type: SettingType;
   prompt?: string;
-};
+}
 
 const tab = ref<SettingTab>('system');
 
@@ -57,11 +57,11 @@ const changeVaultPasswordOption = ref<SettingItem>({
 });
 
 const options = computed<SettingItem[]>(() => {
-  return [darkModeOption.value, viewLogsOption.value, signatureOption.value, changeVaultPasswordOption.value];
+  return [ darkModeOption.value, viewLogsOption.value, signatureOption.value, changeVaultPasswordOption.value ];
 });
 
 const tabs = computed<SettingTab[]>(() => {
-  return ['system', 'security'];
+  return [ 'system', 'security' ];
 });
 
 const form = reactive({
@@ -101,19 +101,31 @@ const getOptionsByTab = (tab: SettingTab): SettingItem[] => {
 <template>
   <BasePage title="Settings">
     <v-row justify="center">
-      <v-col cols="11" md="6">
-        <v-tabs v-model="tab" bg-color="primary">
-          <v-tab v-for="tab in tabs" :key="tab" :value="tab">{{ tab }}</v-tab>
+      <v-col
+        cols="11"
+        md="6">
+        <v-tabs
+          v-model="tab"
+          bg-color="primary">
+          <v-tab
+            v-for="tab in tabs"
+            :key="tab"
+            :value="tab">{{ tab }}</v-tab>
         </v-tabs>
       </v-col>
 
       <v-divider class="opacity-0" />
 
-      <v-col cols="11" md="6">
+      <v-col
+        cols="11"
+        md="6">
         <v-window v-model="tab">
           <v-window-item :value="`${'system' as SettingTab}`">
             <v-list>
-              <v-list-item v-for="option in getOptionsByTab('system')" :key="option.label" density="compact">
+              <v-list-item
+                v-for="option in getOptionsByTab('system')"
+                :key="option.label"
+                density="compact">
                 <v-list-item-title class="text-bold">
                   {{ option.label }}
                 </v-list-item-title>
@@ -121,9 +133,19 @@ const getOptionsByTab = (tab: SettingTab): SettingItem[] => {
                 {{ option.description }}
 
                 <v-list-item-action>
-                  <v-switch v-if="option.type === 'toggle'" v-model="form[option.id]" flat inline color="success"
-                    density="compact" class="px-3" />
-                  <BaseBtn v-else :color="option.color" class="mt-2" :to="option.to">{{ option.prompt }}</BaseBtn>
+                  <v-switch
+                    v-if="option.type === 'toggle'"
+                    v-model="form[option.id]"
+                    flat
+                    inline
+                    color="success"
+                    density="compact"
+                    class="px-3" />
+                  <BaseBtn
+                    v-else
+                    :color="option.color"
+                    class="mt-2"
+                    :to="option.to">{{ option.prompt }}</BaseBtn>
                 </v-list-item-action>
               </v-list-item>
             </v-list>
@@ -131,7 +153,10 @@ const getOptionsByTab = (tab: SettingTab): SettingItem[] => {
 
           <v-window-item :value="`${'security' as SettingTab}`">
             <v-list>
-              <v-list-item v-for="option in getOptionsByTab('security')" :key="option.label" density="compact">
+              <v-list-item
+                v-for="option in getOptionsByTab('security')"
+                :key="option.label"
+                density="compact">
                 <v-list-item-title class="text-bold">
                   {{ option.label }}
                 </v-list-item-title>
@@ -139,9 +164,19 @@ const getOptionsByTab = (tab: SettingTab): SettingItem[] => {
                 {{ option.description }}
 
                 <v-list-item-action>
-                  <v-switch v-if="option.type === 'toggle'" v-model="form[option.id]" flat inline color="success"
-                    density="compact" class="px-3" />
-                  <BaseBtn v-else :color="option.color" class="mt-2" :to="option.to">{{ option.prompt }}</BaseBtn>
+                  <v-switch
+                    v-if="option.type === 'toggle'"
+                    v-model="form[option.id]"
+                    flat
+                    inline
+                    color="success"
+                    density="compact"
+                    class="px-3" />
+                  <BaseBtn
+                    v-else
+                    :color="option.color"
+                    class="mt-2"
+                    :to="option.to">{{ option.prompt }}</BaseBtn>
                 </v-list-item-action>
               </v-list-item>
             </v-list>

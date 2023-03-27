@@ -129,14 +129,22 @@ async function updatePassword(){
 <template>
   <BasePage title="Changing vault password">
     <v-row justify="center">
-      <v-col cols="11" md="6">
+      <v-col
+        cols="11"
+        md="6">
         <v-list>
-          <v-list-item v-for="prompt in prompts" :key="prompt.id">
+          <v-list-item
+            v-for="prompt in prompts"
+            :key="prompt.id">
             <v-list-item-title class="text-bold">{{ prompt.label }}</v-list-item-title>
             {{ prompt.description }}
             
             <v-list-item-action class="px-2">
-              <InputText v-model="form[prompt.id]" :label="prompt.label" type="password" :is-valid="mapPromptIdToComputed(prompt.id)"/>
+              <InputText
+                v-model="form[prompt.id]"
+                :label="prompt.label"
+                type="password"
+                :is-valid="mapPromptIdToComputed(prompt.id)"/>
             </v-list-item-action>
           </v-list-item>
         </v-list>
@@ -144,15 +152,28 @@ async function updatePassword(){
 
       <v-divider class="border-opacity-0" />
       
-      <v-col cols="auto" class="mt-2">
-        <BaseBtn color="error" large :disabled="!isValidForm" @click="updatePassword">
+      <v-col
+        cols="auto"
+        class="mt-2">
+        <BaseBtn
+          color="error"
+          large
+          :disabled="!isValidForm"
+          @click="updatePassword">
           Change password
         </BaseBtn>
       </v-col>
       
-      <v-divider v-if="error" class="border-opacity-0 mt-2" />
-      <v-col v-if="error" cols="auto" class="mt-2">
-        <BaseCard color="error" class="text-center">
+      <v-divider
+        v-if="error"
+        class="border-opacity-0 mt-2" />
+      <v-col
+        v-if="error"
+        cols="auto"
+        class="mt-2">
+        <BaseCard
+          color="error"
+          class="text-center">
           {{ error }}
         </BaseCard>
       </v-col>
