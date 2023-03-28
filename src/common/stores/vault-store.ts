@@ -1,15 +1,21 @@
 import { defineStore } from 'pinia';
-import { useKeyStore } from './key-store';
-import { useNotificationStore } from '~/common/stores/app';
-import { StorageUtil, processSsasyLikeError } from '~/common/utils';
+import { useLocalStorage } from '~/composables/useLocalStorage';
+import { processSsasyLikeError } from '~/common/utils';
+import { useKeyStore, useNotificationStore } from '~/common/stores';
 import { KeyChecker, KeyModule, CryptoModule, CryptoChecker } from '@this-oliver/ssasy';
+import type { RemovableRef } from '@vueuse/core';
 import type { PrivateKey, StandardCiphertext } from '@this-oliver/ssasy';
 
-const LocalAuth = StorageUtil.Auth;
+interface VaultStoreState {
+  encryptedPrivateKey: StandardCiphertext | undefined;
+}
+
+const STORAGE_KEY = 'store-vault';
+const LocalEncryptedPrivateKey: RemovableRef<StandardCiphertext | undefined> = useLocalStorage(STORAGE_KEY, undefined);
 
 export const useVaultStore = defineStore('vaultStore', {
-  state: () => ({
-    encryptedPrivateKey: LocalAuth.value as StandardCiphertext | undefined
+  state: (): VaultStoreState => ({
+    encryptedPrivateKey: LocalEncryptedPrivateKey.value
   }),
   getters: {
     hasKey(): boolean {
@@ -70,7 +76,8 @@ export const useVaultStore = defineStore('vaultStore', {
       }
 
       // store ciphertext
-      LocalAuth.value = encryptedPrivateKey;
+      this.encryptedPrivateKey = encryptedPrivateKey;
+      LocalEncryptedPrivateKey.value = encryptedPrivateKey;
 
       // reset key store
       const keyStore = useKeyStore();
@@ -80,9 +87,8 @@ export const useVaultStore = defineStore('vaultStore', {
     },
     async unwrapKey(passphrase: string): Promise<PrivateKey> {
       const notificationStore = useNotificationStore();
-      const encryptedPrivateKey: StandardCiphertext = await LocalAuth.value;
 
-      if (encryptedPrivateKey === undefined) {
+      if (this.encryptedPrivateKey === undefined) {
         throw notificationStore.error('Vault Key Retrieval Error', 'No key stored');
       }
 
@@ -90,7 +96,7 @@ export const useVaultStore = defineStore('vaultStore', {
       let plaintext: string;
 
       try {
-        plaintext = await CryptoModule.decrypt(passphrase, encryptedPrivateKey);
+        plaintext = await CryptoModule.decrypt(passphrase, this.encryptedPrivateKey);
 
       } catch (err) {
         throw processSsasyLikeError(err);
@@ -111,7 +117,8 @@ export const useVaultStore = defineStore('vaultStore', {
       return key;
     },
     async removeKey(): Promise<boolean> {
-      LocalAuth.value = undefined;
+      this.encryptedPrivateKey = undefined;
+      LocalEncryptedPrivateKey.value = undefined;
       return true;
     }
   }

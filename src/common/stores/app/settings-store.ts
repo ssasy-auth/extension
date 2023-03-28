@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
-import { StorageUtil } from '~/common/utils';
-
-const LocalSetting = StorageUtil.Setting;
+import { useLocalStorage } from '~/composables/useLocalStorage';
+import type { RemovableRef } from '@vueuse/core';
 interface SystemSetting {
   /**
    * Whether or not the signature is required
@@ -13,13 +12,16 @@ interface SystemSetting {
   darkMode: boolean;
 }
 
+const STORAGE_KEY = 'store-setting';
+const LocalSetting: RemovableRef<SystemSetting | undefined> = useLocalStorage(STORAGE_KEY, undefined);
+
 interface SettingStoreState {
   setting: SystemSetting;
 }
 
 export const useSettingStore = defineStore('setting', {
   state: (): SettingStoreState => ({
-    setting: LocalSetting.value as SystemSetting || { requireSignature : true, darkMode: false }
+    setting: LocalSetting.value || { requireSignature : true, darkMode: false }
   }),
   getters: {
     getDarkMode(): boolean {

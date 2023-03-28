@@ -126,7 +126,7 @@ const serializer: SerializerAsync<any> = {
   }
 }
 
-export const useStorageLocal = <T>(
+export const useLocalStorage = <T>(
   key: string,
   initialValue: MaybeRef<any>,
   options: UseStorageAsyncOptions<T> = { serializer }

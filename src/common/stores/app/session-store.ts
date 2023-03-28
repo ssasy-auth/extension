@@ -1,12 +1,10 @@
 import { defineStore } from 'pinia';
 import { useNotificationStore } from './notification-store';
 import { KeyChecker, KeyType, KeyModule, GenericKey } from '@this-oliver/ssasy';
+import { useLocalStorage } from '~/composables/useLocalStorage';
+import { processSsasyLikeError } from '~/common/utils';
 import type { PublicKey, RawKey } from '@this-oliver/ssasy';
-import { StorageUtil, processSsasyLikeError } from '~/common/utils';
-
-const SESSION_DURATION = 12 * 60 * 60 * 1000; // 12 hours
-
-const LocalSession = StorageUtil.Session;
+import type { RemovableRef } from '@vueuse/core';
 
 interface SsasySession {
   /**
@@ -19,13 +17,15 @@ interface SsasySession {
   timestamp: number;
 }
 
+const STORAGE_KEY = 'store-session';
+const LocalSession: RemovableRef<SsasySession | undefined> = useLocalStorage(STORAGE_KEY, undefined);
 interface SessionStoreState {
   session: SsasySession | undefined;
 }
 
 export const useSessionStore = defineStore('session', {
   state: (): SessionStoreState => ({
-    session: LocalSession.value as SsasySession || undefined
+    session: LocalSession.value
   }),
   getters: {
     hasSession(): boolean {
@@ -57,7 +57,9 @@ export const useSessionStore = defineStore('session', {
   actions: {
     async setSession(publicKey: PublicKey) {
       this.resetSession();
-
+      
+      const SESSION_DURATION = 12 * 60 * 60 * 1000; // 12 hours
+      
       try {
         this.session = {
           publicKey: await KeyModule.exportKey(publicKey),
