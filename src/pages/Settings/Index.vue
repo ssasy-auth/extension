@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, computed, watch } from 'vue';
+import { ref, reactive, computed, watch, onMounted } from 'vue';
 import { useSettingStore, useNotificationStore } from '~/common/stores/app';
 import type { ActionItem } from '~/components/Base/BaseCard.vue';
 
@@ -65,8 +65,8 @@ const tabs = computed<SettingTab[]>(() => {
 });
 
 const form = reactive({
-  [signatureOption.value.id]: settingStore.getRequireSignature,
-  [darkModeOption.value.id]: settingStore.getDarkMode
+  [signatureOption.value.id]: settingStore.setting.requireSignature,
+  [darkModeOption.value.id]: settingStore.setting.darkMode
 });
 
 watch(() => form[darkModeOption.value.id], (value) => {
@@ -95,6 +95,14 @@ const getOptionsByTab = (tab: SettingTab): SettingItem[] => {
       return 0;
     });
 };
+
+onMounted(async () => {
+  const darkMode: boolean = await settingStore.isDarkMode();
+  const requireSignature: boolean = await settingStore.isRequireSignature();
+
+  form[darkModeOption.value.id] = darkMode;
+  form[signatureOption.value.id] = requireSignature;
+});
 
 </script>
 

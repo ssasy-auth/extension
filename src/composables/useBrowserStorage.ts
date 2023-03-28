@@ -1,31 +1,12 @@
 import { storage } from 'webextension-polyfill'
-import type {
-  MaybeRef,
-  RemovableRef,
-  StorageLikeAsync,
-  UseStorageAsyncOptions,
-  SerializerAsync
-} from '@vueuse/core'
-import {
-  useStorageAsync
-} from '@vueuse/core'
 
-const storageLocal: StorageLikeAsync = {
-  removeItem(key: string) {
-    return storage.local.remove(key)
-  },
-
-  setItem(key: string, value: string) {
-    return storage.local.set({ [key]: value })
-  },
-
-  async getItem(key: string) {
-    const result = await storage.local.get(key);
-    const value = result[key];
-
-    return value;
-  }
+enum StorageEnum {
+  VAULT = 'store-vault',
+  SESSION = 'store-session',
+  SETTING = 'store-setting'
 }
+
+type StorageKey = keyof typeof StorageEnum
 
 interface StorageItem {
   /**
@@ -38,10 +19,32 @@ interface StorageItem {
   value: any;
 }
 
+interface SerializerMachine {
+  /**
+   * Converts a value to a string for storage
+   * 
+   * @param value - value to be serialized
+   */
+  write(value: any): string;
+
+  /**
+   * Converts a string to its original type when read from storage
+   * 
+   * @param value - value to be deserialized
+   */
+  read(value: string): any;
+}
+
+interface StorageMachine {
+  set(key: string, value: any): void;
+  get(key: string): Promise<any>;
+  remove(key: string): void;
+}
+
 /**
- * Stores the value of an item.
+ * converts a value to a string for storage and then back to the original type when read
  */
-const serializer: SerializerAsync<any> = {
+const Serializer: SerializerMachine = {
   write(value: any): string {
     let storageItem: StorageItem | undefined = undefined;
 
@@ -126,13 +129,44 @@ const serializer: SerializerAsync<any> = {
   }
 }
 
-const useLocalStorage = <T>(
-  key: string,
-  initialValue: MaybeRef<any>,
-  options: UseStorageAsyncOptions<T> = { serializer }
-): RemovableRef<any> => useStorageAsync(key, initialValue, storageLocal, options)
+/**
+ * a wrapper around browser.storage.local that uses the serializer
+ */
+const LocalStorage: StorageMachine = {
+  remove(key) {
+    return storage.local.remove(key)
+  },
 
+  set(key, value) {
+    const v = Serializer.write(value);
+    return storage.local.set({ [key]: v })
+  },
+
+  async get(key) {
+    const result = await storage.local.get(key);
+    const value = result[key];
+
+    return Serializer.read(value)
+  }
+}
+
+const useBrowserStorage = (key: StorageKey) => {
+  const storageKey = StorageEnum[key];
+
+  return {
+    get: async () => {
+      return await LocalStorage.get(storageKey);
+    },
+    set: (value: any) => {
+      return LocalStorage.set(storageKey, value);
+    },
+    remove: () => {
+      return LocalStorage.remove(storageKey);
+    }
+  }
+}
 
 export {
-  useLocalStorage
+  StorageEnum,
+  useBrowserStorage
 }

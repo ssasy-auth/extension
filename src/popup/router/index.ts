@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import { AuthenticationGaurd, MessengerGuard } from '~/common/routes';
+import { KeyGuard, SessionGaurd, MessengerGuard } from '~/common/routes';
 import type { RouteRecordRaw } from 'vue-router';
 import HomeVue from '~/pages/Home.vue';
 
@@ -8,7 +8,7 @@ const routes: Array<RouteRecordRaw> = [
     path: '/', 
     name: 'home', 
     component: HomeVue,
-    beforeEnter: [ AuthenticationGaurd ]
+    beforeEnter: [ KeyGuard, SessionGaurd ]
   },
   {
     path: '/setup',
@@ -24,31 +24,31 @@ const routes: Array<RouteRecordRaw> = [
     path: '/request',
     name: 'request',
     component: () => import('~/pages/Request.vue'),
-    beforeEnter: [ AuthenticationGaurd ]
+    beforeEnter: [ KeyGuard, SessionGaurd ]
   },
   {
     path: '/key',
     name: 'key',
     component: () => import('~/pages/PublicKey.vue'),
-    beforeEnter: [ AuthenticationGaurd ]
+    beforeEnter: [ KeyGuard, SessionGaurd ]
   },
   {
     path: '/settings',
     name: 'settings',
     component: () => import('~/pages/Settings/Index.vue'),
-    beforeEnter: [ AuthenticationGaurd ]
+    beforeEnter: [ KeyGuard, SessionGaurd ]
   },
   {
     path: '/settings/vault',
     name: 'settings-vault',
     component: () => import('~/pages/Settings/Vault.vue'),
-    beforeEnter: [ AuthenticationGaurd ]
+    beforeEnter: [ KeyGuard, SessionGaurd ]
   },
   {
     path: '/settings/logs',
     name: 'settings-logs',
     component: () => import('~/pages/Settings/Logs.vue'),
-    beforeEnter: [ AuthenticationGaurd ]
+    beforeEnter: [ KeyGuard, SessionGaurd ]
   },
   {
     path: '/:pathMatch(.*)*',

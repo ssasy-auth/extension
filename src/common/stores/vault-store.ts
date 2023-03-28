@@ -1,125 +1,136 @@
 import { defineStore } from 'pinia';
-import { useLocalStorage } from '~/composables/useLocalStorage';
 import { processSsasyLikeError } from '~/common/utils';
+import { useLocalStorage } from '~/composables/useLocalStorage';
+import { StorageEnum, useBrowserStorage } from '~/composables/useBrowserStorage';
 import { useKeyStore, useNotificationStore } from '~/common/stores';
 import { KeyChecker, KeyModule, CryptoModule, CryptoChecker } from '@this-oliver/ssasy';
-import type { RemovableRef } from '@vueuse/core';
 import type { PrivateKey, StandardCiphertext } from '@this-oliver/ssasy';
 
-interface VaultStoreState {
-  encryptedPrivateKey: StandardCiphertext | undefined;
-}
+export type LocalVaultKey = StandardCiphertext | undefined;
 
-const STORAGE_KEY = 'store-vault';
-const LocalEncryptedPrivateKey: RemovableRef<StandardCiphertext | undefined> = useLocalStorage(STORAGE_KEY, undefined);
+const localVaultStorage = useLocalStorage(StorageEnum.VAULT, undefined);
 
-export const useVaultStore = defineStore('vaultStore', {
-  state: (): VaultStoreState => ({
-    encryptedPrivateKey: LocalEncryptedPrivateKey.value
-  }),
-  getters: {
-    hasKey(): boolean {
-      const notificationStore = useNotificationStore();
+export const useVaultStore = defineStore('vault', () => {
 
-      if (this.encryptedPrivateKey === undefined) {
-        notificationStore.error('Vault Check Error', 'No key stored');
-        return false;
-      }
+  async function hasKey(): Promise<boolean> {
+    const localVaultKey: LocalVaultKey = await useBrowserStorage('VAULT').get();
 
-      try {
-        // check if ciphertext has all required properties
-        if (!CryptoChecker.isCiphertext(this.encryptedPrivateKey)) {
-          return false;
-        }
+    return _verifyKey(localVaultKey);
+  }
 
-        // confirm that ciphertext is valid
-        return true;
-      } catch (err) {
-        const error: Error = processSsasyLikeError(err);
-        const message = error.message || 'parsing error';
-        notificationStore.error('Vault Error', message);
+  async function wrapKey(privateKey: PrivateKey, passphrase: string): Promise<boolean> {
+    const notificationStore = useNotificationStore();
 
-        return false;
-      }
+    if (!KeyChecker.isAsymmetricKey(privateKey)) {
+      throw notificationStore.error('Vault Error', 'Key is not an asymmetric key');
     }
-  },
-  actions: {
-    async wrapKey(key: PrivateKey, passphrase: string): Promise<boolean> {
-      const notificationStore = useNotificationStore();
 
-      if (!KeyChecker.isAsymmetricKey(key)) {
-        throw notificationStore.error('Vault Error', 'Key is not an asymmetric key');
-      }
+    let plaintextString: string;
+    let encryptedPrivateKey: StandardCiphertext;
 
-      let plaintextString: string;
-      let encryptedPrivateKey: StandardCiphertext;
+    try {
+      const rawKey = await KeyModule.exportKey(privateKey); // converts key to json-like object
+      plaintextString = JSON.stringify(rawKey); // converts object to string
+    } catch (err) {
+      const error: Error = processSsasyLikeError(err);
 
-      try {
-        const rawKey = await KeyModule.exportKey(key); // converts key to json-like object
-        plaintextString = JSON.stringify(rawKey); // converts object to string
-      } catch (err) {
-        const error: Error = processSsasyLikeError(err);
-
-        const message = (error as Error).message || 'failed to export key';
-        notificationStore.error('Vault Error', message, 500);
-        return false;
-      }
-
-      try {
-        encryptedPrivateKey = await CryptoModule.encrypt(passphrase, plaintextString);
-      } catch (err) {
-        const error: Error = processSsasyLikeError(err);
-        const message = error.message || 'encryption error';
-        notificationStore.error('Vault Error', message, 500);
-
-        return false;
-      }
-
-      // store ciphertext
-      this.encryptedPrivateKey = encryptedPrivateKey;
-      LocalEncryptedPrivateKey.value = encryptedPrivateKey;
-
-      // reset key store
-      const keyStore = useKeyStore();
-      keyStore.$reset();
-
-      return true;
-    },
-    async unwrapKey(passphrase: string): Promise<PrivateKey> {
-      const notificationStore = useNotificationStore();
-
-      if (this.encryptedPrivateKey === undefined) {
-        throw notificationStore.error('Vault Key Retrieval Error', 'No key stored');
-      }
-
-      // decrypt ciphertext
-      let plaintext: string;
-
-      try {
-        plaintext = await CryptoModule.decrypt(passphrase, this.encryptedPrivateKey);
-
-      } catch (err) {
-        throw processSsasyLikeError(err);
-      }
-
-      // convert plaintext string to raw key object
-      const rawKey = JSON.parse(plaintext);
-
-      // import raw key object to key
-      let key: PrivateKey;
-
-      try {
-        key = await KeyModule.importKey(rawKey) as PrivateKey;
-      } catch (err) {
-        throw processSsasyLikeError(err);
-      }
-
-      return key;
-    },
-    async removeKey(): Promise<boolean> {
-      this.encryptedPrivateKey = undefined;
-      LocalEncryptedPrivateKey.value = undefined;
-      return true;
+      const message = (error as Error).message || 'failed to export key';
+      notificationStore.error('Vault Error', message, 500);
+      return false;
     }
+
+    try {
+      encryptedPrivateKey = await CryptoModule.encrypt(passphrase, plaintextString);
+    } catch (err) {
+      const error: Error = processSsasyLikeError(err);
+      const message = error.message || 'encryption error';
+      notificationStore.error('Vault Error', message, 500);
+
+      return false;
+    }
+
+    // store ciphertext
+    localVaultStorage.value = encryptedPrivateKey;
+
+    // reset key store
+    const keyStore = useKeyStore();
+    keyStore.$reset();
+
+    return true;
+  }
+
+  async function unwrapKey(passphrase: string): Promise<PrivateKey> {
+    const notificationStore = useNotificationStore();
+
+    const vaultKey: LocalVaultKey = await useBrowserStorage('VAULT').get();
+
+    if (vaultKey === undefined) {
+      throw notificationStore.error('Vault Key Retrieval Error', 'No key stored');
+    }
+
+    // decrypt ciphertext
+    let plaintext: string;
+
+    try {
+      plaintext = await CryptoModule.decrypt(passphrase, vaultKey);
+
+    } catch (err) {
+      throw processSsasyLikeError(err);
+    }
+
+    // convert plaintext string to raw key object
+    const rawKey = JSON.parse(plaintext);
+
+    // import raw key object to key
+    let key: PrivateKey;
+
+    try {
+      key = await KeyModule.importKey(rawKey) as PrivateKey;
+    } catch (err) {
+      throw processSsasyLikeError(err);
+    }
+
+    return key;
+  }
+
+  async function removeKey(): Promise<boolean> {
+    localVaultStorage.value = undefined;
+    return true;
+  }
+
+  /**
+   * @param key - vault key
+   * @returns boolean
+   */
+  function _verifyKey(key: any): boolean {
+    const notificationStore = useNotificationStore();
+
+    if (key === undefined) {
+      notificationStore.error('Vault Check Error', 'No key stored');
+      return false;
+    }
+
+    try {
+      // check if ciphertext has all required properties
+      if (!CryptoChecker.isCiphertext(key)) {
+        return false;
+      }
+
+      // confirm that ciphertext is valid
+      return true;
+    } catch (err) {
+      const error: Error = processSsasyLikeError(err);
+      const message = error.message || 'parsing error';
+      notificationStore.error('Vault Error', message);
+
+      return false;
+    }
+  }
+
+  return {
+    hasKey,
+    wrapKey,
+    unwrapKey,
+    removeKey
   }
 });

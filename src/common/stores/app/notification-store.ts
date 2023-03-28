@@ -1,46 +1,46 @@
+import { ref } from 'vue';
 import { defineStore } from 'pinia';
-import type { GenericLog, ErrorLog, InfoLog } from '~/common/utils'
 import { Logger } from '~/common/utils'
+import type { GenericLog, ErrorLog, InfoLog } from '~/common/utils'
 
-interface NotificationStoreState {
-  notifications: GenericLog[];
-}
+export const useNotificationStore = defineStore('notification', () => {
+  const notifications = ref<GenericLog[]>([]);
 
-export const useNotificationStore = defineStore('notification', {
-  state: (): NotificationStoreState => ({
-    notifications: []
-  }),
-  actions: {
-    notify(title: string, message: string){
-      const notification: InfoLog = { 
-        type: 'info', 
-        title, 
-        message,
-        timestamp: Date.now()
-      };
+  function notify(title: string, message: string){
+    const notification: InfoLog = { 
+      type: 'info', 
+      title, 
+      message,
+      timestamp: Date.now()
+    };
 
-      // push notification
-      this.notifications.push(notification);
+    // push notification
+    notifications.value.push(notification);
 
-      // log notification
-      return Logger.info(notification as InfoLog);
-    },
-    
-    error(title: string, message: string, status?: number){
+    // log notification
+    return Logger.info(notification as InfoLog);
+  }
 
-      const notification: ErrorLog = { 
-        type: 'error', 
-        title, 
-        message,
-        timestamp: Date.now(),
-        status: status || 500
-      };
+  function error(title: string, message: string, status?: number){
 
-      // push notification
-      this.notifications.push(notification);
+    const notification: ErrorLog = { 
+      type: 'error', 
+      title, 
+      message,
+      timestamp: Date.now(),
+      status: status || 500
+    };
 
-      // log notification
-      return Logger.error(notification);
-    }
+    // push notification
+    notifications.value.push(notification);
+
+    // log notification
+    return Logger.error(notification);
+  }
+
+  return {
+    notifications,
+    notify,
+    error
   }
 });
