@@ -1,9 +1,11 @@
-# bridge
+# ssasy extension bridge
 
-The `bridge` component abstracts the complex logic that web applications would need to implement if they were to communicate with this extension. The absraction encompasses:
+`ssasy-ext` is a browser extension that offers a secure, usable and scalable alternative to existing password and federation-based user authentication schemes.
 
-- the interface for messages (see [interface.ts](./src/bridge/interface.ts))
-- the logic for sending and receiving messages (see [bridge.ts](./src/bridge/index.ts))
+The `bridge` component abstracts the complex logic that web applications would need to implement if they were to communicate with the `ssasy-ext`. The absraction encompasses:
+
+- the interface for messages (see [interface.ts](./src/interface.ts))
+- the logic for sending and receiving messages (see [bridge.ts](./src/bridge.ts))
 
 ## usage
 

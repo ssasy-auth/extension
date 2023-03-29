@@ -43,3 +43,13 @@ With `ssasy`, you no longer have to remember dozens of passwords. You also no lo
 ## documentation
 
 To learn more about the extension, check out the [documentation](docs/index.md).
+
+## design decisions: why does the published package only contain the `bridge` component?
+
+The `bridge` component defines the interface for messages that can be sent and received between the extension and web applications. It also defines the logic for sending and receiving messages. Since the component is dictaed by the extension, it makes no sense to define the component as a stand-alone package.
+
+At the same time, there is no use publishing the extension as a package since it is not intended to be used as a dependency. Instead, the extension is intended to be installed as a browser extension.
+
+In order to keep things simple, the `bridge` component is the only exposed component of the `ssasy-ext` package. In doing so, the `bridge` component can be used as a dependency in other projects without having to install the entire extension along with it's dependencies.
+
+To learn more about the `bridge` component, check out the [bridge documentation](./src/bridge/README.md).

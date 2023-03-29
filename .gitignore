@@ -2,6 +2,10 @@
 extension/manifest.json
 extension/dist
 
+# Bridge files
+*.tgz
+src/bridge/lib
+
 # Development files
 .vscode/*
 !.vscode/extensions.json
