@@ -144,7 +144,7 @@ async function handleRequestChallenge(password: string) {
  */
 function closePopup() {
   const walletStore = useWalletStore();
-  walletStore.$reset();
+  walletStore.reset();
 
   PopupPage.close();
 }

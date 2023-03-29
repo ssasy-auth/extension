@@ -55,12 +55,17 @@ export const useKeyStore = defineStore('key', () => {
 
     return await KeyModule.importKey(key);
   }
+
+  function reset() {
+    temporaryKey.value = undefined;
+  }
   
   return {
     temporaryKey,
     hasTemporaryKey,
     createPrivateKey,
     exportKey,
-    importKey
+    importKey,
+    reset
   };
 });

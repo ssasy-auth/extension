@@ -63,11 +63,16 @@ export const useWalletStore = defineStore('wallet',() => {
     }
   }
 
+  function reset(){
+    wallet.value = undefined;
+  }
+
   return {
     wallet,
     hasWallet,
     setWallet,
     getPublicKey,
-    solveChallenge
+    solveChallenge,
+    reset
   }
 });

@@ -54,7 +54,7 @@ export const useVaultStore = defineStore('vault', () => {
 
     // reset key store
     const keyStore = useKeyStore();
-    keyStore.$reset();
+    keyStore.reset();
 
     return true;
   }
