@@ -1,4 +1,4 @@
-# Extension architecture
+# architecture
 
 The purpose of this extension is to provide a user-friendly way to interact with [this-oliver/ssasy](https://github.com/this-oliver/ssasy), a self-sovereign user authentication scheme that uses public key cryptography to provide a secure and practical alternative to federated identities and passwords.
 
@@ -17,3 +17,9 @@ The tasks above are implemented using five 'components':
 5. `options` - configure the extension settings (e.g. change password, dark mode, etc.)
 
 To learn more about the extension, check out the [extension documentation](./extension.md).
+
+## extra: bridge component
+
+The `bridge` component abstracts the complex logic that enables web applications to communicate with this extension. This includes defining the type of messages that can be sent and received, and the logic for sending and receiving messages.
+
+To learn more about the bridge component, check out the [bridge documentation](../src/bridge/README.md).

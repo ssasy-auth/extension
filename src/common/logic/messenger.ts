@@ -1,49 +1,5 @@
-export enum MessageType {
-  REQUEST_PUBLIC_KEY = 'request-public-key',
-  REQUEST_SOLUTION = 'request-solution',
-  REQUEST_PING = 'request-ping',
-  RESPONSE_PUBLIC_KEY = 'response-public-key',
-  RESPONSE_SOLUTION = 'response-solution',
-  RESPONSE_PING = 'response-ping',
-  RESPONSE_ERROR = 'response-error',
-}
-
-export type RequestMode = 'registration' | 'login';
-
-export interface BaseMessage {
-  type: MessageType;
-  description?: string;
-}
-
-export interface BaseRequest extends BaseMessage {
-  origin: string;
-}
-
-export interface PublicKeyRequest extends BaseRequest {
-  type: MessageType.REQUEST_PUBLIC_KEY;
-  mode: RequestMode;
-}
-
-export interface PublicKeyResponse extends BaseMessage {
-  type: MessageType.RESPONSE_PUBLIC_KEY;
-  key: string | null;
-}
-
-export interface ChallengeRequest extends BaseRequest {
-  type: MessageType.REQUEST_SOLUTION;
-  mode: RequestMode;
-  challenge: string;
-}
-
-export interface ChallengeResponse extends BaseMessage {
-  type: MessageType.RESPONSE_SOLUTION;
-  solution: string | null;
-}
-
-export interface ErrorResponse extends BaseMessage {
-  type: MessageType.RESPONSE_ERROR;
-  error: string;
-}
+import { MessageType } from '~/bridge';
+import type { PublicKeyResponse, ChallengeResponse } from '~/bridge';
 
 /**
  * Responds to a public key request with the user's public key and closes the popup window.

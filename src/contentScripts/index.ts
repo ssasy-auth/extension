@@ -2,15 +2,16 @@
 import { sendMessage } from 'webext-bridge';
 import { createApp } from 'vue';
 import { setupApp, Logger } from '~/common/utils';
-import { MessageType, PublicKeyRequest } from '~/common/logic';
+import { MessageType } from '~/bridge';
 import type {
   BaseMessage,
   BaseRequest,
+  PublicKeyRequest,
   PublicKeyResponse,
   ChallengeRequest,
   ChallengeResponse,
   ErrorResponse
-} from '~/common/logic';
+} from '~/bridge';
 import App from './App.vue';
 
 // Firefox `browser.tabs.executeScript()` requires scripts return a primitive value

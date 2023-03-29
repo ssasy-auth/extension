@@ -1,8 +1,8 @@
-# Building a browser extension
+# building a browser extension
 
 > This follows the Mozilla [Getting Started](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Your_first_WebExtension) guide.
 
-## Introduction
+## introduction
 
 ### Anatomy of a web extension
 
@@ -66,7 +66,7 @@ The `manifest.json` file is the heart of the extension. It contains the metadata
 }
 ```
 
-## Getting started
+## getting started
 
 During the development phase, you can use the [about:debugging](about:debugging#/runtime/this-firefox) page to load the extension and test it. This takes a couple of steps:
 
@@ -84,7 +84,7 @@ Below are some optional reads:
 
 The template is a fork of the [antfu/vitesse](https://github.com/antfu/vitesse-webext). It is a template for building browser extensions with [Vue 3](https://v3.vuejs.org/), [TypeScript](https://www.typescriptlang.org/) and [Vite](https://vitejs.dev/) - this project's tech stack.
 
-## Publishing the extension
+## publishing the extension
 
 The following steps should be followed regardless of the browser you are publishing to:
 

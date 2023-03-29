@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { SsasyMessenger, MessageType } from '~/common/logic';
+import { SsasyMessenger } from '~/common/logic';
 import { PopupPage } from '~/common/utils';
 import {
   useVaultStore,
@@ -9,11 +9,12 @@ import {
   useSessionStore,
   useNotificationStore
 } from '~/common/stores';
+import { MessageType } from '~/bridge';
 import type {
   RequestMode,
   BaseMessage,
   ChallengeRequest
-} from '~/common/logic';
+} from '~/bridge';
 import type { ActionItem } from '~/components/Base/BaseCard.vue';
 import BasePage from '~/components/Base/BasePage.vue';
 import BaseCard from '~/components/Base/BaseCard.vue';

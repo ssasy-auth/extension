@@ -3,9 +3,13 @@
 <img src="./extension/assets/logo.png" width="150">
 <br><br>
 
-`ssasy-ext` is a browser extension that provides a secure and practical alternative to federated identities and passwords using public key cryptography.
+`ssasy-ext` is a browser extension that offers a secure, usable and scalable alternative to existing password and federation-based user authentication schemes.
 
-## Why use `ssasy`?
+The extension is built on top of `ssasy`, a self-sovereign user authentication scheme that leverages public key cryptography to generate, store and retrieve credentials.
+
+To learn more, visit the [ssasy repository](https://github.com/this-oliver/ssasy).
+
+## why does `ssasy-ext` exist?
 
 Nowadays, the average internet user is registered to dozens of websites. Each of these websites requires a password. This means that the average internet user has to remember dozens of passwords.
 
@@ -21,7 +25,7 @@ You may be thinking: "I use my Google account to log in to all my other accounts
 
 With `ssasy`, you no longer have to remember dozens of passwords. You also no longer have to trust a third party with your identity. Instead, you can use a single credential to authenticate to all your web services in a secure and user-friendly way thanks to cryptography!
 
-## Features
+## features
 
 - **Secure**. Your credentials never leave your device thanks to public key cryptography.
 - **Practical**. One password for all your accounts means you no longer need to remember dozens of passwords.
@@ -36,6 +40,6 @@ With `ssasy`, you no longer have to remember dozens of passwords. You also no lo
 <br><br>
 <img src="./docs/assets/ssasy-request.png" width="300" alt="aithentication request">
 
-## Documentation
+## documentation
 
 To learn more about the extension, check out the [documentation](docs/index.md).

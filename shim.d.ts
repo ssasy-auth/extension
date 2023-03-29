@@ -1,6 +1,6 @@
 import type { ProtocolWithReturn } from 'webext-bridge'
-import { MessageType } from '~/common/logic'
-import type { KeyRequest, PublicKeyResponse, ChallengeRequest, ChallengeResponse, ErrorResponse } from '~/common/logic'
+import { MessageType } from '~/bridge'
+import type { KeyRequest, PublicKeyResponse, ChallengeRequest, ChallengeResponse, ErrorResponse } from '~/bridge'
 
 declare module 'webext-bridge' {
   

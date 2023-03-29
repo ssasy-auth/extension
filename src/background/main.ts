@@ -1,7 +1,7 @@
 import { onMessage } from 'webext-bridge';
 import { Windows, Tabs } from 'webextension-polyfill';
 import { PopupPage, Logger } from '~/common/utils';
-import { MessageType } from '~/common/logic';
+import { MessageType } from '~/bridge';
 import type {
   BaseMessage,
   PublicKeyRequest,
@@ -9,7 +9,7 @@ import type {
   ChallengeRequest,
   ChallengeResponse,
   ErrorResponse
-} from '~/common/logic';
+} from '~/bridge';
 
 // only on dev mode
 if (import.meta.hot) {
