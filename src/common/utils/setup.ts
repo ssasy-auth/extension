@@ -3,7 +3,7 @@ import { getCurrentContext } from 'webext-bridge'
 import VuetifyPlugin from '~/common/plugins/vuetify-plugin'
 import PiniaPlugin from '~/common/plugins/pinia-plugin'
 
-export function setupApp(app: App) {
+export function setupApp(app: App, config?: { blockVuetify?: boolean, blockPinia?: boolean }) {
   const context = getCurrentContext()
 
   // Inject a globally available `$app` object in template
@@ -15,6 +15,11 @@ export function setupApp(app: App) {
   // Here you can install additional plugins for all contexts: popup, options page and content-script.
   // example: app.use(i18n)
   // example excluding content-script context: if (context !== 'content-script') app.use(i18n)
-  app.use(VuetifyPlugin);
-  app.use(PiniaPlugin);
+  if(config?.blockVuetify !== true){
+    app.use(VuetifyPlugin);
+  }
+
+  if(config?.blockPinia !== true){
+    app.use(PiniaPlugin);
+  }
 }

@@ -207,6 +207,6 @@ import App from './App.vue';
   shadowDOM.appendChild(root);
   document.body.appendChild(container);
   const app = createApp(App);
-  setupApp(app);
+  setupApp(app, { blockVuetify: true });
   app.mount(root);
 })();
