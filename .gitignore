@@ -1,9 +1,12 @@
 # Extension files
-extension/manifest.json
-extension/dist
+extension/*
+!extension/assets/*
+*.tgz
+*.zip
+*.xpi
+*.crx
 
 # Bridge files
-*.tgz
 src/bridge/lib
 
 # Development files

@@ -1,7 +1,7 @@
 {
   "name": "@this-oliver/ssasy-ext",
   "nickname": "ssasy",
-  "version": "0.18.9",
+  "version": "0.18.10",
   "license": "MIT",
   "description": "a browser extension that is built with a secure, usable and scalable authentictaion scheme",
   "repository": "this-oliver/ssasy-ext",
@@ -29,6 +29,7 @@
     "pack:zip": "rimraf extension.zip && jszip-cli add extension/* -o ./extension.zip",
     "pack:crx": "crx pack extension -o ./extension.crx",
     "pack:xpi": "cross-env WEB_EXT_ARTIFACTS_DIR=./ web-ext build --source-dir ./extension --filename extension.xpi --overwrite-dest",
+    "prepare:firefox": "run-s build pack:zip",
     "postinstall": "simple-git-hooks",
     "publish": "pnpm bridge:preview",
     "start:chromium": "web-ext run --source-dir ./extension --target=chromium",
