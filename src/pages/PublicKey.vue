@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 import { useSessionStore } from '~/common/stores';
 import type { ComputedRef } from 'vue';
-import type { RawKey } from '@this-oliver/ssasy';
+import type { RawKey } from '@ssasy-auth/core';
 import KeyViewer from '~/components/Key/KeyViewer.vue';
 
 const sessionStore = useSessionStore();

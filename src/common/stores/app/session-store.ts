@@ -1,11 +1,11 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
 import { useNotificationStore } from './notification-store';
-import { KeyChecker, KeyType, KeyModule, GenericKey } from '@this-oliver/ssasy';
+import { KeyChecker, KeyType, KeyModule, GenericKey } from '@ssasy-auth/core';
 import { useLocalStorage } from '~/composables/useLocalStorage';
 import { StorageEnum, useBrowserStorage } from '~/composables/useBrowserStorage';
 import { processSsasyLikeError } from '~/common/utils';
-import type { PublicKey, RawKey } from '@this-oliver/ssasy';
+import type { PublicKey, RawKey } from '@ssasy-auth/core';
 import type { RemovableRef } from '@vueuse/core';
 
 interface LocalSession {

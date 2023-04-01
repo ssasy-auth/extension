@@ -1,8 +1,8 @@
 <!-- generate key or import -->
 <script setup lang="ts">
-import type { PrivateKey } from '@this-oliver/ssasy';
+import type { PrivateKey } from '@ssasy-auth/core';
 import { reactive, computed } from 'vue';
-import { KeyChecker } from '@this-oliver/ssasy';
+import { KeyChecker } from '@ssasy-auth/core';
 import { useKeyStore } from '~/common/stores/key-store';
 import BasePage from '~/components/Base/BasePage.vue';
 import BaseBtn from '~/components/Base/BaseBtn.vue';

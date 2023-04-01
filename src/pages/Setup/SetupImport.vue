@@ -1,15 +1,15 @@
 <!-- generate key or import -->
 <script setup lang="ts">
 import { reactive, computed } from 'vue';
-import { GenericKey, KeyChecker } from '@this-oliver/ssasy';
+import { GenericKey, KeyChecker } from '@ssasy-auth/core';
 import { useKeyStore } from '~/common/stores/key-store';
 import { useNotificationStore } from '~/common/stores/app';
 import BasePage from '~/components/Base/BasePage.vue';
 import InputFile from '~/components/Base/InputFile.vue';
 import InputTextArea from '~/components/Base/InputTextArea.vue';
 import KeyViewer from '~/components/Key/KeyViewer.vue';
-import { KeyType } from '@this-oliver/ssasy';
-import type { PrivateKey, RawKey } from '@this-oliver/ssasy';
+import { KeyType } from '@ssasy-auth/core';
+import type { PrivateKey, RawKey } from '@ssasy-auth/core';
 
 const notificationStore = useNotificationStore();
 const keyStore = useKeyStore();

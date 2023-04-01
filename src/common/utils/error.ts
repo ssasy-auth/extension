@@ -1,9 +1,9 @@
-import { CRYPTO_ERROR_MESSAGE, WALLET_ERROR_MESSAGE } from '@this-oliver/ssasy';
+import { CRYPTO_ERROR_MESSAGE, WALLET_ERROR_MESSAGE } from '@ssasy-auth/core';
 
 /**
  * Returns a new error with a more user friendly message, if possible. 
  * 
- * This function only supports errors thrown by the `@this-oliver/ssasy` library. Other errors are returned as is.
+ * This function only supports errors thrown by the `@ssasy-auth/core` library. Other errors are returned as is.
  * 
  * @param error - Error to handle
  * @returns error

@@ -3,8 +3,8 @@ import { processSsasyLikeError } from '~/common/utils';
 import { useLocalStorage } from '~/composables/useLocalStorage';
 import { StorageEnum, useBrowserStorage } from '~/composables/useBrowserStorage';
 import { useKeyStore, useNotificationStore } from '~/common/stores';
-import { KeyChecker, KeyModule, CryptoModule, CryptoChecker } from '@this-oliver/ssasy';
-import type { PrivateKey, StandardCiphertext } from '@this-oliver/ssasy';
+import { KeyChecker, KeyModule, CryptoModule, CryptoChecker } from '@ssasy-auth/core';
+import type { PrivateKey, StandardCiphertext } from '@ssasy-auth/core';
 
 export type LocalVaultKey = StandardCiphertext | undefined;
 

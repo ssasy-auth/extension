@@ -19,7 +19,7 @@ export async function updatePackageMetaData(){
     repository
   } = rootPackage;
 
-  const ssasyDependency = dependencies['@this-oliver/ssasy'];
+  const ssasyDependency = dependencies['@ssasy-auth/core'];
   
   // package.json in bridge
   const bridgePackage = {} as any;
@@ -32,7 +32,7 @@ export async function updatePackageMetaData(){
   bridgePackage.main = 'lib/index.js';
 
   bridgePackage.dependencies = {} as any;
-  bridgePackage.dependencies['@this-oliver/ssasy'] = ssasyDependency;
+  bridgePackage.dependencies['@ssasy-auth/core'] = ssasyDependency;
 
   await fs.writeJSON(bridgeR('package.json'), bridgePackage, { spaces: 2 })
 }

@@ -1,4 +1,4 @@
-import type { RawKey } from '@this-oliver/ssasy';
+import type { RawKey } from '@ssasy-auth/core';
 import { 
   MessageType,
   RequestMode,

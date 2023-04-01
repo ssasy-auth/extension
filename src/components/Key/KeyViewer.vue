@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { reactive, computed, onMounted } from 'vue';
 import type { PropType, ComputedRef } from 'vue';
-import { KeyChecker, KeyType } from '@this-oliver/ssasy';
+import { KeyChecker, KeyType } from '@ssasy-auth/core';
 import { useKeyStore } from '~/common/stores/key-store';
-import type { GenericKey, RawKey } from '@this-oliver/ssasy';
+import type { GenericKey, RawKey } from '@ssasy-auth/core';
 import BaseCard from '~/components/Base/BaseCard.vue';
 import type { ActionItem } from '~/components/Base/BaseCard.vue';
 

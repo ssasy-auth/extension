@@ -1,10 +1,10 @@
 import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
 import { useSettingStore, useNotificationStore } from './app';
-import { Wallet } from '@this-oliver/ssasy';
+import { Wallet } from '@ssasy-auth/core';
 import { processSsasyLikeError } from '../utils';
-import { EncoderModule } from '@this-oliver/ssasy';
-import type { PrivateKey, PublicKey } from '@this-oliver/ssasy';
+import { EncoderModule } from '@ssasy-auth/core';
+import type { PrivateKey, PublicKey } from '@ssasy-auth/core';
 
 export const useWalletStore = defineStore('wallet',() => {
   const wallet = ref<Wallet | undefined>(undefined);

@@ -2,7 +2,7 @@
 import { reactive, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useVaultStore, useKeyStore, useNotificationStore } from '~/common/stores';
-import type { PrivateKey } from '@this-oliver/ssasy';
+import type { PrivateKey } from '@ssasy-auth/core';
 import BasePage from '~/components/Base/BasePage.vue';
 import BaseBtn from '~/components/Base/BaseBtn.vue';
 import InputText from '~/components/Base/InputText.vue';

@@ -3,7 +3,7 @@ lockfileVersion: 5.4
 specifiers:
   '@ffflorian/jszip-cli': ^3.1.9
   '@iconify/json': ^2.2.31
-  '@this-oliver/ssasy': 1.8.8
+  '@ssasy-auth/core': 1.8.8
   '@types/fs-extra': ^11.0.1
   '@types/node': ^18.14.6
   '@types/webextension-polyfill': ^0.10.0
@@ -46,7 +46,7 @@ specifiers:
   webextension-polyfill: ^0.10.0
 
 dependencies:
-  '@this-oliver/ssasy': 1.8.8
+  '@ssasy-auth/core': 1.8.8
   pinia: 2.0.33_hmuptsblhheur2tugfgucj7gc4
   vue: 3.2.47
   vue-router: 4.1.6_vue@3.2.47
@@ -1025,18 +1025,18 @@ packages:
     engines: {node: '>=14.16'}
     dev: true
 
+  /@ssasy-auth/core/1.8.8:
+    resolution: {integrity: sha512-YBjkZFqzcsDmFISyiIueuUeQuC6U6lWCcS+a0MbZxldwOO4mbKA9w9X2soeWF/bvGvcqKvfwovwRcBVXg5/VXg==, tarball: download/@ssasy-auth/core/1.8.8/b2b07b09b9ead6c5b04cafddf13bf9db7848fdce}
+    dependencies:
+      buffer: 6.0.3
+    dev: false
+
   /@szmarczak/http-timer/5.0.1:
     resolution: {integrity: sha512-+PmQX0PiAYPMeVYe237LJAYvOMYW1j2rH5YROyS3b4CTVJum34HfRvKvAzozHAQG0TnHNdUfY9nCeUyRAs//cw==}
     engines: {node: '>=14.16'}
     dependencies:
       defer-to-connect: 2.0.1
     dev: true
-
-  /@this-oliver/ssasy/1.8.8:
-    resolution: {integrity: sha512-ndMBA/PcAPwH67NVJqz6RsB/BXkKWrL0ba4zOYLjZSufC5v4WnhLXvysgvhRXiKdg7tsJXLg9+Q4cv+pPqWTtw==, tarball: download/@this-oliver/ssasy/1.8.8/20d77c828dee810627552e0fb0f04eca0bf5d320}
-    dependencies:
-      buffer: 6.0.3
-    dev: false
 
   /@tootallnate/once/2.0.0:
     resolution: {integrity: sha512-XCuKFP5PS55gnMVu3dty8KPatLqUoy/ZYzDzAGCQ8JNFCkLXzmI7vNHCR+XpbZaMWQK/vQubr7PkYq8g470J/A==}
