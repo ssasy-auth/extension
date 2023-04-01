@@ -1,3 +1,4 @@
+import { Logger } from '../../common/utils/logger'
 import type { RawKey } from '@ssasy-auth/core';
 import { 
   MessageType,
@@ -25,7 +26,7 @@ async function isExtensionInstalled(): Promise<boolean> {
         };
 
         if (message.type === MessageType.RESPONSE_PING) {
-          console.log('[ssasy-index] Received ping from extension');
+          Logger.info('ssasy-bridge', 'Recieved ping from extension')
           // extension is installed
           resolve(true);
         }
@@ -41,11 +42,17 @@ async function isExtensionInstalled(): Promise<boolean> {
       });
     
       // send message to extension
-      const request: BaseRequest = { origin: '*', type: MessageType.RESPONSE_PING };
+      const request: BaseRequest = { origin: '*', type: MessageType.REQUEST_PING };
       window.postMessage(request, '*');
+
+      // timeout after 3 seconds
+      setTimeout(() => {
+        Logger.info('ssasy-bridge', 'No response from extension')
+        resolve(false);
+      });
       
     } catch (error) {
-      console.warn(`[ssasy-index] error: ${error}`);
+      Logger.error('ssasy-bridge', (error as Error).message || 'Failed to ping extension');
       resolve(false);
     }
   });
@@ -64,7 +71,7 @@ async function requestPublicKey(mode: RequestMode): Promise<RawKey | null> {
         };
   
         if (message.type === MessageType.RESPONSE_PUBLIC_KEY) {
-          console.log('[ssasy-index] Received public key from extension');
+          Logger.info('ssasy-bridge', 'Recieved public key from extension')
 
           const keyResponse: PublicKeyResponse = {
             type: event.data.type,
@@ -91,7 +98,7 @@ async function requestPublicKey(mode: RequestMode): Promise<RawKey | null> {
       window.postMessage(request, '*');
       
     } catch (error) {
-      console.warn(`[ssasy-index] error: ${error}`);
+      Logger.error('ssasy-bridge', (error as Error).message || 'Failed to request public key');
       resolve(null);
     }
   });
@@ -108,7 +115,7 @@ async function requestSolution(mode: RequestMode, encryptedChallenge: string): P
       const message: BaseMessage = { type: event.data.type };
 
       if(message.type === MessageType.RESPONSE_SOLUTION){
-        console.log('[ssasy-index] Received solution from extension');
+        Logger.info('ssasy-bridge', 'Recieved solution from extension');
 
         const response: ChallengeResponse = {
           type: event.data.type,
