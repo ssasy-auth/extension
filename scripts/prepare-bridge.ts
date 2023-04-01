@@ -1,10 +1,10 @@
 import fs from 'fs-extra'
 import { resolve } from 'node:path'
-import { r } from '../../../scripts/utils'
-import type RootPkgType from '../../../package.json'
+import { r } from './utils'
+import type RootPkgType from '../package.json'
 
 // path to root of bridge directory
-const bridgeR = (...args: string[]) => resolve(__dirname, '..', ...args)
+const bridgeR = (...args: string[]) => resolve(__dirname, '../src/bridge', ...args)
 
 export async function updatePackageMetaData(){
   // get root package.json
