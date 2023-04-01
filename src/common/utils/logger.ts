@@ -1,5 +1,3 @@
-import type { RuntimeContext } from 'webext-bridge';
-
 const LOG_LABEL = 'ssasy-ext';
 
 export type LogType = 'info' | 'error';
@@ -17,13 +15,15 @@ export type InfoLog = Log & { type: 'info' };
 
 export type ErrorLog = Log & { type: 'error', status?: number };
 
+export type Context = 'background' | 'popup' | 'options' | 'content-script';
+
 /**
  * Returns an abbreviated context label
  * 
  * @param context - Runtime context
  * @returns abbreviated context label
  */
-function getContextLabel(context?: RuntimeContext): string | undefined{
+function getContextLabel(context?: Context): string | undefined{
   let label: string | undefined = undefined;
 
   switch (context) {
@@ -67,7 +67,7 @@ function formatText(text: any){
  * @param notification - Notification to format
  * @returns string
  */
-export function formatLog(log: Log, context?: RuntimeContext): string {
+export function formatLog(log: Log, context?: Context): string {
   /**
    * emoji for log type
    */
@@ -97,9 +97,9 @@ export function formatLog(log: Log, context?: RuntimeContext): string {
  * @param type - type of log
  * @returns 
  */
-function extractLogDetails(args: any[], type: LogType): { log: Log, context?: RuntimeContext } {
+function extractLogDetails(args: any[], type: LogType): { log: Log, context?: Context } {
   let log: Log;
-  let context: RuntimeContext | undefined;
+  let context: Context | undefined;
 
   // only title or log was provided
   if(args.length === 1){
@@ -150,8 +150,8 @@ function extractLogDetails(args: any[], type: LogType): { log: Log, context?: Ru
   return { log, context };
 }
 
-function logInfo (log: InfoLog, context?: RuntimeContext): string;
-function logInfo (title: string, message: unknown, context?: RuntimeContext): string;
+function logInfo (log: InfoLog, context?: Context): string;
+function logInfo (title: string, message: unknown, context?: Context): string;
 function logInfo (...args: any[]): string {
   
   const { log, context } = extractLogDetails(args, 'info');
@@ -160,8 +160,8 @@ function logInfo (...args: any[]): string {
   return formattedLog;
 }
 
-function logError (log: ErrorLog, context?: RuntimeContext): string;
-function logError (title: string, message: unknown, context?: RuntimeContext): string;
+function logError (log: ErrorLog, context?: Context): string;
+function logError (title: string, message: unknown, context?: Context): string;
 function logError (...args: any[]): string {
   
   const { log, context } = extractLogDetails(args, 'error');
