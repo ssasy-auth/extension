@@ -1,7 +1,7 @@
 {
   "name": "@ssasy-auth/extension",
   "nickname": "ssasy",
-  "version": "0.18.12",
+  "version": "0.19.0",
   "license": "MIT",
   "description": "a browser extension that is built with a secure, usable and scalable authentictaion scheme",
   "repository": "this-oliver/ssasy-ext",
@@ -10,7 +10,7 @@
     "bridge:build": "tsc -p src/bridge/tsconfig.json",
     "bridge:pack": "esno src/bridge/scripts/setup-pkg.ts",
     "bridge:prepare": "run-s bridge:build bridge:pack",
-    "bridge:release": "pnpm bridge:prepare && cd src/bridge && npm publish && cd ../../ && pnpm bridge:clear",
+    "bridge:release": "pnpm bridge:prepare && cd src/bridge && npm publish --access public && cd ../../ && pnpm bridge:clear",
     "bridge:preview": "pnpm bridge:prepare && cd src/bridge && npm pack && cd ../../ && pnpm bridge:clear",
     "bridge:clear": "rimraf src/bridge/package.json src/bridge/*-lock.* src/bridge/lib src/bridge/node_modules",
     "build": "cross-env NODE_ENV=production run-s clear build:web build:prepare build:js",
