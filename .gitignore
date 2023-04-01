@@ -8,6 +8,8 @@ extension/*
 
 # Bridge files
 src/bridge/lib
+src/bridge/package.json
+src/bridge/package-lock.json
 
 # Development files
 .vscode/*
