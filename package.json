@@ -1,7 +1,7 @@
 {
   "name": "@ssasy-auth/extension",
   "nickname": "ssasy",
-  "version": "0.19.0",
+  "version": "0.19.1",
   "license": "MIT",
   "description": "a browser extension that is built with a secure, usable and scalable authentictaion scheme",
   "repository": "this-oliver/ssasy-ext",
@@ -37,7 +37,7 @@
     "test": "vitest test"
   },
   "dependencies": {
-    "@ssasy-auth/core": "1.8.8",
+    "@ssasy-auth/core": "1.9.1",
     "pinia": "^2.0.33",
     "vue": "^3.2.47",
     "vue-router": "4",
