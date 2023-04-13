@@ -110,7 +110,10 @@ async function handleRequestChallenge(password: string) {
   const walletStore = useWalletStore();
 
   try {
+    // unwrap key
     const privateKey = await vaultStore.unwrapKey(password);
+
+    // set wallet
     walletStore.setWallet(privateKey);
   } catch (error) {
     const errorMessage = (error as Error).message || 'Failed to unlock wallet.';
@@ -127,6 +130,7 @@ async function handleRequestChallenge(password: string) {
       challengeCiphertextString.value,
       { registrationMode: mode.value === 'registration' }
     );
+
     SsasyMessenger.broadcastChallengeResponse(solutionCiphertextString);
 
     loading.value = false;
@@ -134,6 +138,9 @@ async function handleRequestChallenge(password: string) {
     const errorMessage = notificationStore.error('Authentication Request', (error as Error).message || 'Failed to solve challenge.', { toast: true });
     SsasyMessenger.broadcastChallengeResponse(null, errorMessage);
   }
+
+  // kill wallet
+  walletStore.reset();
 
   // close popup
   closePopup();
@@ -150,7 +157,6 @@ function closePopup() {
 }
 
 onMounted(async () => {
-
   try {
     // set mode
     if (
