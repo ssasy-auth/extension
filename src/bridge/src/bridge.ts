@@ -15,8 +15,31 @@ import {
  * Returns true if the browser has the Ssasy extension installed.
  */
 async function isExtensionInstalled(): Promise<boolean> {
+  // prepare message for extension
+  const request: BaseRequest = { origin: '*', type: MessageType.REQUEST_PING };
+
   return new Promise((resolve, reject) => {
     try {
+      let rounds = 0;
+      const MAX_ROUNDS = 5;
+
+      // check every 3 second if extension is installed
+      const interval = setInterval(() => {
+        if (rounds >= MAX_ROUNDS) {
+          clearInterval(interval);
+          console.info('[ssasy-bridge]', 'Timeout...')
+          resolve(false);
+        }
+        
+        // check again
+        window.postMessage(request, '*');
+        console.info('[ssasy-bridge]', 'Pinging...')
+
+        // increment rounds
+        rounds++;
+
+      }, 1000);
+
       // listen for response from extension
       window.addEventListener('message', (event) => {
         const message: BaseMessage = { 
@@ -25,9 +48,10 @@ async function isExtensionInstalled(): Promise<boolean> {
         };
 
         if (message.type === MessageType.RESPONSE_PING) {
-          console.info('[ssasy-bridge] Recieved ping from extension')
-          // extension is installed
-          resolve(true);
+          console.info('[ssasy-bridge] Extension installed')
+
+          clearInterval(interval);
+          return resolve(true);
         }
 
         if(message.type === MessageType.RESPONSE_ERROR){
@@ -36,22 +60,13 @@ async function isExtensionInstalled(): Promise<boolean> {
             error: event.data.error
           };
 
-          reject(errorResponse.error);
+          clearInterval(interval);
+          return reject(errorResponse.error);
         }
       });
-    
-      // send message to extension
-      const request: BaseRequest = { origin: '*', type: MessageType.REQUEST_PING };
-      window.postMessage(request, '*');
-
-      // timeout after 30 seconds
-      setTimeout(() => {
-        console.info('ssasy-bridge', 'No response from extension')
-        resolve(false);
-      }, 30000);
       
     } catch (error) {
-      console.error('ssasy-bridge', (error as Error).message || 'Failed to ping extension');
+      console.error('[ssasy-bridge]', (error as Error).message || 'Failed to ping extension');
       resolve(false);
     }
   });
@@ -97,7 +112,7 @@ async function requestPublicKey(mode: RequestMode): Promise<RawKey | null> {
       window.postMessage(request, '*');
       
     } catch (error) {
-      console.error('ssasy-bridge', (error as Error).message || 'Failed to request public key');
+      console.error('[ssasy-bridge]', (error as Error).message || 'Failed to request public key');
       resolve(null);
     }
   });
