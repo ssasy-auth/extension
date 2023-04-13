@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { PopupPage } from '~/common/utils/browser';
+import { SsasyMessenger } from '~/common/logic';
 import Logo from '~/components/Logo.vue';
 import BaseBtn from './Base/BaseBtn.vue';
 
@@ -20,12 +21,22 @@ const inSetup = computed(() => {
   return route.path.includes('/setup');
 });
 
+const inAuthRequest = computed(() => {
+  return route.path.includes('/request');
+});
+
 function goBack() {
   if(
     inRoot.value ||
     inAuth.value ||
     inSetup.value
   ){
+    PopupPage.close();
+  }
+
+  else if (inAuthRequest.value) {
+    SsasyMessenger.broadcastPublicKeyResponse(null, 'Cancelled by user');
+    SsasyMessenger.broadcastChallengeResponse(null, 'Cancelled by user');
     PopupPage.close();
   }
 
