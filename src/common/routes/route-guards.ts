@@ -1,8 +1,6 @@
 import { useVaultStore, useSessionStore, useNotificationStore } from '~/common/stores'
 import type { LocationQuery, RouteLocationNormalized, NavigationGuardNext } from 'vue-router'
 
-type RedirectRoutes = '/setup' | '/auth';
-
 interface Location {
   path: string;
   query: LocationQuery;
@@ -26,36 +24,36 @@ async function KeyGuard(
   };
   
   let hasKey: boolean = false;
-  let redirectPath: '/setup' | '/auth' | undefined = undefined;
-
+  
   try {
     hasKey = await vaultStore.hasKey();
   } catch (error) {
-    redirectPath = '/setup'
     notificationStore.error('Router Guard - Error', (error as Error).message || 'Failed to authenticate')
-  }
 
-  // redirect the user to the setup page if they are missing a vault key
-  if(!hasKey && !inSetupPath(location.path)) {
-    redirectPath = '/setup';
-    notificationStore.error('Router Guard - Authentication', 'You are missing your authentication key. Please setup your key to continue.')
-  }
-  
-  // continue to the route if no redirect path is set
-  if(redirectPath === undefined) {
-    return next();
-  }
-
-  // redirect to the appropriate page
-  else {
     return next({
-      path: redirectPath,
+      path: '/setup',
       query: {
         redirect: location.path,
         ...location.query
       }
     });
   }
+
+  // redirect the user to the setup page if they are missing a vault key
+  if(!hasKey && !inSetupPath(location.path)) {
+    notificationStore.error('Router Guard - Authentication', 'You are missing your authentication key. Please setup your key to continue.')
+
+    return next({
+      path: '/setup',
+      query: {
+        redirect: location.path,
+        ...location.query
+      }
+    });
+  }
+  
+  // continue to the route if no redirect path is set
+  return next();
 }
 
 /**
@@ -76,35 +74,37 @@ async function SessionGaurd(
   };
   
   let hasSession: boolean = false;
-  let redirectPath: RedirectRoutes | undefined = undefined;
   
   try {
     hasSession = await sessionStore.hasSession();  
   } catch (error) {
-    redirectPath = '/setup'
     notificationStore.error('Router Guard - Error', (error as Error).message || 'Failed to authenticate')
-  }
-  
-  if(!hasSession && !inAuthPath(location.path)) {
-    redirectPath = '/auth';
-    notificationStore.error('Router Guard', 'Your session has timed out. Please login and renew your session to continue.')
-  }
 
-  // continue to the route if no redirect path is set
-  if(redirectPath === undefined) {
-    return next();
-  }
-
-  // redirect to the appropriate page
-  else {
     return next({
-      path: redirectPath,
+      path: '/setup',
       query: {
         redirect: location.path,
         ...location.query
       }
     });
   }
+  
+  if(!hasSession && !inAuthPath(location.path)) {
+    notificationStore.error('Router Guard', 'Your session has timed out. Please login and renew your session to continue.')
+
+    next({
+      path: '/auth',
+      query: {
+        redirect: location.path,
+        timeout: 'true',
+        ...location.query
+      }
+    });
+
+  }
+
+  // continue to the route if no redirect path is set
+  return next();
 }
 
 /**

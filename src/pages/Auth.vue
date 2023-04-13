@@ -1,6 +1,7 @@
 <!-- login user or redirect them to setup.vue -->
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
+import { ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import type { LocationQuery } from 'vue-router';
 import {
   useVaultStore,
@@ -9,10 +10,14 @@ import {
   useNotificationStore
 } from '~/common/stores';
 import BasePage from '~/components/Base/BasePage.vue';
+import BaseCard from '~/components/Base/BaseCard.vue';
 import AuthForm from '~/components/Auth/AuthForm.vue';
 
+const route = useRoute();
 const router = useRouter();
 const notificationStore = useNotificationStore();
+
+const sessionTimedOut = ref<boolean>(route.query.timeout === 'true');
 
 async function handleLoginForm(password: string) {
   const vaultStore = useVaultStore();
@@ -55,6 +60,19 @@ async function handleLoginForm(password: string) {
 <template>
   <base-page title="Start Page">
     <v-row justify="center">
+      <v-col
+        v-if="sessionTimedOut"
+        cols="10"
+        md="6">
+        <base-card>
+          <p>
+            Your session has timed out. Please login again to continue.
+          </p>
+        </base-card>
+      </v-col>
+
+      <v-divider class="border-opacity-0" />
+      
       <v-col
         cols="10"
         md="6">
