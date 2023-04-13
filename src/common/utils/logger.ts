@@ -13,7 +13,7 @@ export type GenericLog = Log;
 
 export type InfoLog = Log & { type: 'info' };
 
-export type ErrorLog = Log & { type: 'error', status?: number };
+export type ErrorLog = Log & { type: 'error' };
 
 export type Context = 'background' | 'popup' | 'options' | 'content-script';
 

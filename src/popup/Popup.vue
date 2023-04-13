@@ -3,6 +3,7 @@ import { ref, watch, onMounted } from 'vue';
 import { useSettingStore } from '~/common/stores';
 import AppBar from '~/components/AppBar.vue';
 import AppFooter from '~/components/AppFooter.vue';
+import AppNotification from '~/components/AppNotification.vue';
 
 type Theme = 'AppTheme' | 'AppThemeDark';
 
@@ -24,6 +25,7 @@ onMounted(async () => {
     id="app-popup"
     :theme="theme">
     <app-bar />
+    <app-notification />
     
     <v-main>
       <router-view />
