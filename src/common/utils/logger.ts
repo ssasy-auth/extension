@@ -5,7 +5,7 @@ export type LogType = 'info' | 'error';
 interface Log {
   type: LogType;
   title: string;
-  message: unknown;
+  message: any;
   timestamp: number;
 }
 

@@ -54,7 +54,13 @@ export const useNotificationStore = defineStore('notification', () => {
 
     // toast notification
     if(config?.toast){
-      toaster.notify(notification.title, notification.message as string, _mapNotificationType(notification.type));
+      let type = _mapNotificationType(notification.type);
+
+      if(notification.title.toLocaleLowerCase().includes('warn') || notification.message.toLocaleLowerCase().includes('warn')){
+        type = 'warning';
+      }
+
+      toaster.notify(notification.title, notification.message as string, type );
     }
 
     // log notification

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { ref, computed, watch, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import { SsasyMessenger } from '~/common/logic';
 import { PopupPage } from '~/common/utils';
 import {
@@ -18,14 +18,16 @@ import type {
 import type { ActionItem } from '~/components/Base/BaseCard.vue';
 import BasePage from '~/components/Base/BasePage.vue';
 import BaseCard from '~/components/Base/BaseCard.vue';
+import BaseBtn from '~/components/Base/BaseBtn.vue';
 import AuthForm from '~/components/Auth/AuthForm.vue';
 
 const route = useRoute();
-const router = useRouter();
 const notificationStore = useNotificationStore();
 
 const loading = ref<boolean>(false);
-const requestError = ref<string | undefined>(undefined);
+const errorMessage = ref<string | undefined>(undefined);
+const closingMessage = ref<string | undefined>(undefined);
+const messageCountdown = ref<number>(-1); // in milliseconds
 
 const mode = ref<RequestMode | undefined>(undefined);
 const origin = ref<string | undefined>(undefined);
@@ -38,7 +40,6 @@ const options: ActionItem[] = [
     color: 'success',
     action: async () => {
       await approvePublicKeyRequest();
-      loading.value = false;
     }
   },
   {
@@ -50,7 +51,11 @@ const options: ActionItem[] = [
   }
 ];
 
-const requestText = computed(() => {
+const countdown = computed<number>(() => {
+  return Math.round(messageCountdown.value / 1000);
+});
+
+const requestText = computed<string>(() => {
   return mode.value === 'login' ? 'login' : 'register';
 });
 
@@ -58,28 +63,31 @@ const requestText = computed(() => {
  * Sends the public key to the origin
  */
 async function approvePublicKeyRequest() {
+  loading.value = true;
+
   try {
-    loading.value = true;
     if (mode.value === undefined) {
-      throw new Error('Mode is undefined');
+      throw new Error('Authentication request is missing a mode');
     }
 
     if (origin.value === undefined) {
-      throw new Error('Origin is undefined');
+      throw new Error('Authentication request is missing an origin');
     }
 
     if (publicKeyString.value === undefined) {
-      throw new Error('Public key is undefined');
+      throw new Error('Public key is missing');
     }
 
     SsasyMessenger.broadcastPublicKeyResponse(publicKeyString.value);
-    loading.value = false;
   } catch (error) {
-    const errorMessage = notificationStore.error('Authentication Request', (error as Error).message || 'Failed to approve registration request.', { toast: true })
-    SsasyMessenger.broadcastPublicKeyResponse(null, errorMessage);
+    const message = notificationStore.error('Authentication Request', (error as Error).message || 'Failed to approve registration request.', { toast: true })
+    SsasyMessenger.broadcastPublicKeyResponse(null, message);
 
-    // close popup if error occurs
-    closePopup();
+    // stop loading
+    loading.value = false;
+
+    // set final message
+    errorMessage.value = message;
   }
 }
 
@@ -87,16 +95,10 @@ async function approvePublicKeyRequest() {
  * Sends a null response to the origin
  */
 function rejectPublicKeyRequest() {
-  if (origin.value === undefined) {
-    const errorMessage = notificationStore.error('Authentication Request', 'Origin is undefined', { toast: true })
-    SsasyMessenger.broadcastPublicKeyResponse(null, errorMessage);
-  }
-
-  else {
-    SsasyMessenger.broadcastPublicKeyResponse(null);
-  }
-
-  closePopup();
+  SsasyMessenger.broadcastPublicKeyResponse(null);
+  
+  // set final message
+  closingMessage.value = 'Request rejected.';
 }
 
 /**
@@ -105,9 +107,10 @@ function rejectPublicKeyRequest() {
  * @param password - password to unlock wallet
  */
 async function handleRequestChallenge(password: string) {
-  loading.value = true;
   const vaultStore = useVaultStore();
   const walletStore = useWalletStore();
+
+  loading.value = true;
 
   try {
     // unwrap key
@@ -116,9 +119,11 @@ async function handleRequestChallenge(password: string) {
     // set wallet
     walletStore.setWallet(privateKey);
   } catch (error) {
-    const errorMessage = (error as Error).message || 'Failed to unlock wallet.';
-    requestError.value = errorMessage;
-    return notificationStore.error('Authentication Request', errorMessage, { toast: true });
+    loading.value = false;
+
+    const message = (error as Error).message || 'Failed to unlock wallet.';
+    errorMessage.value = message;
+    return notificationStore.error('Authentication Request', message, { toast: true });
   }
 
   try {
@@ -132,29 +137,54 @@ async function handleRequestChallenge(password: string) {
     );
 
     SsasyMessenger.broadcastChallengeResponse(solutionCiphertextString);
-
-    loading.value = false;
   } catch (error) {
-    const errorMessage = notificationStore.error('Authentication Request', (error as Error).message || 'Failed to solve challenge.', { toast: true });
-    SsasyMessenger.broadcastChallengeResponse(null, errorMessage);
+    const message = notificationStore.error('Authentication Request', (error as Error).message || 'Failed to solve challenge.', { toast: true });
+    SsasyMessenger.broadcastChallengeResponse(null, message);
+
+    // set final message
+    errorMessage.value = message;
   }
+
+  // stop loading
+  loading.value = false;
 
   // kill wallet
   walletStore.reset();
 
-  // close popup
-  closePopup();
+  // set final message if no error
+  if (errorMessage.value === undefined){
+    closingMessage.value = 'Authentication successful!';
+  }
 }
 
 /**
  * Close the popup window and resets the wallet store.
  */
-function closePopup() {
+function _closePopup() {
   const walletStore = useWalletStore();
   walletStore.reset();
 
   PopupPage.close();
 }
+
+// watch for final message and start countdown to close popup
+watch(closingMessage, (value) => {
+  if (value !== undefined) {
+
+    // set countdown to 10 seconds
+    messageCountdown.value = 10000;
+    
+    // start countdown
+    const interval = setInterval(() => {
+      messageCountdown.value -= 1000;
+
+      if (messageCountdown.value <= 0) {
+        clearInterval(interval);
+        _closePopup();
+      }
+    }, 1000);
+  }
+});
 
 onMounted(async () => {
   try {
@@ -176,42 +206,15 @@ onMounted(async () => {
     }
 
     // set public key
-    const vaultStore = useVaultStore();
     const sessionStore = useSessionStore();
 
-    // if no key, redirect to setup
-    if (!vaultStore.hasKey) {
-      return router.push({
-        path: '/setup',
-        query: {
-          ...route.query,
-          redirect: route.path
-        }
-      });
-    }
+    const rawPublic = sessionStore.session?.publicKey;
+    publicKeyString.value = JSON.stringify(rawPublic);
 
-    // if no session, redirect to login
-    else if (!sessionStore.hasSession) {
-      return router.push({
-        path: '/auth',
-        query: {
-          ...route.query,
-          redirect: route.path
-        }
-      });
-    }
-
-    else {
-      const rawPublic = sessionStore.session?.publicKey;
-      publicKeyString.value = JSON.stringify(rawPublic);
-    }
-
-    // listen for challenge response broadcast from [popup] and forward to [content script]
+    // listen for challenge request broadcast from [background] and set challenge
     // eslint-disable-next-line no-undef
     browser.runtime.onMessage.addListener(async (msg) => {
-      const message: BaseMessage = {
-        type: msg.type
-      };
+      const message: BaseMessage = { type: msg.type };
 
       if (message.type === MessageType.REQUEST_SOLUTION) {
         const request: ChallengeRequest = {
@@ -223,34 +226,88 @@ onMounted(async () => {
 
         // set challenge
         challengeCiphertextString.value = request.challenge;
+
+        loading.value = false;
       }
     });
 
   } catch (error) {
-    const errorMessage = (error as Error).message || 'Failed to setup public key.';
-    notificationStore.error('Authentication Request', errorMessage, { toast: true })
-    SsasyMessenger.broadcastPublicKeyResponse(null, errorMessage);
+    const message = (error as Error).message || 'Failed to setup public key.';
+    notificationStore.error('Authentication Request', message, { toast: true })
+    SsasyMessenger.broadcastPublicKeyResponse(null, message);
+
+    // set final message
+    errorMessage.value = message;
   }
 });
 </script>
 
 <template>
-  <base-page title="Registration Request">
+  <base-page title="Authentication Request">
     <v-row
       justify="center"
       class="request">
       <v-col
-        v-if="challengeCiphertextString"
+        v-if="closingMessage"
         cols="11"
-        md="6">
+        md="6"
+        class="text-center">
+
+        <base-card>
+          <div
+            class="request-promt"
+            style="margin-bottom: 50px;">
+            <div
+              v-if="countdown > 0"
+              class="text-grey"
+              style="font-size: 2rem;">
+              {{ countdown }}
+            </div>
+  
+            <div style="font-size: 1.15rem;">
+              {{ closingMessage }}
+            </div>
+          </div>
+  
+          <base-btn
+            class="mt-2 mx-auto"
+            @click="_closePopup">
+            Close
+          </base-btn>
+        </base-card>
+      </v-col>
+
+      <v-col
+        v-else-if="challengeCiphertextString"
+        cols="11"
+        md="6"
+        class="text-center">
         <base-card class="mt-2 pa-1">
-          <p>Enter your password to confirm the registration request.</p>
+          <p class="request-promt">Enter your password to confirm the {{ mode }} request.</p>
         </base-card>
 
         <auth-form
           class="mt-2"
           style="padding-top: 20px;"
+          :loading="loading"
           @input="handleRequestChallenge" />
+
+        <base-btn
+          :text="true"
+          color="grey"
+          class="mt-2 mx-auto"
+          @click="_closePopup">
+          Cancel
+        </base-btn>
+      </v-col>
+
+      <v-col
+        v-else-if="loading"
+        cols="11"
+        md="6">
+        <v-skeleton-loader
+          color="primary"
+          type="card" />
       </v-col>
 
       <v-col
@@ -263,20 +320,6 @@ onMounted(async () => {
           class="text-center pa-1">
           <p class="request-promt">Do you grant permission to <b class="underline">{{ requestText }}</b> with the
             <b><code>{{ origin }}</code></b> service?
-          </p>
-        </base-card>
-      </v-col>
-
-      <v-divider class="border-opacity-0" />
-
-      <v-col
-        v-if="requestError"
-        cols="auto">
-        <base-card
-          color="error"
-          class="text-center pa-1">
-          <p>
-            {{ requestError }}
           </p>
         </base-card>
       </v-col>

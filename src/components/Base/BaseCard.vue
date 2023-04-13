@@ -12,11 +12,13 @@ export interface ActionItem {
   color?: string;
   icon?: string;
   disabled?: boolean;
+  loading?: boolean;
   outlined?: boolean;
   hint?: string;
   to?: string;
   action?: () => void;
 }
+
 const props = defineProps({
   title: {
     type: String,

@@ -19,11 +19,11 @@ export function processSsasyLikeError(error: unknown): Error {
   }
 
   if(error.message === WALLET_ERROR_MESSAGE.INVALID_CIPHERTEXT_SIGNATURE) {
-    return new Error('(Security Warning - Phishing Alert) The service you are logging into did not provide a valid signature which is a sign of a phishing attack. If this is a mistake, please register to the service and try again or configure your Ssasy settings to not require signatures.');
+    return new Error('Phishing Warning! The service you are logging into did not provide a valid signature which is a sign of a phishing attack. If this is a mistake, please register to the service and try again or configure your Ssasy settings to not require signatures.');
   }
 
   if(error.message === WALLET_ERROR_MESSAGE.INVALID_SIGNATURE_ORIGIN) {
-    return new Error('(Security Warning - Phishing Alert) You might be logging into a service that you have not registered to. If this is a mistake, please register to the service and try again.');
+    return new Error('Phishing Warning! You might be logging into a service that you have not registered to. If this is a mistake, please register to the service and try again.');
   }
 
   return error;

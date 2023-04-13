@@ -58,6 +58,10 @@ const props = defineProps({
     type: Boolean,
     default: undefined
   },
+  loading: {
+    type: Boolean,
+    default: undefined
+  },
   to: {
     type: String,
     default: undefined
@@ -117,8 +121,9 @@ function handleClick() {
     :elevation="props.elevation"
     :color="props.color"
     :block="props.block"
-    :disabled="props.disabled"
     :rounded="props.rounded"
+    :disabled="props.disabled"
+    :loading="props.loading"
     :to="props.to"
     :size="getButtonSize"
     :variant="getButtonStyle"

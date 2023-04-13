@@ -4,7 +4,7 @@ import { useSettingStore, useNotificationStore } from './app';
 import { Wallet } from '@ssasy-auth/core';
 import { processSsasyLikeError } from '../utils';
 import { EncoderModule } from '@ssasy-auth/core';
-import type { PrivateKey, PublicKey } from '@ssasy-auth/core';
+import type { PrivateKey, PublicKey, AdvancedCiphertext } from '@ssasy-auth/core';
 
 export const useWalletStore = defineStore('wallet',() => {
   const wallet = ref<Wallet | undefined>(undefined);
@@ -51,7 +51,7 @@ export const useWalletStore = defineStore('wallet',() => {
 
     try {
       // decode ciphertext
-      const encryptedChallenge = await EncoderModule.decodeCiphertext(encryptedChallengeString);
+      const encryptedChallenge: AdvancedCiphertext = await EncoderModule.decodeCiphertext(encryptedChallengeString);
 
       // solve challenge
       const encryptedSolution = await wallet.value.solveChallenge(encryptedChallenge, { requireSignature });
