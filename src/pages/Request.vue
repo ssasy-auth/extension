@@ -22,6 +22,8 @@ import AuthForm from '~/components/Auth/AuthForm.vue';
 
 const route = useRoute();
 const router = useRouter();
+const notificationStore = useNotificationStore();
+
 const loading = ref<boolean>(false);
 const requestError = ref<string | undefined>(undefined);
 
@@ -73,8 +75,7 @@ async function approvePublicKeyRequest() {
     SsasyMessenger.broadcastPublicKeyResponse(publicKeyString.value);
     loading.value = false;
   } catch (error) {
-    const notificationStore = useNotificationStore();
-    const errorMessage = notificationStore.error('Service Registration', (error as Error).message || 'Failed to approve registration request.')
+    const errorMessage = notificationStore.error('Authentication Request', (error as Error).message || 'Failed to approve registration request.', { toast: true })
     SsasyMessenger.broadcastPublicKeyResponse(null, errorMessage);
 
     // close popup if error occurs
@@ -87,8 +88,7 @@ async function approvePublicKeyRequest() {
  */
 function rejectPublicKeyRequest() {
   if (origin.value === undefined) {
-    const notificationStore = useNotificationStore();
-    const errorMessage = notificationStore.error('Service Registration', 'Origin is undefined')
+    const errorMessage = notificationStore.error('Authentication Request', 'Origin is undefined', { toast: true })
     SsasyMessenger.broadcastPublicKeyResponse(null, errorMessage);
   }
 
@@ -108,7 +108,6 @@ async function handleRequestChallenge(password: string) {
   loading.value = true;
   const vaultStore = useVaultStore();
   const walletStore = useWalletStore();
-  const notificationStore = useNotificationStore();
 
   try {
     const privateKey = await vaultStore.unwrapKey(password);
@@ -116,7 +115,7 @@ async function handleRequestChallenge(password: string) {
   } catch (error) {
     const errorMessage = (error as Error).message || 'Failed to unlock wallet.';
     requestError.value = errorMessage;
-    return notificationStore.error('Service Registration', errorMessage);
+    return notificationStore.error('Authentication Request', errorMessage, { toast: true });
   }
 
   try {
@@ -132,7 +131,7 @@ async function handleRequestChallenge(password: string) {
 
     loading.value = false;
   } catch (error) {
-    const errorMessage = notificationStore.error('Service Registration', (error as Error).message || 'Failed to solve challenge.');
+    const errorMessage = notificationStore.error('Authentication Request', (error as Error).message || 'Failed to solve challenge.', { toast: true });
     SsasyMessenger.broadcastChallengeResponse(null, errorMessage);
   }
 
@@ -151,7 +150,6 @@ function closePopup() {
 }
 
 onMounted(async () => {
-  const notificationStore = useNotificationStore();
 
   try {
     // set mode
@@ -224,7 +222,7 @@ onMounted(async () => {
 
   } catch (error) {
     const errorMessage = (error as Error).message || 'Failed to setup public key.';
-    notificationStore.error('Service Registration', errorMessage)
+    notificationStore.error('Authentication Request', errorMessage, { toast: true })
     SsasyMessenger.broadcastPublicKeyResponse(null, errorMessage);
   }
 });

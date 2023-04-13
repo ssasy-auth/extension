@@ -35,7 +35,7 @@ export const useVaultStore = defineStore('vault', () => {
       const error: Error = processSsasyLikeError(err);
 
       const message = (error as Error).message || 'failed to export key';
-      notificationStore.error('Vault Error', message, 500);
+      notificationStore.error('Vault Error', message);
       return false;
     }
 
@@ -44,7 +44,7 @@ export const useVaultStore = defineStore('vault', () => {
     } catch (err) {
       const error: Error = processSsasyLikeError(err);
       const message = error.message || 'encryption error';
-      notificationStore.error('Vault Error', message, 500);
+      notificationStore.error('Vault Error', message);
 
       return false;
     }

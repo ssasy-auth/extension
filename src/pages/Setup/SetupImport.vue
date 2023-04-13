@@ -109,7 +109,7 @@ async function importKey(){
 
   } catch (error) {
     const message = (error as Error).message || 'Failed to convert file to key';
-    notificationStore.error('Setup Import Flow', message);
+    notificationStore.error('Setup Import Flow', message, { toast: true });
   }
 }
 </script>

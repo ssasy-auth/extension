@@ -19,26 +19,26 @@ async function KeyGuard(
   const vaultStore = useVaultStore();
   const notificationStore = useNotificationStore();
 
-  const hasKey: boolean = await vaultStore.hasKey();
-
   // save the current route and query params for redirecting
   const location: Location = {
     path: to.path,
     query: to.query
   };
   
+  let hasKey: boolean = false;
   let redirectPath: '/setup' | '/auth' | undefined = undefined;
 
   try {
-    // redirect the user to the setup page if they are missing a vault key
-    if(!hasKey && !inSetupPath(location.path)) {
-      redirectPath = '/setup';
-      notificationStore.error('Router Guard - Authentication', 'Vault key is empty or invalid')
-    }
-
+    hasKey = await vaultStore.hasKey();
   } catch (error) {
     redirectPath = '/setup'
     notificationStore.error('Router Guard - Error', (error as Error).message || 'Failed to authenticate')
+  }
+
+  // redirect the user to the setup page if they are missing a vault key
+  if(!hasKey && !inSetupPath(location.path)) {
+    redirectPath = '/setup';
+    notificationStore.error('Router Guard - Authentication', 'You are missing your authentication key. Please setup your key to continue.')
   }
   
   // continue to the route if no redirect path is set
@@ -68,7 +68,6 @@ async function SessionGaurd(
 ) {
   const sessionStore = useSessionStore();
   const notificationStore = useNotificationStore();
-  const hasSession = await sessionStore.hasSession();
 
   // save the current route and query params for redirecting
   const location: Location = {
@@ -76,19 +75,21 @@ async function SessionGaurd(
     query: to.query
   };
   
+  let hasSession: boolean = false;
   let redirectPath: RedirectRoutes | undefined = undefined;
-
+  
   try {
-    if(!hasSession && !inAuthPath(location.path)) {
-      redirectPath = '/auth';
-      notificationStore.error('Router Guard - Authentication', 'Session is empty or invalid')
-    }
-
+    hasSession = await sessionStore.hasSession();  
   } catch (error) {
     redirectPath = '/setup'
     notificationStore.error('Router Guard - Error', (error as Error).message || 'Failed to authenticate')
   }
   
+  if(!hasSession && !inAuthPath(location.path)) {
+    redirectPath = '/auth';
+    notificationStore.error('Router Guard', 'Your session has timed out. Please login and renew your session to continue.')
+  }
+
   // continue to the route if no redirect path is set
   if(redirectPath === undefined) {
     return next();

@@ -10,6 +10,7 @@ interface Prompt {
 }
 
 const router = useRouter();
+const notificationStore = useNotificationStore();
 
 const currentPassword: Prompt = {
   id: 'currentPassword',
@@ -118,9 +119,8 @@ async function updatePassword(){
     // redirect to the vault page
     router.push('/');
   } catch (err) {
-    const notificationStore = useNotificationStore();
     error.value = (err as Error).message || 'Failed to update vault password.';
-    notificationStore.error('Vault Settings', error.value)
+    notificationStore.error('Vault Settings', error.value, { toast: true })
   }
 }
 

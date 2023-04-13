@@ -61,20 +61,20 @@ async function saveKey(){
     const stored = await vaultStore.wrapKey(data.privateKey, form.password);
 
     if(!stored){
-      throw new Error();
+      throw new Error('Failed to save key');
     }
   } catch (error) {
     const message = (error as Error).message || 'Failed to save key';
-    notificationStore.error('Setup Storage Flow', message);
+    notificationStore.error('Setup Storage Flow', message, { toast: true });
   }
   
-  notificationStore.notify('Setup Storage Flow', 'Key saved!');
+  notificationStore.notify('Setup Storage Flow', 'Key saved!', { toast: true });
   router.push('/');
 }
 
 onMounted(async () => {
   if(!keyStore.hasTemporaryKey){
-    notificationStore.error('Setup Storage Flow', 'Temporary key is missing');
+    notificationStore.error('Setup Storage Flow', 'Temporary key is missing', { toast: true });
     router.push('/setup');
   }
 
@@ -82,7 +82,7 @@ onMounted(async () => {
     data.privateKey = keyStore.temporaryKey;
   } catch (error) {
     const message = (error as Error).message || 'Failed to setup key';
-    notificationStore.error('Setup Storage Flow', message);
+    notificationStore.error('Setup Storage Flow', message, { toast: true });
   }
 });
 </script>
