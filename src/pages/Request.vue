@@ -106,7 +106,7 @@ function rejectPublicKeyRequest() {
  * 
  * @param password - password to unlock wallet
  */
-async function handleRequestChallenge(password: string) {
+async function approveChallengeRequest(password: string) {
   const vaultStore = useVaultStore();
   const walletStore = useWalletStore();
 
@@ -157,10 +157,17 @@ async function handleRequestChallenge(password: string) {
   }
 }
 
+function rejectChallengeRequest() {
+  SsasyMessenger.broadcastChallengeResponse(null);
+
+  // set final message
+  closingMessage.value = 'Request rejected.';
+}
+
 /**
  * Close the popup window and resets the wallet store.
  */
-function _closePopup() {
+function closePopup() {
   const walletStore = useWalletStore();
   walletStore.reset();
 
@@ -180,7 +187,7 @@ watch(closingMessage, (value) => {
 
       if (messageCountdown.value <= 0) {
         clearInterval(interval);
-        _closePopup();
+        closePopup();
       }
     }, 1000);
   }
@@ -271,7 +278,7 @@ onMounted(async () => {
   
           <base-btn
             class="mt-2 mx-auto"
-            @click="_closePopup">
+            @click="closePopup">
             Close
           </base-btn>
         </base-card>
@@ -290,13 +297,13 @@ onMounted(async () => {
           class="mt-2"
           style="padding-top: 20px;"
           :loading="loading"
-          @input="handleRequestChallenge" />
+          @input="approveChallengeRequest" />
 
         <base-btn
           :text="true"
           color="grey"
           class="mt-2 mx-auto"
-          @click="_closePopup">
+          @click="rejectChallengeRequest">
           Cancel
         </base-btn>
       </v-col>
