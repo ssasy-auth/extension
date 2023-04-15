@@ -27,9 +27,15 @@ const routes: Array<RouteRecordRaw> = [
     beforeEnter: [ KeyGuard, SessionGaurd ]
   },
   {
-    path: '/settings/vault',
-    name: 'settings-vault',
-    component: () => import('~/pages/Settings/Vault.vue'),
+    path: '/settings/vault/password',
+    name: 'settings-vault-password',
+    component: () => import('~/pages/Settings/VaultPassword.vue'),
+    beforeEnter: [ KeyGuard, SessionGaurd ]
+  },
+  {
+    path: '/settings/vault/key',
+    name: 'settings-vault-key',
+    component: () => import('~/pages/Settings/VaultKey.vue'),
     beforeEnter: [ KeyGuard, SessionGaurd ]
   },
   {

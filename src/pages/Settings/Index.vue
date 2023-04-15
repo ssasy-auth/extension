@@ -1,8 +1,13 @@
 <script setup lang="ts">
-import { ref, reactive, computed, watch, onMounted } from 'vue';
+import { ref, reactive, watch, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { useSettingStore, useNotificationStore } from '~/common/stores/app';
 import type { ActionItem } from '~/components/Base/BaseCard.vue';
+import BasePage from '~/components/Base/BasePage.vue';
+import BaseBtn from '~/components/Base/BaseBtn.vue';
 
+const route = useRoute();
+const router = useRouter();
 const settingStore = useSettingStore();
 const notificationStore = useNotificationStore();
 
@@ -17,7 +22,9 @@ interface SettingItem extends ActionItem {
   prompt?: string;
 }
 
-const tab = ref<SettingTab>('system');
+const tabs = ref<SettingTab[]>([ 'system', 'security' ]);
+
+const tab = ref<SettingTab>(_getRouteTab() || 'system');
 
 const signatureOption = ref<SettingItem>({
   id: 'signature',
@@ -28,7 +35,7 @@ const signatureOption = ref<SettingItem>({
 });
 
 const darkModeOption = ref<SettingItem>({
-  id: 'darkMode',
+  id: 'dark-mode',
   tab: 'system',
   type: 'toggle',
   label: 'Enable dark mode',
@@ -46,39 +53,41 @@ const viewLogsOption = ref<SettingItem>({
 });
 
 const changeVaultPasswordOption = ref<SettingItem>({
-  id: 'vaultPassword',
+  id: 'change-vault-password',
   tab: 'security',
   type: 'action',
   label: 'Edit vault password',
   prompt: 'Change password',
   description: 'Change the password used to encrypt your key.',
   color: 'error',
-  to: '/settings/vault'
+  to: '/settings/vault/password'
 });
 
-const options = computed<SettingItem[]>(() => {
-  return [ darkModeOption.value, viewLogsOption.value, signatureOption.value, changeVaultPasswordOption.value ];
+const deleteVaultKey = ref<SettingItem>({
+  id: 'delete-vault-key',
+  tab: 'security',
+  type: 'action',
+  label: 'Delete encrypted vault key',
+  prompt: 'Delete encrypted key',
+  description: 'Delete your encrypted vault key. This action is irreversible.',
+  color: 'error',
+  to: '/settings/vault/key'
 });
 
-const tabs = computed<SettingTab[]>(() => {
-  return [ 'system', 'security' ];
-});
+const options = ref<SettingItem[]>([
+  signatureOption.value,
+  darkModeOption.value,
+  viewLogsOption.value,
+  changeVaultPasswordOption.value,
+  deleteVaultKey.value
+]);
 
 const form = reactive({
   [signatureOption.value.id]: settingStore.setting.requireSignature,
   [darkModeOption.value.id]: settingStore.setting.darkMode
 });
 
-watch(() => form[darkModeOption.value.id], (value) => {
-  settingStore.setDarkMode(value);
-  notificationStore.notify('Settings', `Dark mode ${value ? 'enabled' : 'disabled'}.`)
-});
-
-watch(() => form[signatureOption.value.id], (value) => {
-  settingStore.setRequireSignature(value);
-});
-
-const getOptionsByTab = (tab: SettingTab): SettingItem[] => {
+function getOptionsByTab (tab: SettingTab): SettingItem[] {
   return options.value
     // filter for tab
     .filter(option => option.tab === tab)
@@ -94,7 +103,35 @@ const getOptionsByTab = (tab: SettingTab): SettingItem[] => {
 
       return 0;
     });
-};
+}
+
+function _getRouteTab (): SettingTab | undefined {
+  const tab = route.query.tab as SettingTab | undefined;
+
+  if(!tab) {
+    return undefined;
+  }
+
+  // TODO: validate tab
+  return tab;
+}
+
+watch(() => form[darkModeOption.value.id], (value) => {
+  settingStore.setDarkMode(value);
+  notificationStore.notify('Settings', `Dark mode ${value ? 'enabled' : 'disabled'}.`)
+});
+
+watch(() => form[signatureOption.value.id], (value) => {
+  settingStore.setRequireSignature(value);
+});
+
+watch(() => tab.value, (value) => {
+  router.replace({
+    query: {
+      tab: value
+    }
+  });
+});
 
 onMounted(async () => {
   const darkMode: boolean = await settingStore.isDarkMode();
@@ -107,7 +144,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <BasePage title="Settings">
+  <base-page title="Settings">
     <v-row justify="center">
       <v-col
         cols="11"
@@ -122,7 +159,7 @@ onMounted(async () => {
         </v-tabs>
       </v-col>
 
-      <v-divider class="opacity-0" />
+      <v-divider class="border-opacity-0" />
 
       <v-col
         cols="11"
@@ -134,13 +171,19 @@ onMounted(async () => {
                 v-for="option in getOptionsByTab('system')"
                 :key="option.label"
                 density="compact">
+                <v-row
+                  justify-md="space-between"
+                  no-gutters>
+                  <v-col
+                    cols="12"
+                    md="6">
                 <v-list-item-title class="text-bold">
                   {{ option.label }}
                 </v-list-item-title>
-
                 {{ option.description }}
+                  </v-col>
 
-                <v-list-item-action>
+                  <v-col cols="auto">
                   <v-switch
                     v-if="option.type === 'toggle'"
                     v-model="form[option.id]"
@@ -149,48 +192,63 @@ onMounted(async () => {
                     color="success"
                     density="compact"
                     class="px-3" />
-                  <BaseBtn
+                  <base-btn
                     v-else
                     :color="option.color"
-                    class="mt-2"
-                    :to="option.to">{{ option.prompt }}</BaseBtn>
-                </v-list-item-action>
+                      :to="option.to"
+                      @click="option.action">{{
+                        option.prompt }}</base-btn>
+                  </v-col>
+                </v-row>
               </v-list-item>
             </v-list>
           </v-window-item>
 
           <v-window-item :value="`${'security' as SettingTab}`">
             <v-list>
-              <v-list-item
-                v-for="option in getOptionsByTab('security')"
-                :key="option.label"
-                density="compact">
-                <v-list-item-title class="text-bold">
-                  {{ option.label }}
-                </v-list-item-title>
+              <div
+                v-for="option, index in getOptionsByTab('security')"
+                :key="option.label">
+                <v-list-item
+                  density="compact"
+                  class="mt-2">
+                  <v-row justify-md="space-between">
+                    <v-col
+                      cols="12"
+                      md="6">
+                  <v-list-item-title class="text-bold">
+                    {{ option.label }}
+                  </v-list-item-title>
+                  {{ option.description }}
+                    </v-col>
 
-                {{ option.description }}
+                    <v-col cols="auto">
+                    <v-switch
+                      v-if="option.type === 'toggle'"
+                      v-model="form[option.id]"
+                      flat
+                      inline
+                      color="success"
+                      density="compact"
+                      class="px-3" />
+                    <base-btn
+                      v-else
+                      :color="option.color"
+                      :to="option.to"
+                      @click="option.action">{{
+                        option.prompt }}</base-btn>
+                    </v-col>
+                  </v-row>
+                </v-list-item>
 
-                <v-list-item-action>
-                  <v-switch
-                    v-if="option.type === 'toggle'"
-                    v-model="form[option.id]"
-                    flat
-                    inline
-                    color="success"
-                    density="compact"
-                    class="px-3" />
-                  <BaseBtn
-                    v-else
-                    :color="option.color"
-                    class="mt-2"
-                    :to="option.to">{{ option.prompt }}</BaseBtn>
-                </v-list-item-action>
-              </v-list-item>
+                <v-divider
+                  v-if="index + 1 < getOptionsByTab('security').length"
+                  class="mt-2 border-opacity-50" />
+              </div>
             </v-list>
           </v-window-item>
         </v-window>
       </v-col>
     </v-row>
-  </BasePage>
+  </base-page>
 </template>
