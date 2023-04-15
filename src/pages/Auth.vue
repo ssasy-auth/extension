@@ -4,14 +4,14 @@ import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import type { LocationQuery } from 'vue-router';
 import {
-  useVaultStore,
   useSessionStore,
   useWalletStore,
   useNotificationStore
 } from '~/common/stores';
 import BasePage from '~/components/Base/BasePage.vue';
 import BaseCard from '~/components/Base/BaseCard.vue';
-import AuthForm from '~/components/Auth/AuthForm.vue';
+import VaultAuthForm from '~/components/Auth/VaultAuthForm.vue';
+import type { PrivateKey } from '@ssasy-auth/core';
 
 const route = useRoute();
 const router = useRouter();
@@ -19,15 +19,11 @@ const notificationStore = useNotificationStore();
 
 const sessionTimedOut = ref<boolean>(route.query.timeout === 'true');
 
-async function handleLoginForm(password: string) {
-  const vaultStore = useVaultStore();
+async function processPrivateKey(privateKey: PrivateKey) {
   const walletStore = useWalletStore();
   const sessionStore = useSessionStore();
 
   try {
-    // unwrap key
-    const privateKey = await vaultStore.unwrapKey(password);
-
     // set wallet
     walletStore.setWallet(privateKey);
 
@@ -76,7 +72,7 @@ async function handleLoginForm(password: string) {
       <v-col
         cols="10"
         md="6">
-        <auth-form @input="handleLoginForm" />
+        <vault-auth-form @input="processPrivateKey" />
       </v-col>
     </v-row>
   </base-page>

@@ -4,7 +4,6 @@ import { useRoute } from 'vue-router';
 import { SsasyMessenger } from '~/common/logic';
 import { PopupPage } from '~/common/utils';
 import {
-  useVaultStore,
   useWalletStore,
   useSessionStore,
   useNotificationStore
@@ -19,7 +18,8 @@ import type { ActionItem } from '~/components/Base/BaseCard.vue';
 import BasePage from '~/components/Base/BasePage.vue';
 import BaseCard from '~/components/Base/BaseCard.vue';
 import BaseBtn from '~/components/Base/BaseBtn.vue';
-import AuthForm from '~/components/Auth/AuthForm.vue';
+import VaultAuthForm from '~/components/Auth/VaultAuthForm.vue';
+import { PrivateKey } from '@ssasy-auth/core';
 
 const route = useRoute();
 const notificationStore = useNotificationStore();
@@ -106,16 +106,12 @@ function rejectPublicKeyRequest() {
  * 
  * @param password - password to unlock wallet
  */
-async function approveChallengeRequest(password: string) {
-  const vaultStore = useVaultStore();
+async function approveChallengeRequest(privateKey: PrivateKey) {
   const walletStore = useWalletStore();
 
   loading.value = true;
 
   try {
-    // unwrap key
-    const privateKey = await vaultStore.unwrapKey(password);
-
     // set wallet
     walletStore.setWallet(privateKey);
   } catch (error) {
@@ -293,7 +289,7 @@ onMounted(async () => {
           <p class="request-promt">Enter your password to confirm the {{ mode }} request.</p>
         </base-card>
 
-        <auth-form
+        <vault-auth-form
           class="mt-2"
           style="padding-top: 20px;"
           :loading="loading"
