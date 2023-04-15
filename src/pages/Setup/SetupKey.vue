@@ -6,7 +6,7 @@ import { KeyChecker } from '@ssasy-auth/core';
 import { useKeyStore } from '~/common/stores/key-store';
 import BasePage from '~/components/Base/BasePage.vue';
 import BaseBtn from '~/components/Base/BaseBtn.vue';
-import KeyViewer from '~/components/Key/KeyViewer.vue';
+import InfoCardBackup from '~/components/Info/InfoCardBackup.vue';
 
 const keyStore = useKeyStore();
 
@@ -55,22 +55,11 @@ async function generateKey(){
         cols="12"
         md="6"
         class="mt-1">
-        <base-card 
-          color="warning"
-          :outlined="false">
-          <v-card-text>
-            <blockquote>
-              <p>
-                Your key is used to securely register and login to websites. Losing or exposing it can result in unauthorized access to your personal information and accounts.
-                Please export your key and store it somewhere safe and private.
-              </p>
-            </blockquote>
-          </v-card-text>
-        </base-card>
+        <info-card-backup />
         <v-switch
           v-model="data.termsAccepted"
           color="primary"
-          :label="data.termsAccepted ? 'I understand' : 'I do not understand'"
+          label="I understand"
           inset></v-switch>
       </v-col>
       <v-divider />

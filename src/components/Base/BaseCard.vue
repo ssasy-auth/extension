@@ -34,11 +34,19 @@ const props = defineProps({
   },
   flat: {
     type: Boolean,
-    default: true
+    default: undefined
+  },
+  tonal: {
+    type: Boolean,
+    default: undefined
+  },
+  text: {
+    type: Boolean,
+    default: undefined
   },
   outlined: {
     type: Boolean,
-    default: true
+    default: undefined
   },
   loading: {
     type: Boolean,
@@ -54,12 +62,19 @@ const props = defineProps({
   }
 })
 
-type CardStyle = 'flat' | 'outlined' | 'text' | 'elevated' | 'tonal' | 'plain';
+type CardStyle = 'flat' | 'outlined' | 'text' | 'tonal' | 'plain';
 const getCardStyle: ComputedRef<NonNullable<CardStyle> | undefined> = computed(() => {
-  if(props.outlined === true){
+  if(props.outlined){
     return 'outlined';
-  } else {
-    return undefined
+  }
+  else if(props.text){
+    return 'text';
+  }
+  else if(props.tonal){
+    return 'tonal';
+  }
+  else {
+    return 'flat'
   }
 });
 
@@ -81,9 +96,8 @@ const getActions: ComputedRef<ActionItem[]> = computed(() => {
   <v-card
     :title="props.title"
     :subtitle="props.subtitle"
-    :flat="props.flat"
-    :color="props.color"
     :variant="getCardStyle"
+    :color="props.color"
     class="pa-2">
     <slot></slot>
 
