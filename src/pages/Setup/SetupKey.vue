@@ -6,6 +6,7 @@ import { KeyChecker } from '@ssasy-auth/core';
 import { useKeyStore } from '~/common/stores/key-store';
 import BasePage from '~/components/Base/BasePage.vue';
 import BaseBtn from '~/components/Base/BaseBtn.vue';
+import KeyCard from '~/components/Key/KeyCard.vue';
 import InfoCardBackup from '~/components/Info/InfoCardBackup.vue';
 
 const keyStore = useKeyStore();
@@ -46,7 +47,7 @@ async function generateKey(){
       <v-col
         cols="12" 
         md="6">
-        <key-viewer
+        <key-card
           :ssasy-key="data.key"
           :show-secrets="true" />
       </v-col>

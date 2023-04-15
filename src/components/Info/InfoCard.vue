@@ -14,9 +14,18 @@ const props = defineProps({
   <base-card
     text
     :color="props.color">
-    <slot name="icon">
-      <mdi-information-outline />
-    </slot>
-    <slot></slot>
+    <v-row>
+      <v-col
+        cols="1"
+        class="text-center">
+        <slot name="icon">
+          <mdi-information-outline />
+        </slot>
+      </v-col>
+      
+      <v-col>
+        <slot></slot>
+      </v-col>
+    </v-row>
   </base-card>
 </template>

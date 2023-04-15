@@ -17,7 +17,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/key',
     name: 'key',
-    component: () => import('~/pages/PublicKey.vue'),
+    component: () => import('~/pages/Key.vue'),
     beforeEnter: [ KeyGuard, SessionGaurd ]
   },
   {

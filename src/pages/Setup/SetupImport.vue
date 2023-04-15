@@ -1,23 +1,28 @@
 <!-- generate key or import -->
 <script setup lang="ts">
-import { reactive, computed } from 'vue';
-import { GenericKey, KeyChecker } from '@ssasy-auth/core';
+import { ref, reactive, computed, watch } from 'vue';
+import { KeyChecker, CryptoChecker, CryptoModule } from '@ssasy-auth/core';
 import { useKeyStore } from '~/common/stores/key-store';
 import { useNotificationStore } from '~/common/stores/app';
 import BasePage from '~/components/Base/BasePage.vue';
+import BaseCard from '~/components/Base/BaseCard.vue';
+import BaseBtn from '~/components/Base/BaseBtn.vue';
+import InfoCard from '~/components/Info/InfoCard.vue';
 import InputFile from '~/components/Base/InputFile.vue';
 import InputTextArea from '~/components/Base/InputTextArea.vue';
-import KeyViewer from '~/components/Key/KeyViewer.vue';
+import InputText from '~/components/Base/InputText.vue';
+import KeyCard from '~/components/Key/KeyCard.vue';
 import { KeyType } from '@ssasy-auth/core';
-import type { PrivateKey, RawKey } from '@ssasy-auth/core';
+import type { Ciphertext, GenericKey, PrivateKey, RawKey } from '@ssasy-auth/core';
 
 const notificationStore = useNotificationStore();
 const keyStore = useKeyStore();
 
-const form = reactive({
-  files: undefined as File[] | undefined,
-  text: undefined as string | undefined
-});
+const formFiles = ref<File[]>([]);
+const formText = ref<string | undefined>(undefined);
+
+const requestPassword = ref(false);
+const password = ref<string | undefined>(undefined);
 
 const data = reactive({
   rawKey: undefined as RawKey | undefined,
@@ -35,39 +40,81 @@ const isValidKey = computed(() => {
   return KeyChecker.isKey(data.privateKey);
 });
 
-async function convertInputToKey(input: string | Blob[]): Promise<RawKey>{
-  let key: RawKey;
+/**
+ * Returns true if the file is valid
+ */
+const isValidFile = computed(() => {
+  if(
+    formFiles.value === undefined ||
+    formFiles.value.length === 0
+  ){
+    return false;
+  }
 
-  if(typeof input === 'string'){
-    try {
-    // convert string to raw key (json)
-      key = JSON.parse(input);
-    } catch (error) {
-      throw new Error('Not a valid json string');
-    }
+  const file = formFiles.value[0];
 
-  } else if ( Array.isArray(input) && input[0] instanceof Blob){
-    const file = input[0] as File;
+  if(file instanceof Blob === false){
+    notificationStore.error('Setup Import Flow', 'Invalid file', { toast: true });
+    return false;
+  }
 
-    // throw error if no file
-    if(!file){
-      throw new Error('No file');
-    }
+  if(file.type !== 'application/json'){
+    notificationStore.error('Setup Import Flow', 'Invalid json file type', { toast: true });
+    return false;
+  }
 
-    // throw error if not a json file
-    if(file.type !== 'application/json'){
-      throw new Error('Not a json file');
-    }
+  return true;
+});
 
-    // extract file contents
-    const content = await file.text();
+/**
+ * Returns true if the text is valid
+ */
+const isValidText = computed(() => {
+  const value = formText.value;
 
-    // convert string content to raw key (json)
-    key = JSON.parse(content);
-  } else {
-    throw new Error('Invalid input');
+  if(value === undefined){
+    return false;
+  }
+
+  if(typeof value !== 'string'){
+    return false;
+  }
+
+  if(value.trim().length === 0){
+    return false;
   }
   
+  return true;
+});
+
+/**
+ * Returns string of user input
+ */
+async function _getInput(input: string | Blob[]): Promise<string>{
+  if(
+    !isValidText.value && // if text is not valid
+    !isValidFile.value // and file is not valid
+  ){
+    throw new Error('Invalid input');
+  }
+
+  if(typeof input === 'string'){
+    return input;
+  }
+
+  const file = formFiles.value![0];
+
+  // extract file contents
+  return await file.text();
+}
+
+/**
+ * Converts input to raw key
+ */
+async function _stringToRawKey(content: string): Promise<RawKey>{
+  
+  let key: RawKey = JSON.parse(content);
+
   // throw error if not a raw key
   if(!KeyChecker.isRawKey(key as GenericKey)){
     throw new Error('Not a valid raw key');
@@ -85,15 +132,37 @@ async function convertInputToKey(input: string | Blob[]): Promise<RawKey>{
  * Sets the raw key and private key
  */
 async function importKey(){
-  const input = form.files || form.text;
-
-  if(input === undefined){
-    throw new Error('Input is undefined');
-  }
+  const input = await _getInput(formText.value || formFiles.value);
 
   try {
-    // convert file or string to raw key
-    const rawKey = await convertInputToKey(input);
+    if(input === undefined){
+      throw new Error('Input is undefined');
+    }
+
+    let rawKey: RawKey;
+
+    if(requestPassword.value === true){
+      if(password.value === undefined){
+        throw new Error('File provided is encrypted. Please provide a valid password to continue');
+      }
+
+      const ciphertext = JSON.parse(input) as Ciphertext;
+
+      if(!CryptoChecker.isCiphertext(ciphertext)){
+        throw new Error('Invalid ciphertext');
+      }
+
+      // decrypt raw key
+      const plaintext = await CryptoModule.decrypt(password.value, ciphertext)
+      rawKey = JSON.parse(plaintext) as RawKey;
+      
+    } else {
+      rawKey = await _stringToRawKey(input);
+    }
+
+    if(requestPassword.value === true && password.value === undefined){
+      throw new Error('Password is undefined');
+    }
     
     // set component raw key
     data.rawKey = rawKey;
@@ -112,6 +181,16 @@ async function importKey(){
     notificationStore.error('Setup Import Flow', message, { toast: true });
   }
 }
+
+// watch for file changes
+watch(formFiles, async (files) => {
+  const content: string = await _getInput(files);
+  const isCiphertext = CryptoChecker.isCiphertext(JSON.parse(content));
+
+  if(isCiphertext){
+    requestPassword.value = true;
+  }
+});
 </script>
 
 <template>
@@ -123,54 +202,85 @@ async function importKey(){
       <v-col
         cols="10"
         md="6">
-        <base-card>
-          <v-card-text>
-            <p>
-              There are two ways to import a key. You can either copy/paste the key into the text area below,
-              or you can upload a JSON file containing the key.
-            </p>
-          </v-card-text>
-        </base-card>
+        <info-card>
+          <p>
+            There are two ways to import a key. You can either copy/paste the key into the text area below,
+            or you can upload a JSON file containing the key.
+          </p>
+        </info-card>
       </v-col>
       <v-divider />
       <v-col
         cols="10"
         md="6"
         class="mt-2">
+        
         <base-card
           class="my-1"
           :outlined="false">
           <input-text-area
-            v-model="form.text"
+            v-model="formText"
             label="Paste Key" />
         </base-card>
+        
         <div class="text-center">
           <i>or</i>
         </div>
+        
         <base-card
           class="my-1"
+          :tonal="requestPassword"
           :outlined="false">
+          
           <input-file
-            v-model="form.files"
+            v-model="formFiles"
             label="Upload JSON File"/>
+
+          <input-text
+            v-if="requestPassword"
+            v-model="password"
+            label="Password"
+            type="password" />
+
+          <info-card v-if="requestPassword">
+            <p>
+              The file you uploaded is encrypted. Please provide the password to continue.
+            </p>
+          </info-card>
+
+          <div class="text-center mt-2">
+            <base-btn
+              v-if="requestPassword"
+              :disabled="!password"
+              @click="importKey">
+              Decrypt File
+            </base-btn>
+          </div>
+
         </base-card>
       </v-col>
+
       <v-divider />
-      <v-col cols="auto">
+
+      <v-col
+        v-if="!requestPassword"
+        cols="auto"
+        class="mt-2">
         <base-btn
-          :disabled="!form.text && !form.files"
+          :disabled="!formText && !formFiles"
           @click="importKey">
           Import
         </base-btn>
       </v-col>
     </v-row>
+    
     <v-row
       v-else
       justify="center">
       <v-col
         cols="10"
         md="6">
-        <key-viewer
+        <key-card
           :ssasy-key="data.privateKey!"
           :show-secrets="true" />
       </v-col>

@@ -6,7 +6,7 @@ import type { PrivateKey } from '@ssasy-auth/core';
 import BasePage from '~/components/Base/BasePage.vue';
 import BaseBtn from '~/components/Base/BaseBtn.vue';
 import InputText from '~/components/Base/InputText.vue';
-import KeyViewer from '~/components/Key/KeyViewer.vue';
+import KeyCard from '~/components/Key/KeyCard.vue';
 
 const router = useRouter();
 const keyStore = useKeyStore();
@@ -94,7 +94,9 @@ onMounted(async () => {
         v-if="isValidKey"
         cols="10"
         md="6">
-        <key-viewer :ssasy-key="data.privateKey!" />
+        <key-card
+          :ssasy-key="data.privateKey!"
+          :hide-info="true" />
       </v-col>
       <v-divider />
       <v-col

@@ -52,6 +52,16 @@ const viewLogsOption = ref<SettingItem>({
   to: '/settings/logs'
 });
 
+const exportVaultKey = ref<SettingItem>({
+  id: 'export-vault-key',
+  tab: 'security',
+  type: 'action',
+  label: 'Export Private Key',
+  prompt: 'Export key',
+  description: 'Export your private key as a JSON file.',
+  to: '/key/?tab=private'
+});
+
 const changeVaultPasswordOption = ref<SettingItem>({
   id: 'change-vault-password',
   tab: 'security',
@@ -78,6 +88,7 @@ const options = ref<SettingItem[]>([
   signatureOption.value,
   darkModeOption.value,
   viewLogsOption.value,
+  exportVaultKey.value,
   changeVaultPasswordOption.value,
   deleteVaultKey.value
 ]);
@@ -177,24 +188,24 @@ onMounted(async () => {
                   <v-col
                     cols="12"
                     md="6">
-                <v-list-item-title class="text-bold">
-                  {{ option.label }}
-                </v-list-item-title>
-                {{ option.description }}
+                    <v-list-item-title class="text-bold">
+                      {{ option.label }}
+                    </v-list-item-title>
+                    {{ option.description }}
                   </v-col>
 
                   <v-col cols="auto">
-                  <v-switch
-                    v-if="option.type === 'toggle'"
-                    v-model="form[option.id]"
-                    flat
-                    inline
-                    color="success"
-                    density="compact"
-                    class="px-3" />
-                  <base-btn
-                    v-else
-                    :color="option.color"
+                    <v-switch
+                      v-if="option.type === 'toggle'"
+                      v-model="form[option.id]"
+                      flat
+                      inline
+                      color="success"
+                      density="compact"
+                      class="px-3" />
+                    <base-btn
+                      v-else
+                      :color="option.color"
                       :to="option.to"
                       @click="option.action">{{
                         option.prompt }}</base-btn>
@@ -216,27 +227,27 @@ onMounted(async () => {
                     <v-col
                       cols="12"
                       md="6">
-                  <v-list-item-title class="text-bold">
-                    {{ option.label }}
-                  </v-list-item-title>
-                  {{ option.description }}
+                      <v-list-item-title class="text-bold">
+                        {{ option.label }}
+                      </v-list-item-title>
+                      {{ option.description }}
                     </v-col>
 
                     <v-col cols="auto">
-                    <v-switch
-                      v-if="option.type === 'toggle'"
-                      v-model="form[option.id]"
-                      flat
-                      inline
-                      color="success"
-                      density="compact"
-                      class="px-3" />
-                    <base-btn
-                      v-else
-                      :color="option.color"
-                      :to="option.to"
-                      @click="option.action">{{
-                        option.prompt }}</base-btn>
+                      <v-switch
+                        v-if="option.type === 'toggle'"
+                        v-model="form[option.id]"
+                        flat
+                        inline
+                        color="success"
+                        density="compact"
+                        class="px-3" />
+                      <base-btn
+                        v-else
+                        :color="option.color"
+                        :to="option.to"
+                        @click="option.action">{{
+                          option.prompt }}</base-btn>
                     </v-col>
                   </v-row>
                 </v-list-item>
