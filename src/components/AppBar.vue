@@ -17,10 +17,6 @@ const inAuth = computed(() => {
   return route.path.includes('/auth');
 });
 
-const inSetup = computed(() => {
-  return route.path.includes('/setup');
-});
-
 const inAuthRequest = computed(() => {
   return route.path.includes('/request');
 });
@@ -28,8 +24,7 @@ const inAuthRequest = computed(() => {
 function goBack() {
   if(
     inRoot.value ||
-    inAuth.value ||
-    inSetup.value
+    inAuth.value
   ){
     PopupPage.close();
   }
