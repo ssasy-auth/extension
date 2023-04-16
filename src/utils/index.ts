@@ -1,5 +1,4 @@
 export * from './browser'
 export * from './setup'
 export * from './logger'
-export * from './theme'
 export * from './error'
