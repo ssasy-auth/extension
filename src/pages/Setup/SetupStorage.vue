@@ -102,6 +102,17 @@ onMounted(async () => {
       <v-col
         cols="10"
         md="6">
+        <info-card>
+          <b>Encrypt your private key</b>
+          <p>
+            Enter a password to encrypt your private key. This password will be used to unlock your key when you want to use it.
+          </p>
+        </info-card>
+      </v-col>
+      <v-divider class="border-opacity-0" />
+      <v-col
+        cols="10"
+        md="6">
         <input-text
           v-model="form.password"
           label="Password"

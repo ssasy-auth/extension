@@ -9,7 +9,7 @@ import {
   useNotificationStore
 } from '~/stores';
 import BasePage from '~/components/base/BasePage.vue';
-import BaseCard from '~/components/base/BaseCard.vue';
+import InfoCard from '~/components/cards/InfoCard.vue';
 import VaultAuthForm from '~/components/forms/VaultAuthForm.vue';
 import type { PrivateKey } from '@ssasy-auth/core';
 
@@ -19,7 +19,7 @@ const notificationStore = useNotificationStore();
 
 const sessionTimedOut = ref<boolean>(route.query.timeout === 'true');
 
-async function processPrivateKey(privateKey: PrivateKey) {
+async function setSession(privateKey: PrivateKey) {
   const walletStore = useWalletStore();
   const sessionStore = useSessionStore();
 
@@ -57,22 +57,22 @@ async function processPrivateKey(privateKey: PrivateKey) {
   <base-page title="Start Page">
     <v-row justify="center">
       <v-col
-        v-if="sessionTimedOut"
         cols="10"
         md="6">
-        <base-card>
-          <p>
-            Your session has timed out. Please login again to continue.
-          </p>
-        </base-card>
-      </v-col>
-
-      <v-divider class="border-opacity-0" />
-      
-      <v-col
-        cols="10"
-        md="6">
-        <vault-auth-form @input="processPrivateKey" />
+        <vault-auth-form @input="setSession">
+          <template #header>
+            <info-card v-if="sessionTimedOut">
+              <p>
+                Your session has timed out. Please login again to continue.
+              </p>
+            </info-card>
+            <info-card v-else>
+              <p>
+                Please login to continue.
+              </p>
+            </info-card>
+          </template>
+        </vault-auth-form>
       </v-col>
     </v-row>
   </base-page>

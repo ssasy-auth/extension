@@ -55,8 +55,14 @@ async function generateKey(){
       <v-col
         cols="12"
         md="6"
-        class="mt-1">
+        class="mt-2">
         <info-card-backup />
+      </v-col>
+      <v-divider class="border-opacity-0" />
+      <v-col
+        cols="12"
+        md="6"
+        class="mt-2">
         <v-switch
           v-model="data.termsAccepted"
           color="primary"
