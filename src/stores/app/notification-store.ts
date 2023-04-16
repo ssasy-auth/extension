@@ -1,9 +1,9 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
-import { Logger } from '~/common/utils'
+import { Logger } from '~/utils'
 import { useNotification } from '~/composables/useNotification';
 import type { NotificationType } from '~/composables/useNotification';
-import type { GenericLog, ErrorLog, InfoLog, LogType } from '~/common/utils';
+import type { GenericLog, ErrorLog, InfoLog, LogType } from '~/utils';
 
 interface NotificationConfig {
   toast?: boolean;

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useSessionStore } from '~/common/stores';
+import { useSessionStore } from '~/stores';
 import type { PrivateKey } from '@ssasy-auth/core';
 import BasePage from '~/components/Base/BasePage.vue';
 import VaultAuthForm from '~/components/Auth/VaultAuthForm.vue';

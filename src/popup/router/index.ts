@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import { KeyGuard, SessionGaurd, MessengerGuard } from '~/common/routes';
+import { KeyGuard, SessionGaurd, MessengerGuard } from '~/routes';
 import type { RouteRecordRaw } from 'vue-router';
 import HomeVue from '~/pages/Home.vue';
 

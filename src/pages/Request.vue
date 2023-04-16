@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-import { SsasyMessenger } from '~/common/logic';
-import { PopupPage } from '~/common/utils';
+import { SsasyMessenger } from '~/logic';
+import { PopupPage } from '~/utils';
 import {
   useWalletStore,
   useSessionStore,
   useNotificationStore
-} from '~/common/stores';
+} from '~/stores';
 import { MessageType } from '~/bridge';
 import type {
   RequestMode,

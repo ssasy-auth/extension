@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue';
-import { useSettingStore } from '~/common/stores';
+import { useSettingStore } from '~/stores';
 import AppBar from '~/components/AppBar.vue';
 import AppFooter from '~/components/AppFooter.vue';
 import AppNotification from '~/components/AppNotification.vue';

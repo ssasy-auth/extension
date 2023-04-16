@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
-import { useVaultStore, useNotificationStore } from '~/common/stores';
+import { useVaultStore, useNotificationStore } from '~/stores';
 import BasePage from '~/components/Base/BasePage.vue';
 import BaseCard from '~/components/Base/BaseCard.vue';
 import BaseBtn from '~/components/Base/BaseBtn.vue';

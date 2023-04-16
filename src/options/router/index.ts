@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
-import { KeyGuard, SessionGaurd } from '~/common/routes';
+import { KeyGuard, SessionGaurd } from '~/routes';
 import HomeVue from '~/pages/Home.vue';
 
 const routes: Array<RouteRecordRaw> = [

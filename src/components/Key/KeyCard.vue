@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { KeyChecker, KeyType, KeyModule, CryptoModule } from '@ssasy-auth/core';
-import { useKeyStore } from '~/common/stores/key-store';
+import { useKeyStore } from '~/stores/key-store';
 import type { PropType, ComputedRef } from 'vue';
 import type { GenericKey, RawKey } from '@ssasy-auth/core';
 import type { ActionItem } from '~/components/Base/BaseCard.vue';

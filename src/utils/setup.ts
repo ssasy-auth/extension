@@ -1,7 +1,7 @@
 import type { App } from 'vue'
 import { getCurrentContext } from 'webext-bridge'
-import VuetifyPlugin from '~/common/plugins/vuetify-plugin'
-import PiniaPlugin from '~/common/plugins/pinia-plugin'
+import VuetifyPlugin from '~/plugins/vuetify-plugin'
+import PiniaPlugin from '~/plugins/pinia-plugin'
 
 export function setupApp(app: App, config?: { blockVuetify?: boolean, blockPinia?: boolean }) {
   const context = getCurrentContext()

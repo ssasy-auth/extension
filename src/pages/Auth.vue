@@ -7,7 +7,7 @@ import {
   useSessionStore,
   useWalletStore,
   useNotificationStore
-} from '~/common/stores';
+} from '~/stores';
 import BasePage from '~/components/Base/BasePage.vue';
 import BaseCard from '~/components/Base/BaseCard.vue';
 import VaultAuthForm from '~/components/Auth/VaultAuthForm.vue';

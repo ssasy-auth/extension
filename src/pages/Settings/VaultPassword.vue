@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { useVaultStore, useNotificationStore } from '~/common/stores';
+import { useVaultStore, useNotificationStore } from '~/stores';
 
 interface Prompt {
   id: string;

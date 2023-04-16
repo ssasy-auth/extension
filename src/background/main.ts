@@ -1,6 +1,6 @@
 import { onMessage } from 'webext-bridge';
 import { Windows, Tabs } from 'webextension-polyfill';
-import { PopupPage, Logger } from '~/common/utils';
+import { PopupPage, Logger } from '~/utils';
 import { MessageType } from '~/bridge';
 import type {
   BaseMessage,

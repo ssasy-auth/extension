@@ -4,7 +4,7 @@ import { useNotificationStore } from './notification-store';
 import { KeyChecker, KeyType, KeyModule, GenericKey } from '@ssasy-auth/core';
 import { useLocalStorage } from '~/composables/useLocalStorage';
 import { StorageEnum, useBrowserStorage } from '~/composables/useBrowserStorage';
-import { processSsasyLikeError } from '~/common/utils';
+import { processSsasyLikeError } from '~/utils';
 import type { PublicKey, RawKey } from '@ssasy-auth/core';
 import type { RemovableRef } from '@vueuse/core';
 

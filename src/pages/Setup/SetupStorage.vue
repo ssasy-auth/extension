@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { reactive, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { useVaultStore, useKeyStore, useNotificationStore } from '~/common/stores';
+import { useVaultStore, useKeyStore, useNotificationStore } from '~/stores';
 import type { PrivateKey } from '@ssasy-auth/core';
 import BasePage from '~/components/Base/BasePage.vue';
 import BaseBtn from '~/components/Base/BaseBtn.vue';

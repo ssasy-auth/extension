@@ -2,7 +2,7 @@ import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
 import { KeyModule, KeyChecker } from '@ssasy-auth/core';
 import type { GenericKey, PrivateKey, RawKey } from '@ssasy-auth/core';
-import { useNotificationStore } from '~/common/stores/app';
+import { useNotificationStore } from '~/stores/app';
 
 export const useKeyStore = defineStore('key', () => {
   const temporaryKey = ref<PrivateKey | undefined>(undefined);

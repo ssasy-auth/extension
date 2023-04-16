@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { sendMessage } from 'webext-bridge';
 import { createApp } from 'vue';
-import { setupApp, Logger } from '~/common/utils';
+import { setupApp, Logger } from '~/utils';
 import { MessageType } from '~/bridge';
 import type {
   BaseMessage,

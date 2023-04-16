@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia';
-import { processSsasyLikeError } from '~/common/utils';
+import { processSsasyLikeError } from '~/utils';
 import { useLocalStorage } from '~/composables/useLocalStorage';
 import { StorageEnum, useBrowserStorage } from '~/composables/useBrowserStorage';
-import { useKeyStore, useNotificationStore } from '~/common/stores';
+import { useKeyStore, useNotificationStore } from '~/stores';
 import { KeyChecker, KeyModule, CryptoModule, CryptoChecker } from '@ssasy-auth/core';
 import type { PrivateKey, StandardCiphertext } from '@ssasy-auth/core';
 

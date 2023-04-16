@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { PopupPage } from '~/common/utils/browser';
-import { SsasyMessenger } from '~/common/logic';
+import { PopupPage } from '~/utils/browser';
+import { SsasyMessenger } from '~/logic';
 import Logo from '~/components/Logo.vue';
 import BaseBtn from './Base/BaseBtn.vue';
 

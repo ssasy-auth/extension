@@ -1,7 +1,7 @@
 <!-- login user or redirect them to setup.vue -->
 <script setup lang="ts">
 import { reactive, computed, ComputedRef } from 'vue';
-import { useVaultStore, useNotificationStore } from '~/common/stores';
+import { useVaultStore, useNotificationStore } from '~/stores';
 import BaseCard from '~/components/Base/BaseCard.vue';
 import BaseInput from '~/components/Base/InputText.vue';
 import type { ActionItem } from '~/components/Base/BaseCard.vue';

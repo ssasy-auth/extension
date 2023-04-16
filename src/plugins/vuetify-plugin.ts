@@ -4,7 +4,7 @@ import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
 import { VSkeletonLoader } from 'vuetify/labs/VSkeletonLoader'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
-import { AppTheme, AppThemeDark } from '../utils/theme'
+import { AppTheme, AppThemeDark } from '~/utils/theme'
 
 export default createVuetify({
   components: {

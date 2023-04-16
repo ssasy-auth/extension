@@ -2,8 +2,8 @@
 <script setup lang="ts">
 import { ref, reactive, computed, watch } from 'vue';
 import { KeyChecker, CryptoChecker, CryptoModule } from '@ssasy-auth/core';
-import { useKeyStore } from '~/common/stores/key-store';
-import { useNotificationStore } from '~/common/stores/app';
+import { useKeyStore } from '~/stores/key-store';
+import { useNotificationStore } from '~/stores/app';
 import BasePage from '~/components/Base/BasePage.vue';
 import BaseCard from '~/components/Base/BaseCard.vue';
 import BaseBtn from '~/components/Base/BaseBtn.vue';
