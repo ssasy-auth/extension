@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import BaseImage from '~/components/Base/BaseImage.vue';
+import BaseImage from '~/components/base/BaseImage.vue';
 import LogoImage from '~/assets/logo.svg';
 </script>
 

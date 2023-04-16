@@ -4,10 +4,10 @@ import type { PrivateKey } from '@ssasy-auth/core';
 import { reactive, computed } from 'vue';
 import { KeyChecker } from '@ssasy-auth/core';
 import { useKeyStore } from '~/stores/key-store';
-import BasePage from '~/components/Base/BasePage.vue';
-import BaseBtn from '~/components/Base/BaseBtn.vue';
-import KeyCard from '~/components/Key/KeyCard.vue';
-import InfoCardBackup from '~/components/Info/InfoCardBackup.vue';
+import BasePage from '~/components/base/BasePage.vue';
+import BaseBtn from '~/components/base/BaseBtn.vue';
+import KeyCard from '~/components/cards/KeyCard.vue';
+import InfoCardBackup from '~/components/cards/InfoCardBackup.vue';
 
 const keyStore = useKeyStore();
 

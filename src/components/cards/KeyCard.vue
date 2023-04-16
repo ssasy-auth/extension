@@ -4,12 +4,12 @@ import { KeyChecker, KeyType, KeyModule, CryptoModule } from '@ssasy-auth/core';
 import { useKeyStore } from '~/stores/key-store';
 import type { PropType, ComputedRef } from 'vue';
 import type { GenericKey, RawKey } from '@ssasy-auth/core';
-import type { ActionItem } from '~/components/Base/BaseCard.vue';
-import BaseCard from '~/components/Base/BaseCard.vue';
-import BaseBtn from '~/components/Base/BaseBtn.vue';
-import InputText from '~/components/Base/InputText.vue';
-import InfoCard from '../Info/InfoCard.vue';
-import InfoCardNeverShareKey from '../Info/InfoCardNeverShareKey.vue';
+import type { ActionItem } from '~/components/base/BaseCard.vue';
+import BaseCard from '~/components/base/BaseCard.vue';
+import BaseBtn from '~/components/base/BaseBtn.vue';
+import InputText from '~/components/base/InputText.vue';
+import InfoCard from '~/components/cards/InfoCard.vue';
+import InfoCardNeverShareKey from '~/components/cards/InfoCardNeverShareKey.vue';
 
 const keyStore = useKeyStore();
 

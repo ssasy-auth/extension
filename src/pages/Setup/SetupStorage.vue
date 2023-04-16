@@ -3,10 +3,10 @@ import { reactive, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useVaultStore, useKeyStore, useNotificationStore } from '~/stores';
 import type { PrivateKey } from '@ssasy-auth/core';
-import BasePage from '~/components/Base/BasePage.vue';
-import BaseBtn from '~/components/Base/BaseBtn.vue';
-import InputText from '~/components/Base/InputText.vue';
-import KeyCard from '~/components/Key/KeyCard.vue';
+import BasePage from '~/components/base/BasePage.vue';
+import BaseBtn from '~/components/base/BaseBtn.vue';
+import InputText from '~/components/base/InputText.vue';
+import KeyCard from '~/components/cards/KeyCard.vue';
 
 const router = useRouter();
 const keyStore = useKeyStore();

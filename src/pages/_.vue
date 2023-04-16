@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
-import BasePage from '~/components/Base/BasePage.vue';
-import BaseCard from '~/components/Base/BaseCard.vue';
+import BasePage from '~/components/base/BasePage.vue';
+import BaseCard from '~/components/base/BaseCard.vue';
 
 const route = useRoute();
 const path = ref<string | undefined>(route.path);

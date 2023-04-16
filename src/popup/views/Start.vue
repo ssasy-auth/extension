@@ -4,8 +4,8 @@ import { ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { SsasyMessenger } from '~/logic';
 import { OptionPage, PopupPage } from '~/utils/browser.js';
-import BasePage from '~/components/Base/BasePage.vue';
-import BaseBtn from '~/components/Base/BaseBtn.vue';
+import BasePage from '~/components/base/BasePage.vue';
+import BaseBtn from '~/components/base/BaseBtn.vue';
 
 const route = useRoute();
 const origin = ref<string | undefined>(route.query.origin as string);

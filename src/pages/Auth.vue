@@ -8,9 +8,9 @@ import {
   useWalletStore,
   useNotificationStore
 } from '~/stores';
-import BasePage from '~/components/Base/BasePage.vue';
-import BaseCard from '~/components/Base/BaseCard.vue';
-import VaultAuthForm from '~/components/Auth/VaultAuthForm.vue';
+import BasePage from '~/components/base/BasePage.vue';
+import BaseCard from '~/components/base/BaseCard.vue';
+import VaultAuthForm from '~/components/forms/VaultAuthForm.vue';
 import type { PrivateKey } from '@ssasy-auth/core';
 
 const route = useRoute();

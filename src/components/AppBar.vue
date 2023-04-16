@@ -4,7 +4,7 @@ import { useRouter, useRoute } from 'vue-router';
 import { PopupPage } from '~/utils/browser';
 import { SsasyMessenger } from '~/logic';
 import Logo from '~/components/Logo.vue';
-import BaseBtn from './Base/BaseBtn.vue';
+import BaseBtn from './base/BaseBtn.vue';
 
 const router = useRouter();
 const route = useRoute();

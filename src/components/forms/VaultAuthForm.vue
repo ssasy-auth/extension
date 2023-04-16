@@ -2,9 +2,9 @@
 <script setup lang="ts">
 import { reactive, computed, ComputedRef } from 'vue';
 import { useVaultStore, useNotificationStore } from '~/stores';
-import BaseCard from '~/components/Base/BaseCard.vue';
-import BaseInput from '~/components/Base/InputText.vue';
-import type { ActionItem } from '~/components/Base/BaseCard.vue';
+import BaseCard from '~/components/base/BaseCard.vue';
+import BaseInput from '~/components/base/InputText.vue';
+import type { ActionItem } from '~/components/base/BaseCard.vue';
 import type { PrivateKey } from '@ssasy-auth/core';
 
 const props = defineProps({

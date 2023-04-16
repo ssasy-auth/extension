@@ -14,11 +14,11 @@ import type {
   BaseMessage,
   ChallengeRequest
 } from '~/bridge';
-import type { ActionItem } from '~/components/Base/BaseCard.vue';
-import BasePage from '~/components/Base/BasePage.vue';
-import BaseCard from '~/components/Base/BaseCard.vue';
-import BaseBtn from '~/components/Base/BaseBtn.vue';
-import VaultAuthForm from '~/components/Auth/VaultAuthForm.vue';
+import type { ActionItem } from '~/components/base/BaseCard.vue';
+import BasePage from '~/components/base/BasePage.vue';
+import BaseCard from '~/components/base/BaseCard.vue';
+import BaseBtn from '~/components/base/BaseBtn.vue';
+import VaultAuthForm from '~/components/forms/VaultAuthForm.vue';
 import { PrivateKey } from '@ssasy-auth/core';
 
 const route = useRoute();

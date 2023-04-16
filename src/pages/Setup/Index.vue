@@ -1,9 +1,9 @@
 <!-- generate key or import -->
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
-import BasePage from '~/components/Base/BasePage.vue';
-import BaseCard from '~/components/Base/BaseCard.vue';
-import type { ActionItem } from '~/components/Base/BaseCard.vue';
+import BasePage from '~/components/base/BasePage.vue';
+import BaseCard from '~/components/base/BaseCard.vue';
+import type { ActionItem } from '~/components/base/BaseCard.vue';
 
 const router = useRouter();
 

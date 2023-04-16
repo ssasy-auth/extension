@@ -1,6 +1,6 @@
 import { toast } from 'vue-sonner'
 import { defineComponent, h, shallowRef } from 'vue'
-import MessageCardVue from '~/components/MessageCard.vue'
+import MessageCardVue from '~/components/cards/MessageCard.vue'
 import type { DefineComponent } from 'vue'
 
 export type NotificationType = 'general' | 'warning' | 'error' | 'success';

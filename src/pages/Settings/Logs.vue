@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useNotificationStore } from '~/stores';
-import BasePage from '~/components/Base/BasePage.vue';
+import BasePage from '~/components/base/BasePage.vue';
 
 const notificationStore = useNotificationStore();
 

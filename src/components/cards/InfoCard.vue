@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import BaseCard from '../Base/BaseCard.vue';
+import BaseCard from '../base/BaseCard.vue';
 
 const props = defineProps({
   color: {

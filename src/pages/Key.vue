@@ -3,11 +3,11 @@ import { ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useSessionStore } from '~/stores';
 import type { PrivateKey } from '@ssasy-auth/core';
-import BasePage from '~/components/Base/BasePage.vue';
-import VaultAuthForm from '~/components/Auth/VaultAuthForm.vue';
-import KeyCard from '~/components/Key/KeyCard.vue';
-import MessageCard from '~/components/MessageCard.vue';
-import InfoCard from '~/components/Info/InfoCard.vue';
+import BasePage from '~/components/base/BasePage.vue';
+import VaultAuthForm from '~/components/forms/VaultAuthForm.vue';
+import KeyCard from '~/components/cards/KeyCard.vue';
+import MessageCard from '~/components/cards/MessageCard.vue';
+import InfoCard from '~/components/cards/InfoCard.vue';
 
 type KeyTab = 'public' | 'private';
 const tabs: KeyTab[] = [ 'public', 'private' ];

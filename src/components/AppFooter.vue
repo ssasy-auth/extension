@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { OptionPage, PopupPage } from '~/utils/browser';
-import BaseBtn from '~/components/Base/BaseBtn.vue';
+import BaseBtn from '~/components/base/BaseBtn.vue';
 
 function goToOptionPage() {
   OptionPage.open();

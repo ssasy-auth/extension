@@ -2,9 +2,9 @@
 import { ref, reactive, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useSettingStore, useNotificationStore } from '~/stores/app';
-import type { ActionItem } from '~/components/Base/BaseCard.vue';
-import BasePage from '~/components/Base/BasePage.vue';
-import BaseBtn from '~/components/Base/BaseBtn.vue';
+import type { ActionItem } from '~/components/base/BaseCard.vue';
+import BasePage from '~/components/base/BasePage.vue';
+import BaseBtn from '~/components/base/BaseBtn.vue';
 
 const route = useRoute();
 const router = useRouter();

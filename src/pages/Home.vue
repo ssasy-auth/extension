@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { ActionItem } from '~/components/Base/BaseCard.vue';
-import BasePage from '~/components/Base/BasePage.vue';
-import BaseBtn from '~/components/Base/BaseBtn.vue';
+import type { ActionItem } from '~/components/base/BaseCard.vue';
+import BasePage from '~/components/base/BasePage.vue';
+import BaseBtn from '~/components/base/BaseBtn.vue';
 
 const options: ActionItem[] = [
   {

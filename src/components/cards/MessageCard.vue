@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useTheme } from 'vuetify/lib/framework.mjs';
-import BaseCard from './Base/BaseCard.vue';
+import BaseCard from '../base/BaseCard.vue';
 
 const props = defineProps({
   message: {
