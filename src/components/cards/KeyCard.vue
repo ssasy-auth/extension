@@ -218,8 +218,8 @@ onMounted(async () => {
         v-if="props.showSecrets"
         tonal
         :color="getKeyColor"
-        class="json-string mt-2">
-        <pre><code>{{ rawKey }}</code></pre>
+        class="mt-2">
+        <pre class="json-string"><code>{{ rawKey }}</code></pre>
       </base-card>
     </v-card-text>
   </base-card>
