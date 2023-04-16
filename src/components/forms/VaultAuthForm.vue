@@ -115,10 +115,13 @@ async function _unwrapKey(password: string){
 
 <template>
   <base-card :outlined="false">
+    <slot name="header"></slot>
+
     <base-input
       v-model="form.password"
       label="Password"
-      type="password"/>
+      type="password"
+      class="my-2"/>
 
     <!-- register mode only -->
     <v-divider v-if="props.registerMode" />
@@ -126,9 +129,10 @@ async function _unwrapKey(password: string){
       v-if="props.registerMode"
       v-model="form.passwordConfirm"
       label="Confirm Password"
-      type="password"/>
+      type="password"
+      class="my-2"/>
 
-    <v-card-actions>
+    <v-card-actions class="my-2">
       <v-row justify="center">
         <v-col cols="auto">
           <base-btn
@@ -144,5 +148,7 @@ async function _unwrapKey(password: string){
         </v-col>
       </v-row>
     </v-card-actions>
+
+    <slot name="footer"></slot>
   </base-card>
 </template>

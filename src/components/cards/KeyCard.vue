@@ -2,7 +2,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { KeyChecker, KeyType, KeyModule, CryptoModule } from '@ssasy-auth/core';
 import { useKeyStore } from '~/stores/key-store';
-import type { PropType, ComputedRef } from 'vue';
+import type { PropType } from 'vue';
 import type { GenericKey, RawKey } from '@ssasy-auth/core';
 import type { ActionItem } from '~/components/base/BaseCard.vue';
 import BaseCard from '~/components/base/BaseCard.vue';
@@ -39,11 +39,11 @@ const showExportForm = ref(false);
 const exportPassword = ref('');
 const exportPasswordConfirm = ref('');
 
-const isSensitiveKey = computed(() => {
+const isSensitiveKey = computed<boolean>(() => {
   return props.ssasyKey.type !== KeyType.PublicKey;
 });
 
-const keyType: ComputedRef<string> = computed(() => {
+const keyType = computed<string>(() => {
   const SYMMETRIC = 'Symmetric';
   const ASYMMETRIC = 'Asymmetric';
 
@@ -63,7 +63,7 @@ const keyType: ComputedRef<string> = computed(() => {
   }
 });
 
-const keyActions: ComputedRef<ActionItem[]> = computed(() => {
+const keyActions = computed<ActionItem[]>(() => {
   const actions: ActionItem[] = [
     {
       label: 'Encrypted Export',
@@ -86,7 +86,7 @@ const keyActions: ComputedRef<ActionItem[]> = computed(() => {
     : actions.filter((action) => action.label !== 'Encrypted Export');
 });
 
-const isValidPassword: ComputedRef<boolean | null> = computed(() => {
+const isValidPassword = computed<boolean | null>(() => {
   if (_isEmptyString(exportPassword.value)) {
     return null;
   }
@@ -94,11 +94,13 @@ const isValidPassword: ComputedRef<boolean | null> = computed(() => {
   return exportPassword.value.length > 0;
 });
 
-const isValidPasswordConfirmation: ComputedRef<boolean | null> = computed(
+const isValidPasswordConfirmation = computed<boolean | null>(
   () => {
     return isValidPassword.value === true && exportPassword.value === exportPasswordConfirm.value;
   }
 );
+
+const getCardColor = computed<string>(() => isSensitiveKey.value ? 'red' : 'green')
 
 interface KeyDetail {
 	label: string;
@@ -189,8 +191,8 @@ onMounted(async () => {
 
 <template>
   <base-card
-    :color="isSensitiveKey ? 'red' : 'green'"
-    :flat="true"
+    :color="getCardColor"
+    flat
     class="pa-1">
     <v-card-title>{{ keyType }} Key</v-card-title>
 

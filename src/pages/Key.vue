@@ -77,12 +77,15 @@ watch(tab, (newTab) => {
 
           <v-window-item :value="`${'private' as KeyTab}`">
             <div v-if="!privateKey">
-              <info-card>
-                <p>
-                  Enter your password to export your vault key.
-                </p>
-              </info-card>
-              <vault-auth-form @input="(key) => privateKey = key" />
+              <vault-auth-form @input="(key) => privateKey = key">
+                <template #header>
+                  <info-card>
+                    <p>
+                      Enter vault password to view your private key.
+                    </p>
+                  </info-card>
+                </template>
+              </vault-auth-form>
             </div>
             <key-card
               v-else

@@ -12,7 +12,7 @@ const props = defineProps({
 
 <template>
   <base-card
-    text
+    tonal
     :color="props.color">
     <v-row>
       <v-col
