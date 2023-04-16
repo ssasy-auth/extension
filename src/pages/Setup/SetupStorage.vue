@@ -98,7 +98,7 @@ onMounted(async () => {
           :ssasy-key="data.privateKey!"
           :hide-info="true" />
       </v-col>
-      <v-divider />
+      <v-divider class="border-opacity-0" />
       <v-col
         cols="10"
         md="6">
@@ -107,14 +107,14 @@ onMounted(async () => {
           label="Password"
           type="password"
           :is-valid="isValidPassword" />
-        <v-divider />
+        <v-divider class="border-opacity-0" />
         <input-text
           v-model="form.password2"
           label="Re-enter password"
           type="password"
           :is-valid="isValidPassword2" />
       </v-col>
-      <v-divider />
+      <v-divider class="border-opacity-0" />
       <v-col
         cols="10"
         md="auto">

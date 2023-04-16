@@ -209,7 +209,7 @@ watch(formFiles, async (files) => {
           </p>
         </info-card>
       </v-col>
-      <v-divider />
+      <v-divider class="border-opacity-0" />
       <v-col
         cols="10"
         md="6"
@@ -260,7 +260,7 @@ watch(formFiles, async (files) => {
         </base-card>
       </v-col>
 
-      <v-divider />
+      <v-divider class="border-opacity-0" />
 
       <v-col
         v-if="!requestPassword"

@@ -34,7 +34,7 @@ function goToSetup(){
         class="text-center">
         You need to setup your wallet first.
       </v-col>
-      <v-divider />
+      <v-divider class="border-opacity-0" />
       <v-col cols="auto">
         <base-btn
           large

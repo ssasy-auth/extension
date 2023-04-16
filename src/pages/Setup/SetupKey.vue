@@ -51,7 +51,7 @@ async function generateKey(){
           :ssasy-key="data.key"
           :show-secrets="true" />
       </v-col>
-      <v-divider />
+      <v-divider class="border-opacity-0" />
       <v-col
         cols="12"
         md="6"
@@ -63,7 +63,7 @@ async function generateKey(){
           label="I understand"
           inset></v-switch>
       </v-col>
-      <v-divider />
+      <v-divider class="border-opacity-0" />
       <v-col cols="auto">
         <base-btn
           large
