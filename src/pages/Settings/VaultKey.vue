@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
-import { useVaultStore, useNotificationStore } from '~/stores';
+import { useVaultStore, useSessionStore, useNotificationStore } from '~/stores';
 import BasePage from '~/components/base/BasePage.vue';
 import BaseCard from '~/components/base/BaseCard.vue';
 import BaseBtn from '~/components/base/BaseBtn.vue';
 
 const router = useRouter();
 const vaultStore = useVaultStore();
+const sessionStore = useSessionStore();
 const notificationStore = useNotificationStore();
 
 const consequences: string[] = [
@@ -15,7 +16,9 @@ const consequences: string[] = [
 ];
 
 async function deleteVaultKey () {
-  await vaultStore.removeKey();
+  vaultStore.resetVault();
+  sessionStore.resetSession();
+
   notificationStore.notify('Settings', 'Vault key deleted.');
 
   router.push('/');

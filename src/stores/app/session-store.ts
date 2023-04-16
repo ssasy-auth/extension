@@ -73,7 +73,7 @@ export const useSessionStore = defineStore('session', () => {
     return true;
   }
 
-  const resetSession = () => {
+  function resetSession (): void {
     session.value = undefined;
     LocalSession.value = undefined;
   }

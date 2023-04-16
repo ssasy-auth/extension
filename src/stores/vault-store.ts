@@ -93,9 +93,8 @@ export const useVaultStore = defineStore('vault', () => {
     return key;
   }
 
-  async function removeKey(): Promise<boolean> {
+  function resetVault(): void {
     localVaultStorage.value = undefined;
-    return true;
   }
 
   /**
@@ -131,6 +130,6 @@ export const useVaultStore = defineStore('vault', () => {
     hasKey,
     wrapKey,
     unwrapKey,
-    removeKey
+    resetVault
   }
 });
