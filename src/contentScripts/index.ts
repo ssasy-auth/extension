@@ -197,16 +197,8 @@ import App from './App.vue';
   // ======== ssasy logic - request channel ========
 
   // mount component to context window
-  const container = document.createElement('div');
   const root = document.createElement('div');
-  const styleEl = document.createElement('link');
-  const shadowDOM = container.attachShadow?.({ mode: __DEV__ ? 'open' : 'closed' }) || container;
-  styleEl.setAttribute('rel', 'stylesheet');
-  styleEl.setAttribute('href', browser.runtime.getURL('dist/contentScripts/style.css'));
-  shadowDOM.appendChild(styleEl);
-  shadowDOM.appendChild(root);
-  document.body.appendChild(container);
   const app = createApp(App);
-  setupApp(app, { blockVuetify: true });
+  setupApp(app, { blockVuetify: true, blockPinia: true });
   app.mount(root);
 })();

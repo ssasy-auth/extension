@@ -61,7 +61,7 @@ export const PopupPage: PageController = {
       url: extensionURL,
       type: 'popup',
       top: 0,
-      left: screen.width - 400,
+      left: screen ? screen.width - 400 : 0,
       width: 400,
       height: 600
     };

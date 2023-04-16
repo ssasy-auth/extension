@@ -1,7 +1,7 @@
 import fs from 'fs-extra'
 import type { Manifest } from 'webextension-polyfill'
 import type PkgType from '../package.json'
-import { isDev, port, r } from '../scripts/utils'
+import { isDev, port, r, isManifest3 } from '../scripts/utils'
 
 const extIcons = {
   16: './assets/icon-16.png',
@@ -35,8 +35,7 @@ const manifestV2: Manifest.WebExtensionManifest = {
   permissions: [ ...extPermissions, ...extHostPermissions ],
   options_ui: {
     page: './dist/options/index.html',
-    open_in_tab: true,
-    chrome_style: false
+    open_in_tab: true
   },
   background: {
     page: './dist/background/index.html',
@@ -64,7 +63,6 @@ const manifestV2: Manifest.WebExtensionManifest = {
   }
 }
 
-// TODO: convert background script to service worker
 const manifestV3: Manifest.WebExtensionManifest = {
   ...manifestV2,
   
@@ -79,11 +77,10 @@ const manifestV3: Manifest.WebExtensionManifest = {
   
   host_permissions: extHostPermissions,
 
-  // TODO: fix this and celebrate
-  //background: {
-  //  service_worker: 'service_worker.js',
-  //  page: './dist/background/index.html'
-  //},
+  background: {
+    service_worker: './dist/background/index.js',
+    type: 'module'
+  },
 
   // remove deprecated fields
   browser_action: undefined
@@ -91,7 +88,13 @@ const manifestV3: Manifest.WebExtensionManifest = {
 
 type ManifestVersion = 'v2' | 'v3'
 
-export async function getManifest(version: ManifestVersion = 'v2') {
+/**
+ * Returns a json object of the manifest config based on the manifest version
+ * 
+ * @param version - manifest version
+ * @returns manifest.json
+ */
+export async function getManifest(version: ManifestVersion = 'v2'): Promise<Manifest.WebExtensionManifest> {
   const pkg = await fs.readJSON(r('package.json')) as typeof PkgType
 
   // set base manifest based on manifest version
@@ -117,8 +120,10 @@ export async function getManifest(version: ManifestVersion = 'v2') {
     manifest.permissions?.push('webNavigation')
 
     // this is required on dev for Vite script to load
-    // eslint-disable-next-line no-useless-escape
-    manifest.content_security_policy = `script-src \'self\' http://localhost:${port}; object-src \'self\'`
+    const policy = `script-src 'self' http://localhost:${port}; object-src 'self'`;
+    manifest.content_security_policy = isManifest3
+      ? { 'extension_pages': policy }
+      : policy
   }
 
   return manifest

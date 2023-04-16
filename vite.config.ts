@@ -9,7 +9,7 @@ import Layouts from 'vite-plugin-vue-layouts'
 import Components from 'unplugin-vue-components/vite'
 import AutoImport from 'unplugin-auto-import/vite'
 import UnoCSS from 'unocss/vite'
-import { isDev, port, r } from './scripts/utils'
+import { isDev, port, r, isManifest3 } from './scripts/utils'
 
 export const sharedConfig: UserConfig = {
   root: r('src'),
@@ -89,7 +89,7 @@ export default defineConfig(({ command }) => ({
     },
     rollupOptions: {
       input: {
-        background: r('src/background/index.html'),
+        ...(isManifest3 ? {} : { background: r('src/background/index.html') }), // add the background if it's not manifest v3
         options: r('src/options/index.html'),
         popup: r('src/popup/index.html')
       }

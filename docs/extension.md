@@ -103,4 +103,3 @@ The following steps should be followed regardless of the browser you are publish
 
 1. [create a chrome developer account](https://developer.chrome.com/docs/webstore/register/) and pay the $5 fee 😤
 2. [upload zip file](https://chrome.google.com/webstore/devconsole) to Chrome's devconsole
-3. []

@@ -19,13 +19,6 @@ if (import.meta.hot) {
   import('./contentScriptHMR');
 }
 
-/**
- * Listen for extension install and log to console
- */
-browser.runtime.onInstalled.addListener((): void => {
-  Logger.info('Extension installed', null, 'background');
-});
-
 export interface Session {
   request: PublicKeyRequest | ChallengeRequest;
   popupPage: Windows.Window | Tabs.Tab;
