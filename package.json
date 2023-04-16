@@ -1,7 +1,7 @@
 {
   "name": "@ssasy-auth/extension",
   "nickname": "ssasy",
-  "version": "0.22.8",
+  "version": "0.22.9",
   "license": "MIT",
   "description": "a browser extension that is built with a secure, usable and scalable authentictaion scheme",
   "repository": "this-oliver/ssasy-ext",

@@ -1,5 +1,5 @@
 import { useVaultStore, useSessionStore, useNotificationStore } from '~/stores'
-import type { LocationQuery, RouteLocationNormalized, NavigationGuardNext } from 'vue-router'
+import type { LocationQuery, RouteLocationNormalized, NavigationGuardNext, RouteLocationRaw } from 'vue-router'
 
 interface Location {
   path: string;
@@ -92,15 +92,25 @@ async function SessionGaurd(
   if(!hasSession && !inAuthPath(location.path)) {
     notificationStore.error('Router Guard', 'Your session has timed out. Please login and renew your session to continue.')
 
-    next({
+    const nextLocation: RouteLocationRaw = {
       path: '/auth',
       query: {
         redirect: location.path,
-        timeout: 'true',
         ...location.query
       }
-    });
+    }
 
+    if(location.query.newUser !== 'true') {
+      nextLocation.query = {
+        ...nextLocation.query,
+        timeout: 'true'
+      };
+      
+      // set the timeout query to true
+      nextLocation.query!.timeout = 'true';
+    }
+
+    return next(nextLocation);
   }
 
   // continue to the route if no redirect path is set

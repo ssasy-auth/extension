@@ -6,6 +6,7 @@ import type { PrivateKey } from '@ssasy-auth/core';
 import BasePage from '~/components/base/BasePage.vue';
 import BaseBtn from '~/components/base/BaseBtn.vue';
 import InputText from '~/components/base/InputText.vue';
+import InfoCard from '~/components/cards/InfoCard.vue';
 import KeyCard from '~/components/cards/KeyCard.vue';
 
 const router = useRouter();
@@ -69,7 +70,7 @@ async function saveKey(){
   }
   
   notificationStore.notify('Setup Storage Flow', 'Key saved!', { toast: true });
-  router.push('/');
+  router.push('/?newUser=true');
 }
 
 onMounted(async () => {
