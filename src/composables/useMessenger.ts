@@ -37,7 +37,9 @@ function broadcastChallengeResponse(solution: string | null, error?: string) {
   browser.runtime.sendMessage(message);
 }
 
-export const SsasyMessenger = {
-  broadcastPublicKeyResponse,
-  broadcastChallengeResponse
+export const useMessenger = () => {
+  return {
+    broadcastPublicKeyResponse,
+    broadcastChallengeResponse
+  };
 };

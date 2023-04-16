@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-import { SsasyMessenger } from '~/logic';
+import { useMessenger } from '~/composables/useMessenger';
 import { PopupPage } from '~/utils';
 import {
   useWalletStore,
@@ -23,6 +23,7 @@ import { PrivateKey } from '@ssasy-auth/core';
 
 const route = useRoute();
 const notificationStore = useNotificationStore();
+const { broadcastPublicKeyResponse, broadcastChallengeResponse } = useMessenger();
 
 const loading = ref<boolean>(false);
 const errorMessage = ref<string | undefined>(undefined);
@@ -78,10 +79,10 @@ async function approvePublicKeyRequest() {
       throw new Error('Public key is missing');
     }
 
-    SsasyMessenger.broadcastPublicKeyResponse(publicKeyString.value);
+    broadcastPublicKeyResponse(publicKeyString.value);
   } catch (error) {
     const message = notificationStore.error('Authentication Request', (error as Error).message || 'Failed to approve registration request.', { toast: true })
-    SsasyMessenger.broadcastPublicKeyResponse(null, message);
+    broadcastPublicKeyResponse(null, message);
 
     // stop loading
     loading.value = false;
@@ -95,7 +96,7 @@ async function approvePublicKeyRequest() {
  * Sends a null response to the origin
  */
 function rejectPublicKeyRequest() {
-  SsasyMessenger.broadcastPublicKeyResponse(null);
+  broadcastPublicKeyResponse(null);
   
   // set final message
   closingMessage.value = 'Request rejected.';
@@ -132,10 +133,10 @@ async function approveChallengeRequest(privateKey: PrivateKey) {
       { registrationMode: mode.value === 'registration' }
     );
 
-    SsasyMessenger.broadcastChallengeResponse(solutionCiphertextString);
+    broadcastChallengeResponse(solutionCiphertextString);
   } catch (error) {
     const message = notificationStore.error('Authentication Request', (error as Error).message || 'Failed to solve challenge.', { toast: true });
-    SsasyMessenger.broadcastChallengeResponse(null, message);
+    broadcastChallengeResponse(null, message);
 
     // set final message
     errorMessage.value = message;
@@ -154,7 +155,7 @@ async function approveChallengeRequest(privateKey: PrivateKey) {
 }
 
 function rejectChallengeRequest() {
-  SsasyMessenger.broadcastChallengeResponse(null);
+  broadcastChallengeResponse(null);
 
   // set final message
   closingMessage.value = 'Request rejected.';
@@ -237,7 +238,7 @@ onMounted(async () => {
   } catch (error) {
     const message = (error as Error).message || 'Failed to setup public key.';
     notificationStore.error('Authentication Request', message, { toast: true })
-    SsasyMessenger.broadcastPublicKeyResponse(null, message);
+    broadcastPublicKeyResponse(null, message);
 
     // set final message
     errorMessage.value = message;
