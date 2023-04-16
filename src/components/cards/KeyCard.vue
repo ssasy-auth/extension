@@ -43,7 +43,11 @@ const isSensitiveKey = computed<boolean>(() => {
   return props.ssasyKey.type !== KeyType.PublicKey;
 });
 
-const keyType = computed<string>(() => {
+const getKeyColor = computed<string>(() => {
+  return isSensitiveKey.value ? 'red' : 'green';
+});
+
+const getKeyType = computed<string>(() => {
   const SYMMETRIC = 'Symmetric';
   const ASYMMETRIC = 'Asymmetric';
 
@@ -63,7 +67,7 @@ const keyType = computed<string>(() => {
   }
 });
 
-const keyActions = computed<ActionItem[]>(() => {
+const getKeyActions = computed<ActionItem[]>(() => {
   const actions: ActionItem[] = [
     {
       label: 'Encrypted Export',
@@ -100,8 +104,6 @@ const isValidPasswordConfirmation = computed<boolean | null>(
   }
 );
 
-const getCardColor = computed<string>(() => isSensitiveKey.value ? 'red' : 'green')
-
 interface KeyDetail {
 	label: string;
 	value: string;
@@ -110,20 +112,28 @@ function _extractKeySummary(rawKey: RawKey): KeyDetail[] {
   const details: KeyDetail[] = [];
   const MSG_MISSING_VALUE = 'N/A';
 
-  const isAsymmetric =		rawKey.type === KeyType.PrivateKey || rawKey.type === KeyType.PublicKey;
+  const isAsymmetric = rawKey.type === KeyType.PrivateKey || rawKey.type === KeyType.PublicKey;
 
-  details.push({
-    label: 'Algorithm',
-    value: isAsymmetric
-      ? `${rawKey.crypto.kty} ${rawKey.crypto.crv}`
-      : rawKey.crypto.alg || MSG_MISSING_VALUE
-  });
-  details.push({
-    label: 'Usages',
-    value: rawKey.crypto.key_ops?.join(', ') || MSG_MISSING_VALUE
-  });
-  //details.push({ label: 'Extractable', value: rawKey.crypto.ext || MSG_MISSING_VALUE });
-  details.push({ label: 'Domain', value: rawKey.domain || MSG_MISSING_VALUE });
+  if(rawKey.crypto.kty || rawKey.crypto.crv || rawKey.crypto.alg) {
+    details.push({
+      label: 'Algorithm',
+      value: isAsymmetric
+        ? `${rawKey.crypto.kty} ${rawKey.crypto.crv}`
+        : rawKey.crypto.alg || MSG_MISSING_VALUE
+    });
+  }
+  
+  if(rawKey.crypto.key_ops && rawKey.crypto.key_ops.length > 0){
+    details.push({
+      label: 'Usages',
+      value: rawKey.crypto.key_ops?.join(', ') || MSG_MISSING_VALUE
+    });
+  }
+
+  if(rawKey.domain){
+    details.push({ label: 'Domain', value: rawKey.domain || MSG_MISSING_VALUE });
+  }
+
   return details;
 }
 
@@ -190,11 +200,8 @@ onMounted(async () => {
 </script>
 
 <template>
-  <base-card
-    :color="getCardColor"
-    flat
-    class="pa-1">
-    <v-card-title>{{ keyType }} Key</v-card-title>
+  <base-card class="pa-1">
+    <v-card-title>{{ getKeyType }} Key</v-card-title>
 
     <v-card-text>
       <v-list
@@ -209,7 +216,8 @@ onMounted(async () => {
 
       <base-card
         v-if="props.showSecrets"
-        text
+        tonal
+        :color="getKeyColor"
         class="json-string mt-2">
         <pre><code>{{ rawKey }}</code></pre>
       </base-card>
@@ -258,7 +266,7 @@ onMounted(async () => {
     v-else-if="props.showActions"
     class="mt-2">
     <v-col
-      v-for="action in keyActions"
+      v-for="action in getKeyActions"
       :key="action.label"
       cols="12"
       md="4">

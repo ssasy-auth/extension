@@ -61,7 +61,9 @@ async function setSession(privateKey: PrivateKey) {
         md="6">
         <vault-auth-form @input="setSession">
           <template #header>
-            <info-card v-if="sessionTimedOut">
+            <info-card
+              v-if="sessionTimedOut"
+              color="warning">
               <p>
                 Your session has timed out. Please login again to continue.
               </p>

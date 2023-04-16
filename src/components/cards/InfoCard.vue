@@ -4,7 +4,7 @@ import BaseCard from '../base/BaseCard.vue';
 const props = defineProps({
   color: {
     type: String,
-    default: 'info'
+    default: undefined
   }
 })
 
@@ -15,12 +15,12 @@ const props = defineProps({
     tonal
     :color="props.color">
     <v-row>
-      <v-col
-        cols="1"
-        class="text-center">
-        <slot name="icon">
-          <mdi-information-outline />
-        </slot>
+      <v-col cols="1">
+        <div class="mx-auto">
+          <slot name="icon">
+            <mdi-information-outline />
+          </slot>
+        </div>
       </v-col>
       
       <v-col>
