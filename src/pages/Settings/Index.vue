@@ -205,6 +205,7 @@ onMounted(async () => {
                       class="px-3" />
                     <base-btn
                       v-else
+                      :medium="true"
                       :color="option.color"
                       :to="option.to"
                       @click="option.action">{{
@@ -244,6 +245,7 @@ onMounted(async () => {
                         class="px-3" />
                       <base-btn
                         v-else
+                        :medium="true"
                         :color="option.color"
                         :to="option.to"
                         @click="option.action">{{

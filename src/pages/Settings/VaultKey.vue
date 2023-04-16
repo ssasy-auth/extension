@@ -60,11 +60,12 @@ function cancelKeyDeletion () {
 
           <v-card-actions>
             <base-btn
-              color="error"
-              @click="cancelKeyDeletion">Cancel</base-btn>
-            <base-btn
               text
               color="grey lighten-1"
+              @click="cancelKeyDeletion">Cancel</base-btn>
+              
+            <base-btn
+              color="error"
               @click="deleteVaultKey">Delete</base-btn>
           </v-card-actions>
         </base-card>
