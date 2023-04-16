@@ -18,7 +18,7 @@ const props = defineProps({
       <v-col cols="1">
         <div class="mx-auto">
           <slot name="icon">
-            <mdi-information-outline />
+            <v-icon icon="$mdi-information-outline" />
           </slot>
         </div>
       </v-col>

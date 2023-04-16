@@ -53,7 +53,7 @@ function goBack() {
       small
       rounded="pill"
       @click="goBack">
-      <material-symbols-arrow-back />
+      <v-icon icon="$mdi-arrow-left" />
     </base-btn>
     
     <logo id="bar-center"/>

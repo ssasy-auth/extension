@@ -6,27 +6,21 @@ import BaseBtn from '~/components/base/BaseBtn.vue';
 const options: ActionItem[] = [
   {
     label: 'Key',
-    to: '/key'
+    to: '/key',
+    icon: '$mdi-key'
   },
   {
     label: 'Settings',
-    to: '/settings'
+    to: '/settings',
+    icon: '$mdi-cog'
   }
 ];
+
 </script>
 
 <template>
   <base-page title="Home">
     <v-row justify="center">
-      <v-col
-        cols="11"
-        md="6"
-        class="home-welcome text-center">
-        <h1>🎉 Welcome!</h1>
-      </v-col>
-
-      <v-divider class="opacity-0" />
-
       <v-col
         v-for="option in options"
         :key="option.label"
@@ -34,10 +28,22 @@ const options: ActionItem[] = [
         md="4"
         class="mt-1">
         <base-btn
-          large
           block
+          extra-large
           :to="option.to">
-          {{ option.label }}
+          <v-row
+            justify="space-between"
+            style="width: 100%;">
+            <v-col>
+              {{ option.label }}
+            </v-col>
+
+            <v-col>
+              <v-icon
+                v-if="option.icon"
+                :icon="option.icon"/>
+            </v-col>
+          </v-row>
         </base-btn>
       </v-col>
     </v-row>

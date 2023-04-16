@@ -4,7 +4,9 @@ import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
 import { VSkeletonLoader } from 'vuetify/labs/VSkeletonLoader'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
-import { type ThemeDefinition } from 'vuetify'
+import * as icons from '@mdi/js'
+
+import type { ThemeDefinition } from 'vuetify'
 
 export const AppTheme: ThemeDefinition = {
   dark: false,
@@ -46,6 +48,18 @@ export const AppThemeDark: ThemeDefinition = {
   }
 }
 
+function getProcessedIcons(icons: any){
+  const processedIcons: any = {};
+
+  for (const key in icons) {
+    // convert from PascalCase to kebab-case
+    const kebabCaseKey = key.replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2').toLowerCase()
+
+    processedIcons[kebabCaseKey] = icons[key]
+  }
+
+  return processedIcons
+}
 
 export default createVuetify({
   components: {
@@ -62,7 +76,10 @@ export default createVuetify({
   },
   icons: {
     defaultSet: 'mdi',
-    aliases,
+    aliases: {
+      ...aliases,
+      ...getProcessedIcons(icons)
+    },
     sets: {
       mdi
     }
