@@ -268,19 +268,30 @@ onMounted(async () => {
     <v-col
       v-for="action in getKeyActions"
       :key="action.label"
-      cols="12"
-      md="4">
-      <base-btn
-        large
-        block
-        :color="action.color"
-        :disabled="action.disabled"
-        @click="action.action">
-        {{ action.label }}
-      </base-btn>
-      <p class="text-grey lighten-1">
-        {{ action.description }}
-      </p>
+      cols="12">
+      <v-row
+        justify-md="space-between"
+        align="center">
+        <v-col
+          cols="12"
+          md="4">
+          <base-btn
+            large
+            :color="action.color"
+            :disabled="action.disabled"
+            @click="action.action">
+            {{ action.label }}
+          </base-btn>
+        </v-col>
+
+        <v-col
+          cols="12"
+          md="7">
+          <p class="text-grey lighten-1">
+            {{ action.description }}
+          </p>
+        </v-col>
+      </v-row>
     </v-col>
   </v-row>
 </template>
