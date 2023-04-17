@@ -103,3 +103,8 @@ The following steps should be followed regardless of the browser you are publish
 
 1. [create a chrome developer account](https://developer.chrome.com/docs/webstore/register/) and pay the $5 fee 😤
 2. [upload zip file](https://chrome.google.com/webstore/devconsole) to Chrome's devconsole
+
+### Edge
+
+1. [create a microsoft developer account](https://partner.microsoft.com/dashboard/microsoftedge/public/login)
+2. [upload a zip file](https://partner.microsoft.com/en-us/dashboard/microsoftedge/overview) to the Microsoft Edge devconsole (click the `Create new extension` button)
