@@ -9,7 +9,6 @@ import BaseCard from '~/components/base/BaseCard.vue';
 import BaseBtn from '~/components/base/BaseBtn.vue';
 import InputText from '~/components/base/InputText.vue';
 import InfoCard from '~/components/cards/InfoCard.vue';
-import InfoCardNeverShareKey from '~/components/cards/InfoCardNeverShareKey.vue';
 
 const keyStore = useKeyStore();
 
@@ -201,6 +200,8 @@ onMounted(async () => {
 
 <template>
   <base-card class="pa-1">
+    <slot name="header"></slot>
+
     <v-card-title>{{ getKeyType }} Key</v-card-title>
 
     <v-card-text>
@@ -219,85 +220,88 @@ onMounted(async () => {
         tonal
         :color="getKeyColor"
         class="mt-2">
-        <pre class="json-string"><code>{{ rawKey }}</code></pre>
+        <pre class="key-content"><code>{{ rawKey }}</code></pre>
       </base-card>
     </v-card-text>
-  </base-card>
 
-  <info-card-never-share-key
-    v-if="isSensitiveKey && !props.hideInfo"
-    class="mt-2" />
-
-  <div v-if="showExportForm">
-    <info-card>
-      <p>
-        Enter your password to export your vault key.
-      </p>
-    </info-card>
-
-    <base-card>
-      <input-text
-        v-model="exportPassword"
-        label="Password"
-        type="password" />
-      <input-text
-        v-model="exportPasswordConfirm"
-        label="Confirm Password"
-        type="password"/>
-      <v-card-actions>
-        <base-btn
-          text
-          large
-          color="grey lighten-1"
-          @click="showExportForm = false">
-          Cancel
-        </base-btn>
-        <base-btn
-          large
-          :disabled="!isValidPasswordConfirmation"
-          @click="_exportKey(rawKey!, exportPassword)">
-          Export
-        </base-btn>
-      </v-card-actions>
-    </base-card>
-  </div>
-
-  <v-row
-    v-else-if="props.showActions"
-    class="mt-2">
-    <v-col
-      v-for="action in getKeyActions"
-      :key="action.label"
-      cols="12">
-      <v-row
-        justify-md="space-between"
-        align="center">
-        <v-col
-          cols="12"
-          md="4">
-          <base-btn
-            large
-            :color="action.color"
-            :disabled="action.disabled"
-            @click="action.action">
-            {{ action.label }}
-          </base-btn>
-        </v-col>
-
-        <v-col
-          cols="12"
-          md="7">
-          <p class="text-grey lighten-1">
-            {{ action.description }}
+    <v-card-actions v-if="props.showActions || showExportForm">
+      <div v-if="showExportForm">
+        <info-card>
+          <p>
+            Enter your password to export your vault key.
           </p>
+        </info-card>
+
+        <base-card>
+          <input-text
+            v-model="exportPassword"
+            label="Password"
+            type="password" />
+          <input-text
+            v-model="exportPasswordConfirm"
+            label="Confirm Password"
+            type="password"/>
+          <v-card-actions>
+            <base-btn
+              text
+              large
+              color="grey lighten-1"
+              @click="showExportForm = false">
+              Cancel
+            </base-btn>
+            <base-btn
+              large
+              :disabled="!isValidPasswordConfirmation"
+              @click="_exportKey(rawKey!, exportPassword)">
+              Export
+            </base-btn>
+          </v-card-actions>
+        </base-card>
+      </div>
+
+      <v-row
+        v-else-if="props.showActions"
+        class="mt-2">
+        <v-col
+          v-for="action in getKeyActions"
+          :key="action.label"
+          cols="12">
+          <v-row
+            justify-md="space-between"
+            align="center">
+            <v-col
+              cols="12"
+              md="4">
+              <base-btn
+                large
+                block
+                :color="action.color"
+                :disabled="action.disabled"
+                @click="action.action">
+                {{ action.label }}
+              </base-btn>
+            </v-col>
+
+            <v-col
+              cols="12"
+              md="7">
+              <p class="text-grey lighten-1">
+                {{ action.description }}
+              </p>
+            </v-col>
+          </v-row>
         </v-col>
       </v-row>
-    </v-col>
-  </v-row>
+    </v-card-actions>
+  </base-card>
+
+  <slot name="hints"></slot>
+
+  <slot name="footer"></slot>
 </template>
 
 <style>
-.json-string {
+.key-content {
 	overflow: auto;
 }
 </style>

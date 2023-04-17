@@ -12,6 +12,7 @@ import InputFile from '~/components/base/InputFile.vue';
 import InputTextArea from '~/components/base/InputTextArea.vue';
 import InputText from '~/components/base/InputText.vue';
 import KeyCard from '~/components/cards/KeyCard.vue';
+import InfoCardNeverShareKey from '~/components/cards/InfoCardNeverShareKey.vue';
 import { KeyType } from '@ssasy-auth/core';
 import type { Ciphertext, GenericKey, PrivateKey, RawKey } from '@ssasy-auth/core';
 
@@ -282,19 +283,29 @@ watch(formFiles, async (files) => {
         md="6">
         <key-card
           :ssasy-key="data.privateKey!"
-          :show-secrets="true" />
+          :show-secrets="true"
+          :show-actions="true">
+
+          <template #hints>
+            <info-card-never-share-key class="mt-2" />
+          </template>
+        </key-card>
       </v-col>
     </v-row>
     <v-row
       v-if="isValidKey"
       justify="center">
       <v-col cols="auto">
-        <base-btn to="/setup">
+        <base-btn
+          color="grey lighten-1"
+          to="/setup">
           Back
         </base-btn>
       </v-col>
       <v-col cols="auto">
-        <base-btn to="/setup/storage">
+        <base-btn
+          color="success"
+          to="/setup/storage">
           Next
         </base-btn>
       </v-col>

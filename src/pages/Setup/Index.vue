@@ -15,10 +15,10 @@ interface SetupOption {
 const options = [
   {
     label: 'Start from scratch',
-    description: 'Generate a new key pair',
+    description: 'Generate private key',
     actions: [
       {
-        label: 'Generate keys',
+        label: 'Generate key',
         action: () => {
           router.push('/setup/key');
         }
@@ -27,10 +27,10 @@ const options = [
   },
   {
     label: 'Import',
-    description: 'Import an existing key pair',
+    description: 'Import an existing private key',
     actions: [
       {
-        label: 'Import Key',
+        label: 'Import key',
         action: () => {
           router.push('/setup/import');
         }

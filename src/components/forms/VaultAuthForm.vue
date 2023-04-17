@@ -41,6 +41,7 @@ const isValidPasswordConfirmation: ComputedRef<boolean | null> = computed(() => 
 const registrationAction = computed<ActionItem>(() => {
   return {
     label: 'Register',
+    color: 'success',
     disabled: !isValidPasswordConfirmation.value,
     action: () => _unwrapKey(form.password)
   };
@@ -49,6 +50,7 @@ const registrationAction = computed<ActionItem>(() => {
 const loginAction = computed<ActionItem>(() => {
   return {
     label: 'Login',
+    color: 'success',
     disabled: !isValidPassword.value,
     action: () => _unwrapKey(form.password)
   };
@@ -57,6 +59,7 @@ const loginAction = computed<ActionItem>(() => {
 const confirmAction = computed<ActionItem>(() => {
   return {
     label: 'Confirm Action',
+    color: 'success',
     disabled: !isValidPassword.value,
     action: () => _unwrapKey(form.password)
   };

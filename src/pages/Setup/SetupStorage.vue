@@ -132,6 +132,7 @@ onMounted(async () => {
         md="auto">
         <base-btn
           large
+          color="success"
           :disabled="!isValidPassword2"
           @click="saveKey">Save</base-btn>
       </v-col>
