@@ -1,7 +1,7 @@
 {
   "name": "@ssasy-auth/extension",
   "nickname": "ssasy",
-  "version": "0.23.5",
+  "version": "0.23.6",
   "license": "MIT",
   "description": "A browser extension that offers a secure and usable alternative to passwords and federated identity providers.",
   "repository": "this-oliver/ssasy-ext",
@@ -34,7 +34,7 @@
     "pack:crx": "crx pack extension -o ./extension.crx",
     "pack:xpi": "cross-env WEB_EXT_ARTIFACTS_DIR=./ web-ext build --source-dir ./extension --filename extension.xpi --overwrite-dest",
     "release:firefox": "pnpm build && pnpm pack && pnpm pack:zip",
-    "release:chromium": "pnpm build:mv3 && pnpm pack && pnpm pack:zip",
+    "release:chromium": "pnpm build:mv3 && pnpm pack:zip",
     "postinstall": "simple-git-hooks",
     "start:chromium": "web-ext run --source-dir ./extension --target=chromium",
     "start:firefox": "web-ext run --source-dir ./extension --target=firefox-desktop --firefox=firefoxdeveloperedition",
