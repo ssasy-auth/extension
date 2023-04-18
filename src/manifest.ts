@@ -12,7 +12,6 @@ const extIcons = {
 }
 
 const extPermissions = [
-  'tabs', // used to open the option page programmatically
   'storage', // used to store credentials and system settings
   'unlimitedStorage' // used to store credentials and system settings
 ]
