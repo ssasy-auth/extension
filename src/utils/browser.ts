@@ -57,13 +57,18 @@ export const PopupPage: PageController = {
       query: queryString
     });
 
+    const popupWidth = 400;
+    const popupHeight = 600;
+    const window = await browser.windows.getCurrent();
+    const screenWidth = window.width || popupWidth * 2;
+
     const windowOptions: Windows.CreateCreateDataType = {
       url: extensionURL,
       type: 'popup',
       top: 0,
-      left: screen ? screen.width - 400 : 0,
-      width: 400,
-      height: 600
+      left: screenWidth - popupWidth,
+      width: popupWidth,
+      height: popupHeight
     };
 
     return await browser.windows
