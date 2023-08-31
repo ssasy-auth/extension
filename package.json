@@ -1,7 +1,7 @@
 {
   "name": "@ssasy-auth/extension",
   "nickname": "ssasy",
-  "version": "0.23.7",
+  "version": "0.23.8",
   "license": "MIT",
   "description": "A browser extension that offers a secure and usable alternative to passwords and federated identity providers.",
   "repository": "this-oliver/ssasy-ext",
@@ -9,12 +9,12 @@
   "scripts": {
     "bridge:build": "tsc -p src/bridge/tsconfig.json",
     "bridge:pack": "esno scripts/prepare-bridge.ts",
-    "bridge:prepare": "run-s bridge:build bridge:pack",
+    "bridge:prepare": "run-s test bridge:build bridge:pack",
     "bridge:release": "pnpm bridge:prepare && cd src/bridge && npm publish --access public && cd ../../ && pnpm bridge:clear",
     "bridge:preview": "pnpm bridge:prepare && cd src/bridge && npm pack && cd ../../ && pnpm bridge:clear",
     "bridge:clear": "rimraf src/bridge/package.json src/bridge/*-lock.* src/bridge/lib src/bridge/node_modules",
-    "build": "cross-env NODE_ENV=production run-s clear build:web build:prepare build:js",
-    "build:mv3": "cross-env NODE_ENV=production MANIFEST_VERSION=3 run-s clear build:web build:prepare build:js build:bg",
+    "build": "cross-env NODE_ENV=production run-s clear test build:web build:prepare build:js",
+    "build:mv3": "cross-env NODE_ENV=production MANIFEST_VERSION=3 run-s clear test build:web build:prepare build:js build:bg",
     "build:prepare": "esno scripts/prepare.ts",
     "build:web": "vite build",
     "build:js": "vite build --config vite.config.content.ts",
@@ -38,7 +38,8 @@
     "postinstall": "simple-git-hooks",
     "start:chromium": "web-ext run --source-dir ./extension --target=chromium",
     "start:firefox": "web-ext run --source-dir ./extension --target=firefox-desktop --firefox=firefoxdeveloperedition",
-    "test": "vitest test"
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@mdi/js": "^7.2.96",
@@ -90,7 +91,7 @@
     "webextension-polyfill": "^0.10.0"
   },
   "simple-git-hooks": {
-    "pre-commit": "pnpm lint-staged"
+    "pre-commit": "pnpm test && pnpm lint-staged"
   },
   "lint-staged": {
     "*.ts": "eslint --fix"

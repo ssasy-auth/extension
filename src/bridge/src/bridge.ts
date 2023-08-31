@@ -124,6 +124,16 @@ async function requestPublicKey(mode: RequestMode): Promise<RawKey | null> {
 async function requestSolution(mode: RequestMode, encryptedChallenge: string): Promise<string | null> {
 
   return new Promise((resolve, reject) => {
+    // throw error if requestMode is not a string
+    if(typeof mode !== 'string') {
+      reject(new Error('requestMode must be a string'));
+    }
+
+    // throw error if challengeString is not a string
+    if(typeof encryptedChallenge !== 'string') {
+      reject(new Error('challengeString must be a string'));
+    }
+    
     // listen for response from extension
     window.addEventListener('message', (event) => {
       const message: BaseMessage = { type: event.data.type };
