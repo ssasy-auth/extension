@@ -4,7 +4,7 @@
 
 ## introduction
 
-### Anatomy of a web extension
+### anatomy of a web extension
 
 The extension can be grouped into [six main parts](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Anatomy_of_a_WebExtension) but for the sake of simplicity, I will only discuss three of them:
 
@@ -14,7 +14,7 @@ The extension can be grouped into [six main parts](https://developer.mozilla.org
 
 Apart from these three parts, there are also other parts like the `manifest.json` file which contains the metadata and configuration for the extension. This is discussed in more detail in the next section.
 
-### The `manifest.json` file
+### the `manifest.json` file
 
 The `manifest.json` file is the heart of the extension. It contains the metadata and configuration for the browser extension.
 
@@ -70,17 +70,14 @@ The `manifest.json` file is the heart of the extension. It contains the metadata
 
 During the development phase, you can use the [about:debugging](about:debugging#/runtime/this-firefox) page to load the extension and test it. This takes a couple of steps:
 
-1. build the project `npm run build` which creates the `dist` folder
-2. copy the `manifest.json` file to the `dist` folder
-3. open the [`about:debugging`](about:debugging#/runtime/this-firefox) page
-4. load the `dist/manifest.json` file
-5. play around with the extension
+1. run `pnpm dev` to start the development server
+2. run `pnpm start:firefox` to start the firefox browser (`start:chrome` for chrome)
 
 Below are some optional reads:
 
 - this [article](https://extensionworkshop.com/documentation/develop/debugging/#debugging-popups) explains how to debug the extension which is useful when you want to debug the popup.
 
-### Building from the `antfu/vitesse-webext` template
+### building from the `antfu/vitesse-webext` template
 
 The template is a fork of the [antfu/vitesse](https://github.com/antfu/vitesse-webext). It is a template for building browser extensions with [Vue 3](https://v3.vuejs.org/), [TypeScript](https://www.typescriptlang.org/) and [Vite](https://vitejs.dev/) - this project's tech stack.
 
@@ -93,18 +90,18 @@ The following steps should be followed regardless of the browser you are publish
 3. `pnpm pack` - compress the entire project into a `.tgz` file (source code) that excludes hidden files and folders (e.g. `.git`)
 4. `pnpm clear` - remove the `.zip` and `.tgz` files
 
-### Firefox
+### firefox
 
 1. [create a firefox developer account](https://addons.mozilla.org/en-US/firefox/)
 2. [submit zip file](https://addons.mozilla.org/en-US/developers/) for the Mozilla review process
 3. [submit source code](https://extensionworkshop.com/documentation/publish/source-code-submission/) for reviewal since the extension is built using the rollup bundler
 
-### Chrome
+### chrome
 
 1. [create a chrome developer account](https://developer.chrome.com/docs/webstore/register/) and pay the $5 fee 😤
 2. [upload zip file](https://chrome.google.com/webstore/devconsole) to Chrome's devconsole
 
-### Edge
+### edge
 
 1. [create a microsoft developer account](https://partner.microsoft.com/dashboard/microsoftedge/public/login)
 2. [upload a zip file](https://partner.microsoft.com/en-us/dashboard/microsoftedge/overview) to the Microsoft Edge devconsole (click the `Create new extension` button)
