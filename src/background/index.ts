@@ -19,12 +19,32 @@ if (import.meta.hot) {
   import('./contentScriptHMR');
 }
 
+/**
+ * Session object
+ */
 export interface Session {
   request: PublicKeyRequest | ChallengeRequest;
   popupPage: Windows.Window | Tabs.Tab;
 }
 
-let currentRequestTab: number = -1;
+/**
+ * Current request tab id
+ */
+let requestTab: number = -1;
+
+/**
+ * Close current request tab and reset `requestTab` to `-1`
+ */
+function _closeRequestTab(): void {
+  // close popup window if it is open
+  if (requestTab !== -1) {
+    PopupPage.close({ id: requestTab });
+  }
+
+  // reset current request tab
+  requestTab = -1;
+
+}
 
 /**
  * Listen for current tab requests from content scripts
@@ -38,10 +58,8 @@ onMessage('close-request-tab', ({ data }) => {
     Logger.error(error.error, null, 'background');
   }
 
-  // close popup window
-  if (currentRequestTab !== -1) {
-    PopupPage.close({ id: currentRequestTab });
-  }
+  // close current request tab
+  _closeRequestTab();
 })
 
 /**
@@ -64,8 +82,8 @@ onMessage(MessageType.REQUEST_PUBLIC_KEY, async ({ data }) => {
     popupPage: await PopupPage.open({ queryString: query })
   }
 
-  currentRequestTab = session.popupPage.id || 0;
-  Logger.info('currentRequestTab set to ', currentRequestTab, 'background');
+  requestTab = session.popupPage.id || 0;
+  Logger.info('requestTab set to ', requestTab, 'background');
 
   // wait for response from popup window
   return new Promise((resolve) => {
@@ -95,9 +113,6 @@ onMessage(MessageType.REQUEST_PUBLIC_KEY, async ({ data }) => {
           key: msg.key
         };
 
-        // reset current request tab
-        currentRequestTab = -1;
-
         // respond to content script
         return resolve(response);
       }
@@ -124,14 +139,14 @@ onMessage(MessageType.REQUEST_SOLUTION, async ({ data }) => {
   return new Promise((resolve) => {
     // broadcast undefined response, if the messageSession is still active and popup window is closed
     browser.windows.onRemoved.addListener(async (windowId) => {
-      if (currentRequestTab === windowId) {
+      if (requestTab === windowId) {
         const response: ChallengeResponse = {
           type: MessageType.RESPONSE_SOLUTION,
           solution: null
         };
 
-        // reset current request tab
-        currentRequestTab = -1;
+        // close current request tab
+        _closeRequestTab();
 
         return resolve(response);
       }
