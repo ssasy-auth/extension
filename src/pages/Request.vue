@@ -1,4 +1,18 @@
 <script setup lang="ts">
+/**
+ * Authentication request page
+ * 
+ * The purpose of this page is to handle the authentication request from the
+ * a service provider via the [background] script. Basically, the request 
+ * takes the following steps:
+ * 
+ * 1. The service provider sends a request to the [background] script
+ * 2. The [background] script broadcasts the request to all open tabs
+ * 3. This page captures the broadcast and requests user consent to process the request
+ * 4. If the user consents, this page sends the public key to the [background] script
+ * 5. The [background] script sends the public key to the service provider
+ */
+
 import { ref, computed, watch, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useMessenger } from '~/composables/useMessenger';
@@ -19,21 +33,23 @@ import BasePage from '~/components/base/BasePage.vue';
 import BaseCard from '~/components/base/BaseCard.vue';
 import BaseBtn from '~/components/base/BaseBtn.vue';
 import VaultAuthForm from '~/components/forms/VaultAuthForm.vue';
-import { PrivateKey } from '@ssasy-auth/core';
+import { SerializerModule } from '@ssasy-auth/core';
+import type { PrivateKey, RawKey } from '@ssasy-auth/core';
 
 const route = useRoute();
+const walletStore = useWalletStore();
 const notificationStore = useNotificationStore();
 const { broadcastPublicKeyResponse, broadcastChallengeResponse } = useMessenger();
 
 const loading = ref<boolean>(false);
-const errorMessage = ref<string | undefined>(undefined);
-const closingMessage = ref<string | undefined>(undefined);
+const errorMessage = ref<string>();
+const closingMessage = ref<string>();
 const messageCountdown = ref<number>(-1); // in milliseconds
 
-const mode = ref<RequestMode | undefined>(undefined);
-const origin = ref<string | undefined>(undefined);
-const publicKeyString = ref<string | undefined>(undefined);
-const challengeCiphertextString = ref<string | undefined>(undefined);
+const mode = ref<RequestMode>();
+const origin = ref<string>();
+const publicKeyUri = ref<string>();
+const encryptedChallengeUri = ref<string>();
 
 const options: ActionItem[] = [
   {
@@ -75,11 +91,11 @@ async function approvePublicKeyRequest() {
       throw new Error('Authentication request is missing an origin');
     }
 
-    if (publicKeyString.value === undefined) {
+    if (publicKeyUri.value === undefined) {
       throw new Error('Public key is missing');
     }
 
-    broadcastPublicKeyResponse(publicKeyString.value);
+    broadcastPublicKeyResponse(publicKeyUri.value);
   } catch (error) {
     const message = notificationStore.error('Authentication Request', (error as Error).message || 'Failed to approve registration request.', { toast: true })
     broadcastPublicKeyResponse(null, message);
@@ -103,18 +119,14 @@ function rejectPublicKeyRequest() {
 }
 
 /**
- * Solves the challenge and sends the solution to the origin
- * 
- * @param password - password to unlock wallet
+ * Solves the challenge and sends the challenge response to the origin
  */
 async function approveChallengeRequest(privateKey: PrivateKey) {
-  const walletStore = useWalletStore();
-
   loading.value = true;
 
   try {
     // set wallet
-    walletStore.setWallet(privateKey);
+    await walletStore.setWallet(privateKey);
   } catch (error) {
     loading.value = false;
 
@@ -124,16 +136,16 @@ async function approveChallengeRequest(privateKey: PrivateKey) {
   }
 
   try {
-    if (challengeCiphertextString.value === undefined) {
+    if (encryptedChallengeUri.value === undefined) {
       throw new Error('Challenge encryption is undefined');
     }
 
-    const solutionCiphertextString = await walletStore.solveChallenge(
-      challengeCiphertextString.value,
+    const challengeResponseUri = await walletStore.solveChallenge(
+      encryptedChallengeUri.value,
       { registrationMode: mode.value === 'registration' }
     );
 
-    broadcastChallengeResponse(solutionCiphertextString);
+    broadcastChallengeResponse(challengeResponseUri);
   } catch (error) {
     const message = notificationStore.error('Authentication Request', (error as Error).message || 'Failed to solve challenge.', { toast: true });
     broadcastChallengeResponse(null, message);
@@ -154,6 +166,9 @@ async function approveChallengeRequest(privateKey: PrivateKey) {
   }
 }
 
+/**
+ * Sends a null response to the origin
+ */
 function rejectChallengeRequest() {
   broadcastChallengeResponse(null);
 
@@ -165,9 +180,7 @@ function rejectChallengeRequest() {
  * Close the popup window and resets the wallet store.
  */
 function closePopup() {
-  const walletStore = useWalletStore();
   walletStore.reset();
-
   PopupPage.close();
 }
 
@@ -190,6 +203,7 @@ watch(closingMessage, (value) => {
   }
 });
 
+// set up page
 onMounted(async () => {
   try {
     // set mode
@@ -209,27 +223,30 @@ onMounted(async () => {
       throw new Error('Invalid origin');
     }
 
-    // set public key
+    // get raw public key
     const sessionStore = useSessionStore();
+    const rawPublicKey: RawKey | undefined = sessionStore.session?.publicKey;
 
-    const rawPublic = sessionStore.session?.publicKey;
-    publicKeyString.value = JSON.stringify(rawPublic);
+    // set public key URI if raw public key exists
+    if(rawPublicKey){
+      publicKeyUri.value = await SerializerModule.serializeKey(rawPublicKey);
+    }
 
     // listen for challenge request broadcast from [background] and set challenge
     // eslint-disable-next-line no-undef
     browser.runtime.onMessage.addListener(async (msg) => {
       const message: BaseMessage = { type: msg.type };
 
-      if (message.type === MessageType.REQUEST_SOLUTION) {
+      if (message.type === MessageType.REQUEST_CHALLENGE_RESPONSE) {
         const request: ChallengeRequest = {
           origin: msg.origin,
           mode: msg.mode,
-          type: MessageType.REQUEST_SOLUTION,
+          type: MessageType.REQUEST_CHALLENGE_RESPONSE,
           challenge: msg.challenge
         };
 
         // set challenge
-        challengeCiphertextString.value = request.challenge;
+        encryptedChallengeUri.value = request.challenge;
 
         loading.value = false;
       }
@@ -282,7 +299,7 @@ onMounted(async () => {
       </v-col>
 
       <v-col
-        v-else-if="challengeCiphertextString"
+        v-else-if="encryptedChallengeUri"
         cols="11"
         md="6"
         class="text-center">

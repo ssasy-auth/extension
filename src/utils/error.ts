@@ -14,16 +14,20 @@ export function processSsasyLikeError(error: unknown): Error {
     return error as Error;
   }
 
+  const phishingWarning = 'Warning! This site may be attempting a phishing attack.';
+  const authenticityAction = 'Ensure you\'re on the genuine website before proceeding.';
+  const ssasyAdjustment = 'Adjust your \'Ssasy\' settings (do not require signature) if you\'re confident about the site\'s authenticity.';
+
   if(error.message === CRYPTO_ERROR_MESSAGE.WRONG_KEY) {
-    return new Error('Wrong passphrase for vault key');
+    throw new Error('Wrong passphrase for vault key');
   }
 
   if(error.message === WALLET_ERROR_MESSAGE.INVALID_CIPHERTEXT_SIGNATURE) {
-    return new Error('Phishing Warning! The service you are logging into did not provide a valid signature which is a sign of a phishing attack. If this is a mistake, please register to the service and try again or configure your Ssasy settings to not require signatures.');
+    throw new Error(`${phishingWarning} This is because it didn't provide a recognized signature. ${authenticityAction} Or, ${ssasyAdjustment}`);
   }
 
   if(error.message === WALLET_ERROR_MESSAGE.INVALID_SIGNATURE_ORIGIN) {
-    return new Error('Phishing Warning! You might be logging into a service that you have not registered to. If this is a mistake, please register to the service and try again.');
+    throw new Error(`${phishingWarning} This is because the site's public key doesn't match the key in the signature. ${authenticityAction} Or, ${ssasyAdjustment}`);
   }
 
   return error;

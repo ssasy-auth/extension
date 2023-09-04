@@ -34,7 +34,7 @@ export const useNotificationStore = defineStore('notification', () => {
     }
 
     // log notification
-    return Logger.info(notification as InfoLog);
+    return Logger.info(notification as InfoLog, 'popup');
   }
 
   function error(
@@ -64,7 +64,7 @@ export const useNotificationStore = defineStore('notification', () => {
     }
 
     // log notification
-    return Logger.error(notification);
+    return Logger.error(notification, 'popup');
   }
 
   function _mapNotificationType(type: LogType): NotificationType {

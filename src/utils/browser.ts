@@ -1,39 +1,39 @@
 import type { Windows, Tabs } from 'webextension-polyfill';
 
-type PageType = 'popup' | 'option';
+/**
+ * Defines the type of page to open. The types are also the root "path"
+ * of the popup and options pages (e.g. popup/index.html, options/index.html).
+ */
+type PageType = 'popup' | 'options';
 
+/**
+ * Defines the page route configuration.
+ */
 interface PageRoute {
 	type: PageType;
 	route?: string;
 	query?: string;
 }
 
-function definePageRoute(config?: PageRoute): string {
-  const { type, route, query } = config || {};
-
-  const page = type === 'popup' ? 'popup' : 'options';
-  let pageUrl = browser.runtime.getURL(`dist/${page}/index.html`);
-
-  if (route) {
-    pageUrl += `#${route}`;
-  }
-
-  if (query) {
-    pageUrl += `?${query}`;
-  }
-
-  return pageUrl;
-}
-
+/**
+ * Defines the configuration for opening a page.
+ */
 interface OpenConfig {
 	route?: string;
 	queryString?: string;
 }
 
+/**
+ * Defines the configuration for closing a page.
+ */
 interface CloseConfig {
   id?: number;
 }
 
+/**
+ * Defines the page controller interface. The controller is responsible for
+ * opening and closing pages programmatically.
+ */
 interface PageController {
 	/**
 	 * opens the page
@@ -47,11 +47,33 @@ interface PageController {
 	close(config?: CloseConfig): void;
 }
 
+/**
+ * Returns the path to the a page based on the config.
+ */
+function getPath(config?: PageRoute): string {
+  const { type, route, query } = config || {};
+
+  let pageUrl = browser.runtime.getURL(`dist/${type}/index.html`);
+
+  if (route) {
+    pageUrl += `#${route}`;
+  }
+
+  if (query) {
+    pageUrl += `?${query}`;
+  }
+
+  return pageUrl;
+}
+
+/**
+ * A page controller for opening and closing the popup page.
+ */
 export const PopupPage: PageController = {
   async open(config?): Promise<Windows.Window> {
     const { route, queryString } = config || {};
 
-    const extensionURL = definePageRoute({
+    const extensionURL = getPath({
       type: 'popup',
       route,
       query: queryString
@@ -110,12 +132,15 @@ export const PopupPage: PageController = {
   }
 };
 
+/**
+ * A page controller for opening and closing the options page.
+ */
 export const OptionPage: PageController = {
   async open(config?): Promise<Tabs.Tab> {
     const { route, queryString } = config || {};
 
-    const extensionURL = definePageRoute({
-      type: 'option',
+    const extensionURL = getPath({
+      type: 'options',
       route,
       query: queryString
     });
@@ -128,8 +153,8 @@ export const OptionPage: PageController = {
   close() {
     const views = browser.extension.getViews({ type: 'tab' });
     for (const view of views) {
-      // if view is an option page
-      if (view.location.href.includes('option')) {
+      // if view is an options page
+      if (view.location.href.includes('options')) {
         view.close();
       }
     }

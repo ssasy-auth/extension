@@ -1,9 +1,9 @@
 enum MessageType {
   REQUEST_PUBLIC_KEY = 'request-public-key',
-  REQUEST_SOLUTION = 'request-solution',
+  REQUEST_CHALLENGE_RESPONSE = 'request-challenge-response',
   REQUEST_PING = 'request-ping',
   RESPONSE_PUBLIC_KEY = 'response-public-key',
-  RESPONSE_SOLUTION = 'response-solution',
+  RESPONSE_CHALLENGE_RESPONSE = 'response-challenge-response',
   RESPONSE_PING = 'response-ping',
   RESPONSE_ERROR = 'response-error',
 }
@@ -30,14 +30,14 @@ interface PublicKeyResponse extends BaseMessage {
 }
 
 interface ChallengeRequest extends BaseRequest {
-  type: MessageType.REQUEST_SOLUTION;
+  type: MessageType.REQUEST_CHALLENGE_RESPONSE;
   mode: RequestMode;
   challenge: string;
 }
 
 interface ChallengeResponse extends BaseMessage {
-  type: MessageType.RESPONSE_SOLUTION;
-  solution: string | null;
+  type: MessageType.RESPONSE_CHALLENGE_RESPONSE;
+  challengeResponse: string | null;
 }
 
 interface ErrorResponse extends BaseMessage {

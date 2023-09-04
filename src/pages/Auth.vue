@@ -25,7 +25,7 @@ async function setSession(privateKey: PrivateKey) {
 
   try {
     // set wallet
-    walletStore.setWallet(privateKey);
+    await walletStore.setWallet(privateKey);
 
     // extract public key
     const publicKey = await walletStore.getPublicKey();
@@ -36,7 +36,7 @@ async function setSession(privateKey: PrivateKey) {
     // kill the wallet
     walletStore.reset();
   } catch (error) {
-    const message = (error as Error).message || 'Invalid password';
+    const message = (error as Error).message || 'Failed to set session';
     return notificationStore.error('Authentication', message, { toast: true });
   }
 

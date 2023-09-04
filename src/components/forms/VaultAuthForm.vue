@@ -110,8 +110,8 @@ async function _unwrapKey(password: string){
     // emit the key
     emits('input', privateKey);
   } catch (error) {
-    const message = (error as Error).message || 'Invalid password';
-    notificationStore.error('Authentication', message, { toast: true });
+    const message = (error as Error).message || 'Failed to unwrap key';
+    notificationStore.error('Authentication Form', message, { toast: true });
   }
 }
 </script>

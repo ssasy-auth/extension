@@ -28,11 +28,41 @@ import App from './App.vue';
   const SESSION_DURATION = 1000 * 60 * 2; // 2 minute(s)
 
   /**
-	 * The origin of the website that started a message. There can only be one
-	 * website at a time that is requesting a public key to mitigate the risk
-	 * of denial of service attacks.
-	 */
+   * The origin of the website that started a message. There can only be one
+   * website at a time that is requesting a public key to mitigate the risk
+   * of denial of service attacks.
+   */
   let currentSession: BaseRequest | undefined = undefined;
+
+  let timeout: NodeJS.Timeout | undefined = undefined;
+
+  /**
+ * Resets the current session and broadcasts message to background
+ * script to close the popup window.
+ */
+  function resetSession(config?: { message?: string, error?: boolean }) {
+    // reset session
+    currentSession = undefined;
+
+    // clear timer
+    if (timeout) {
+      clearTimeout(timeout);
+      
+      timeout = undefined;
+    }
+
+    const errorResponse: ErrorResponse | undefined = config?.message && config?.error
+      ? { type: MessageType.RESPONSE_ERROR, error: config.message } 
+      : undefined;
+
+    // log that session ended successfully
+    if(!errorResponse) {
+      Logger.info(config?.message || 'Session completed.', null, 'content-script');
+    }
+
+    // broadcast to close popup
+    sendMessage('close-popup', errorResponse);
+  }
 
   /**
    * Sets the current session and starts a timer to reset the session
@@ -45,68 +75,37 @@ import App from './App.vue';
   function setSession(request: BaseRequest) {
     currentSession = request;
 
-    Logger.info('starting session timer', null, 'content-script')
+    Logger.info(`starting session timer (${SESSION_DURATION} milliseconds)`, null, 'content-script')
+    
     // start a timer
-    setTimeout(async () => {
-
+    timeout = setTimeout(async () => {
       Logger.info('resetting session timer', null, 'content-script')
-      resetSession();
-
+      resetSession({ message: 'Session timed out.', error: true });
     }, SESSION_DURATION);
   }
 
   /**
-   * Resets the current session to undefined.
+   * Listen for public key and challenge-response requests from websites. 
+   * For every request, ask the user to approve/deny the request and 
+   * return the response.
    */
-  function resetSession(message?: string) {
-    currentSession = undefined;
-
-    closeSessionWindow(message);
-  }
-
-  /**
-   * Closes the popup window that is requesting a user response.
-   */
-  async function closeSessionWindow(message?: string){
-    if(message) {
-      const error: ErrorResponse = {
-        type: MessageType.RESPONSE_ERROR,
-        error: message
-      };
-
-      sendMessage('close-request-tab', error);
-    }
-
-    else {
-      sendMessage('close-request-tab', undefined);
-    }
-  }
-
-  /**
-	 * Listen for public key requests from websites. For every request,
-	 * ask the user to approve/deny the request and return the response.
-	 *
-	 */
   window.addEventListener('message', async (event: MessageEvent) => {
     const request: BaseRequest = {
       origin: event.origin,
       type: event.data.type
     };
 
+    const isUserRequest: boolean = (
+      request.type === MessageType.REQUEST_PUBLIC_KEY ||
+      request.type === MessageType.REQUEST_CHALLENGE_RESPONSE
+    );
+
     try {
-      /**
-			 * the request require user interaction
-			 */
-      const isUserRequest = (
-        request.type === MessageType.REQUEST_PUBLIC_KEY ||
-				request.type === MessageType.REQUEST_SOLUTION
-      );
 
       if (isUserRequest && currentSession === undefined) {
-        
         setSession(request);
-      } 
-      
+      }
+
       else if (isUserRequest && currentSession !== undefined) {
         throw new Error(
           'Another website is already requesting a response. Please try again later.'
@@ -125,7 +124,7 @@ import App from './App.vue';
 
       // listen for [public key request] from website
       if (request.type === MessageType.REQUEST_PUBLIC_KEY) {
-        Logger.info('SSASy Channel', 'public key request received', 'content-script')
+        Logger.info('Public key request received', null, 'content-script')
 
         const keyRequest: PublicKeyRequest = {
           origin: request.origin,
@@ -143,25 +142,25 @@ import App from './App.vue';
         } else {
           // send message to website
           window.postMessage(response, request.origin);
-          
+
           // reset session
-          return resetSession();
+          return resetSession({ message: 'Public key request session completed.' });
         }
       }
 
       // listen for [challenge request] from website
-      if (request.type === MessageType.REQUEST_SOLUTION) {
-        Logger.info('SSASy Channel', 'solution request received', 'content-script')
+      if (request.type === MessageType.REQUEST_CHALLENGE_RESPONSE) {
+        Logger.info('Challenge-response request received', null, 'content-script')
 
         const challengeRequest: ChallengeRequest = {
           origin: request.origin,
-          type: MessageType.REQUEST_SOLUTION,
+          type: MessageType.REQUEST_CHALLENGE_RESPONSE,
           mode: event.data.mode,
           challenge: event.data.challenge
         };
 
         const response: ChallengeResponse | ErrorResponse = await sendMessage(
-          MessageType.REQUEST_SOLUTION,
+          MessageType.REQUEST_CHALLENGE_RESPONSE,
           challengeRequest
         );
 
@@ -170,15 +169,15 @@ import App from './App.vue';
         } else {
           // send message to website
           window.postMessage(response, request.origin);
-          
+
           // reset session
-          return resetSession();
+          return resetSession({ message: 'Challenge-response session completed.' });
         }
       }
 
     } catch (error) {
       const errorMessage = (error as Error).message || `Failed to process request ${request.type}`;
-      Logger.error('SSASy Channel', errorMessage, 'content-script');
+      Logger.error('Error', errorMessage, 'content-script');
 
       // response to website
       const errorResponse: ErrorResponse = {
@@ -190,7 +189,7 @@ import App from './App.vue';
       window.postMessage(errorResponse, request.origin);
 
       // reset session
-      resetSession();
+      resetSession({ message: errorMessage, error: true });
     }
   });
 

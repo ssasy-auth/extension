@@ -1,7 +1,7 @@
 <!-- generate key or import -->
 <script setup lang="ts">
 import { ref, reactive, computed, watch } from 'vue';
-import { KeyChecker, CryptoChecker, CryptoModule } from '@ssasy-auth/core';
+import { KeyType, KeyChecker, CryptoChecker, CryptoModule } from '@ssasy-auth/core';
 import { useKeyStore } from '~/stores/key-store';
 import { useNotificationStore } from '~/stores/app';
 import BasePage from '~/components/base/BasePage.vue';
@@ -13,7 +13,6 @@ import InputTextArea from '~/components/base/InputTextArea.vue';
 import InputText from '~/components/base/InputText.vue';
 import KeyCard from '~/components/cards/KeyCard.vue';
 import InfoCardNeverShareKey from '~/components/cards/InfoCardNeverShareKey.vue';
-import { KeyType } from '@ssasy-auth/core';
 import type { Ciphertext, GenericKey, PrivateKey, RawKey } from '@ssasy-auth/core';
 
 const notificationStore = useNotificationStore();

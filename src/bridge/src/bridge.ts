@@ -1,5 +1,14 @@
-import type { RawKey } from '@ssasy-auth/core';
-import { 
+/**
+ * This file acts as a 'bridge' between the SSASy extension and web applications
+ * that want to request a public key or chalenge-response from a user. It exposes
+ * three main functions:
+ * 
+ * - `isExtensionInstalled`: Checks if the SSASy extension is installed in the browser.
+ * - `requestPublicKey`: Requests the public key of the user from the SSASy extension.
+ * - `requestChallengeResponse`: Requests the solution from the SSASy extension.
+ */
+
+import {
   MessageType,
   RequestMode,
   BaseMessage,
@@ -10,6 +19,23 @@ import {
   ChallengeResponse,
   ErrorResponse
 } from './types';
+
+const LOGGING_EMOJI = '🌉';
+const LOGGING_CONTEXT = '[ssasy-bridge]';
+const LOGGING_PREFIX = `${LOGGING_CONTEXT} ${LOGGING_EMOJI}`;
+
+/**
+ * Logs a message to the console.
+ */
+function _log(message: string, config?: { error?: boolean }) {
+  const log = `${LOGGING_PREFIX} ${message}`;
+
+  if (config?.error) {
+    console.error(log);
+  } else {
+    console.info(log);
+  }
+}
 
 /**
  * Returns true if the browser has the Ssasy extension installed.
@@ -27,13 +53,13 @@ async function isExtensionInstalled(): Promise<boolean> {
       const interval = setInterval(() => {
         if (rounds >= MAX_ROUNDS) {
           clearInterval(interval);
-          console.info('[ssasy-bridge]', 'Timeout...')
+          _log('Timeout...', { error: true });
           resolve(false);
         }
-        
+
         // check again
         window.postMessage(request, '*');
-        console.info('[ssasy-bridge]', 'Pinging...')
+        _log('Pinging...');
 
         // increment rounds
         rounds++;
@@ -42,19 +68,19 @@ async function isExtensionInstalled(): Promise<boolean> {
 
       // listen for response from extension
       window.addEventListener('message', (event) => {
-        const message: BaseMessage = { 
-          type: event.data.type, 
+        const message: BaseMessage = {
+          type: event.data.type,
           description: event.data.description
         };
 
         if (message.type === MessageType.RESPONSE_PING) {
-          console.info('[ssasy-bridge] Extension installed')
+          _log('Extension installed');
 
           clearInterval(interval);
           return resolve(true);
         }
 
-        if(message.type === MessageType.RESPONSE_ERROR){
+        if (message.type === MessageType.RESPONSE_ERROR) {
           const errorResponse: ErrorResponse = {
             type: event.data.type,
             error: event.data.error
@@ -64,9 +90,10 @@ async function isExtensionInstalled(): Promise<boolean> {
           return reject(errorResponse.error);
         }
       });
-      
+
     } catch (error) {
-      console.error('[ssasy-bridge]', (error as Error).message || 'Failed to ping extension');
+      const message = (error as Error).message || 'Failed to ping extension';
+      _log(message, { error: true });
       resolve(false);
     }
   });
@@ -75,109 +102,110 @@ async function isExtensionInstalled(): Promise<boolean> {
 /**
  * Returns the public key of the user from the Ssasy extension.
  */
-async function requestPublicKey(mode: RequestMode): Promise<RawKey | null> {
+async function requestPublicKey(mode: RequestMode): Promise<string | null> {
   return new Promise((resolve, reject) => {
+
+    // throw error if requestMode is not a string
+    if (typeof mode !== 'string') {
+      reject(new Error('requestMode must be a string'));
+    }
+
     try {
       // listen for response from extension
       window.addEventListener('message', (event) => {
-        const message: BaseMessage = { 
+        const message: BaseMessage = {
           type: event.data.type
         };
-  
+
         if (message.type === MessageType.RESPONSE_PUBLIC_KEY) {
-          console.info('[ssasy-bridge] Recieved public key from extension')
+          _log('Recieved public key from extension');
+
+          const response: PublicKeyResponse = event.data;
 
           const keyResponse: PublicKeyResponse = {
-            type: event.data.type,
-            key: event.data.key
+            type: response.type,
+            key: response.key
           };
 
-          return keyResponse.key 
-            ? resolve(JSON.parse(keyResponse.key) as RawKey)
+          return keyResponse.key
+            ? resolve(keyResponse.key)
             : resolve(null);
         }
 
-        if(message.type === MessageType.RESPONSE_ERROR){
-          const errorResponse: ErrorResponse = {
-            type: event.data.type,
-            error: event.data.error
-          };
-
-          reject(errorResponse.error);
+        if (message.type === MessageType.RESPONSE_ERROR) {
+        
+          const response: ErrorResponse = event.data;
+          reject(response.error);
         }
       });
-  
+
       // send message to extension
       const request: PublicKeyRequest = { origin: '*', mode: mode, type: MessageType.REQUEST_PUBLIC_KEY };
       window.postMessage(request, '*');
-      
+
     } catch (error) {
-      console.error('[ssasy-bridge]', (error as Error).message || 'Failed to request public key');
+      const message = (error as Error).message || 'Failed to request public key';
+      _log(message, { error: true });
       resolve(null);
     }
   });
 }
 
 /**
- * Returns the solution to the challenge from the Ssasy extension.
+ * Returns the challenge response from the Ssasy extension.
  */
-async function requestSolution(mode: RequestMode, encryptedChallenge: string): Promise<string | null> {
-
+async function requestChallengeResponse(mode: RequestMode, encryptedChallengeUri: string): Promise<string | null> {
   return new Promise((resolve, reject) => {
+
     // throw error if requestMode is not a string
-    if(typeof mode !== 'string') {
+    if (typeof mode !== 'string') {
       reject(new Error('requestMode must be a string'));
     }
 
     // throw error if challengeString is not a string
-    if(typeof encryptedChallenge !== 'string') {
+    if (typeof encryptedChallengeUri !== 'string') {
       reject(new Error('challengeString must be a string'));
     }
-    
+
     // listen for response from extension
     window.addEventListener('message', (event) => {
+      
       const message: BaseMessage = { type: event.data.type };
 
-      if(message.type === MessageType.RESPONSE_SOLUTION){
-        console.info('[ssasy-bridge] Recieved solution from extension');
+      if (message.type === MessageType.RESPONSE_CHALLENGE_RESPONSE) {
+        _log('Recieved challenge response from extension');
 
-        const response: ChallengeResponse = {
-          type: event.data.type,
-          solution: event.data.solution
-        };
+        const response: ChallengeResponse = event.data;
 
-        if(response.solution){
-          resolve(response.solution);
+        if (response.challengeResponse) {
+          resolve(response.challengeResponse);
 
         } else {
           resolve(null);
         }
       }
 
-      if(message.type === MessageType.RESPONSE_ERROR){
-        const errorResponse: ErrorResponse = {
-          type: event.data.type,
-          error: event.data.error
-        };
-
-        reject(errorResponse.error);
+      if (message.type === MessageType.RESPONSE_ERROR) {
+        
+        const response: ErrorResponse = event.data;
+        reject(response.error);
       }
     });
-    
+
     // send message to extension
-    const request: ChallengeRequest = { 
-      origin: '', 
+    const request: ChallengeRequest = {
+      origin: '',
       mode: mode,
-      type: MessageType.REQUEST_SOLUTION, 
-      challenge: encryptedChallenge
+      type: MessageType.REQUEST_CHALLENGE_RESPONSE,
+      challenge: encryptedChallengeUri
     };
 
     window.postMessage(request, '*');
-  }); 
+  });
 }
 
-export const Bridge = { 
+export const Bridge = {
   isExtensionInstalled,
   requestPublicKey,
-  requestSolution
+  requestChallengeResponse
 };

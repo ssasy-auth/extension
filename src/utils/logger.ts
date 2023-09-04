@@ -17,44 +17,84 @@ export type ErrorLog = Log & { type: 'error' };
 
 export type Context = 'background' | 'popup' | 'options' | 'content-script';
 
+type ContextLable = 'cs' | 'bg' | 'pop' | 'opt' | 'unknown';
+
+type ContextEmoji = '🖥️' | '⛓️' | '📣' | '⚙️' | '❓';
+
 /**
  * Returns an abbreviated context label
- * 
+ *
  * @param context - Runtime context
  * @returns abbreviated context label
  */
-function getContextLabel(context?: Context): string | undefined{
-  let label: string | undefined = undefined;
+function getContextLabel(context?: Context): ContextLable {
+  let label: ContextLable;
 
   switch (context) {
   case 'popup':
-    label = 'pop'
+    label = 'pop';
     break;
 
   case 'options':
-    label = 'opt'
+    label = 'opt';
     break;
 
   case 'content-script':
-    label = 'cs'
+    label = 'cs';
     break;
 
   case 'background':
-    label = 'bg'
+    label = 'bg';
     break;
+
+  default:
+    label = 'unknown';
   }
 
   return label;
 }
 
 /**
- * Converts text to JSON string if it is an object
+ * Returns an emoji for the context
  * 
+ * @param context - Runtime context
+ * @returns emoji for context
+ */
+function getContextEmoji(context?: Context): ContextEmoji {
+  let emoji: ContextEmoji;
+
+  switch (context) {
+  case 'popup':
+    emoji = '📣';
+    break;
+
+  case 'options':
+    emoji = '⚙️';
+    break;
+
+  case 'content-script':
+    emoji = '🖥️';
+    break;
+
+  case 'background':
+    emoji = '⛓️';
+    break;
+
+  default:
+    emoji = '❓';
+  }
+
+  return emoji;
+}
+
+/**
+ * Converts text to JSON string if it is an object
+ *
  * @param text - Text to format
  * @returns text
  */
-function formatText(text: any){
-  if(typeof text === 'object'){
+function formatText(text: any) {
+  if (typeof text === 'object') {
     return JSON.stringify(text);
   }
 
@@ -63,53 +103,50 @@ function formatText(text: any){
 
 /**
  * Returns a formatted notification
- * 
+ *
  * @param notification - Notification to format
  * @returns string
  */
 export function formatLog(log: Log, context?: Context): string {
-  /**
-   * emoji for log type
-   */
-  const emoji = log.type === 'error' ? '❗️' : '📣';
+  const contextLabel: string = getContextLabel(context);
+  const contextEmoji: string = getContextEmoji(context);
 
-  /**
-   * context label, if context is provided
-   */
-  const contextLabel = getContextLabel(context);
+  // context shows where the log was called from
+  const extensionContext: string = `[${LOG_LABEL}-${contextLabel}] ${contextEmoji}`;
+  
+  // text is the title and message of the log
+  let text = log.title && log.message
+    ? `${log.title}: ${formatText(log.message)}`
+    : log.title || formatText(log.message);
 
-  /**
-   * label for log
-   */
-  const label = contextLabel ? `[${LOG_LABEL}-${contextLabel}]` : `[${LOG_LABEL}]`;
+  // capitalize first letter
+  text = text.charAt(0).toUpperCase() + text.slice(1);
 
-  /**
-   * text for log. shows title and message if they are provided and converts message to JSON string if it is an object
-   */
-  const text = log.title && log.message ? `${log.title} - ${formatText(log.message)}` : log.title || formatText(log.message);
-
-  return `${label} ${emoji} ${text}`;
+  return `${extensionContext} ${text}`;
 }
 
 /**
  * Returns log and context from arguments passed to log function
  * @param args - arguments passed to the log function
  * @param type - type of log
- * @returns 
+ * @returns
  */
-function extractLogDetails(args: any[], type: LogType): { log: Log, context?: Context } {
+function extractLogDetails(
+  args: any[],
+  type: LogType
+): { log: Log; context?: Context } {
   let log: Log;
   let context: Context | undefined;
 
   // only title or log was provided
-  if(args.length === 1){
-    if(typeof args[0] === 'string'){
+  if (args.length === 1) {
+    if (typeof args[0] === 'string') {
       log = {
         type: type,
         title: args[0],
         message: undefined,
         timestamp: Date.now()
-      }
+      };
     } else {
       log = args[0];
     }
@@ -118,23 +155,22 @@ function extractLogDetails(args: any[], type: LogType): { log: Log, context?: Co
   }
 
   // title and message or log and context were provided
-  else if(args.length === 2){
-    if(typeof args[0] === 'string'){
+  else if (args.length === 2) {
+    if (typeof args[0] === 'string') {
       log = {
         type: type,
         title: args[0],
         message: args[1],
         timestamp: Date.now()
-      }
+      };
 
       context = undefined;
-
     } else {
       log = args[0];
       context = args[1];
     }
-  } 
-  
+  }
+
   // title, message and context were provided
   else {
     log = {
@@ -142,7 +178,7 @@ function extractLogDetails(args: any[], type: LogType): { log: Log, context?: Co
       title: args[0],
       message: args[1],
       timestamp: Date.now()
-    }
+    };
 
     context = args[2];
   }
@@ -150,20 +186,18 @@ function extractLogDetails(args: any[], type: LogType): { log: Log, context?: Co
   return { log, context };
 }
 
-function logInfo (log: InfoLog, context?: Context): string;
-function logInfo (title: string, message: unknown, context?: Context): string;
-function logInfo (...args: any[]): string {
-  
+function logInfo(log: InfoLog, context?: Context): string;
+function logInfo(title: string, message: unknown, context?: Context): string;
+function logInfo(...args: any[]): string {
   const { log, context } = extractLogDetails(args, 'info');
   const formattedLog: string = formatLog(log, context);
   console.info(formattedLog);
   return formattedLog;
 }
 
-function logError (log: ErrorLog, context?: Context): string;
-function logError (title: string, message: unknown, context?: Context): string;
-function logError (...args: any[]): string {
-  
+function logError(log: ErrorLog, context?: Context): string;
+function logError(title: string, message: unknown, context?: Context): string;
+function logError(...args: any[]): string {
   const { log, context } = extractLogDetails(args, 'error');
   const formattedLog: string = formatLog(log, context);
   console.warn(formattedLog);
@@ -173,4 +207,4 @@ function logError (...args: any[]): string {
 export const Logger = {
   info: logInfo,
   error: logError
-}
+};

@@ -2,7 +2,7 @@ import { MessageType } from '~/bridge';
 import type { PublicKeyResponse, ChallengeResponse } from '~/bridge';
 
 /**
- * Responds to a public key request with the user's public key and closes the popup window.
+ * Broadcasts public key response to background
  *
  * @param origin - the origin of the website that started the message
  * @param key - the public key of the user
@@ -20,16 +20,16 @@ function broadcastPublicKeyResponse(key: string | null, error?: string) {
 }
 
 /**
- * Responds to a challenge request with the solution to the challenge and closes the popup window.
+ * Broadcasts challenge response to background
  * 
- * @param solution - the solution to the challenge
+ * @param challengeResponse - challenge response
  * @param error - an error message
  */
-function broadcastChallengeResponse(solution: string | null, error?: string) {
+function broadcastChallengeResponse(challengeResponse: string | null, error?: string) {
   // define message
   const message: ChallengeResponse = {
-    type: MessageType.RESPONSE_SOLUTION,
-    solution,
+    type: MessageType.RESPONSE_CHALLENGE_RESPONSE,
+    challengeResponse,
     description: error
   };
 

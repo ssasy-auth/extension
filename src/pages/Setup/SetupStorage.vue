@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, computed, onMounted } from 'vue';
+import { ref, reactive, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useVaultStore, useKeyStore, useNotificationStore } from '~/stores';
 import type { PrivateKey } from '@ssasy-auth/core';
@@ -14,9 +14,7 @@ const keyStore = useKeyStore();
 const vaultStore = useVaultStore();
 const notificationStore = useNotificationStore();
 
-const data = reactive({
-  privateKey: undefined as PrivateKey | undefined
-});
+const privateKey = ref<PrivateKey>();
 
 const form = reactive({
   password: undefined as string | undefined,
@@ -24,7 +22,7 @@ const form = reactive({
 });
 
 const isValidKey = computed(() => {
-  return data.privateKey !== undefined;
+  return privateKey.value !== undefined;
 });
 
 /**
@@ -49,17 +47,21 @@ const isValidPassword2 = computed(() => {
   return form.password2 === form.password;
 });
 
-async function saveKey(){
-  if(!data.privateKey){
+async function saveKey(privateKey: PrivateKey, password: string){
+  if(!privateKey){
     throw new Error('No key to save');
   }
 
-  if( form.password === undefined || isValidPassword2.value === false){
-    throw new Error('Invalid password');
+  if( password === undefined){
+    throw new Error('Password is missing');
+  }
+
+  if( isValidPassword2.value === false){
+    throw new Error('Passwords do not match');
   }
   
   try {
-    const stored = await vaultStore.wrapKey(data.privateKey, form.password);
+    const stored = await vaultStore.wrapKey(privateKey, password);
 
     if(!stored){
       throw new Error('Failed to save key');
@@ -80,7 +82,7 @@ onMounted(async () => {
   }
 
   try {
-    data.privateKey = keyStore.temporaryKey;
+    privateKey.value = keyStore.temporaryKey;
   } catch (error) {
     const message = (error as Error).message || 'Failed to setup key';
     notificationStore.error('Setup Storage Flow', message, { toast: true });
@@ -96,7 +98,7 @@ onMounted(async () => {
         cols="10"
         md="6">
         <key-card
-          :ssasy-key="data.privateKey!"
+          :ssasy-key="privateKey!"
           :hide-info="true" />
       </v-col>
       <v-divider class="border-opacity-0" />
@@ -133,8 +135,8 @@ onMounted(async () => {
         <base-btn
           large
           color="success"
-          :disabled="!isValidPassword2"
-          @click="saveKey">Save</base-btn>
+          :disabled="!isValidPassword2 || !privateKey || !form.password"
+          @click="saveKey(privateKey as PrivateKey, form.password as string)">Save</base-btn>
       </v-col>
     </v-row>
   </base-page>

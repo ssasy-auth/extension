@@ -9,23 +9,23 @@ The `bridge` component abstracts the complex logic that web applications would n
 
 ## usage
 
-```js
+```ts
 import { Bridge } from 'ssasy-ext-bridge';
 
 // check if the extension is installed
-const extensionInstalled = await Bridge.isExtensionInstalled(); // returns true or false
+const extensionInstalled: boolean = await Bridge.isExtensionInstalled(); // returns true or false
 
 if(extensionInstalled === true){
 
-  const requestMode = 'login'; // or 'registration'
+  const requestMode: string = 'login'; // or 'registration'
   
   // request the user's public key
-  const publicKey = await Bridge.requestPublicKey(requestMode); // returns the user's public key
+  const publicKey: string = await Bridge.requestPublicKey(requestMode); // returns the user's public key
 
   // ... generate a challenge with the user's public key 
 
   // initiate challenge-response
-  const challengeResponse = await Bridge.requestSolution(requestMode, challenge); // returns the challenge response
+  const challengeResponse: string = await Bridge.requestChallengeResponse(requestMode, challenge); // returns the challenge response
 
   // ... verify the challenge response
 }
