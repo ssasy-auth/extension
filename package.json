@@ -1,7 +1,7 @@
 {
   "name": "@ssasy-auth/extension",
   "nickname": "ssasy",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "description": "A browser extension that offers a secure and usable alternative to passwords and federated identity providers.",
   "repository": "this-oliver/ssasy-ext",

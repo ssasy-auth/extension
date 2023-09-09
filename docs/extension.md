@@ -6,7 +6,7 @@
 
 ### anatomy of a web extension
 
-The extension can be grouped into [six main parts](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Anatomy_of_a_WebExtension) but for the sake of simplicity, I will only discuss three of them:
+The extension can be grouped into [six main parts](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Anatomy_of_a_WebExtension) but for the sake of simplicity, I will only discuss the **top three parts**:
 
 1. The `background` script responds to events in the browser while the extension is running. Background scripts can be persisten, which means they continue to run when the extension's popup is closed. Background scripts can also be event pages, which are unloaded when not in use.
 2. The visual elements of the extension like the `popup` and `option` pages. Where the `popup` is the dialog that appears when you click on the `browser action` (e.g. the extension's icon in the toolbar) and the `option` page which is the page that appears when you want to interact with the extension's settings.
@@ -90,18 +90,24 @@ The following steps should be followed regardless of the browser you are publish
 3. `pnpm pack` - compress the entire project into a `.tgz` file (source code) that excludes hidden files and folders (e.g. `.git`)
 4. `pnpm clear` - remove the `.zip` and `.tgz` files
 
+The script `pnpm release:firefox` is a shortcut for the steps above and `pnpm release:chrome` does the same, except for manifest v3 which is required for chromium-based browsers like chrome, edge and brave.
+
 ### firefox
 
-1. [create a firefox developer account](https://addons.mozilla.org/en-US/firefox/)
-2. [submit zip file](https://addons.mozilla.org/en-US/developers/) for the Mozilla review process
-3. [submit source code](https://extensionworkshop.com/documentation/publish/source-code-submission/) for reviewal since the extension is built using the rollup bundler
+1. run `pnpm release:firefox` to build the project
+2. [create/log into firefox developer account](https://addons.mozilla.org/en-US/firefox/)
+3. [submit zip file](https://addons.mozilla.org/en-US/developers/) for the Mozilla review process
+4. upload the `ssasy-auth-extension-x.x.x.tgz` file if they ask for source code
+5. [submit source code](https://extensionworkshop.com/documentation/publish/source-code-submission/) for reviewal since the extension is built using the rollup bundler
 
 ### chrome
 
-1. [create a chrome developer account](https://developer.chrome.com/docs/webstore/register/) and pay the $5 fee 😤
-2. [upload zip file](https://chrome.google.com/webstore/devconsole) to Chrome's devconsole
+1. `pnpm release:chrome` to build the project
+2. [create/log into chrome developer account](https://developer.chrome.com/docs/webstore/register/) and pay the $5 fee 😤
+3. [upload zip file](https://chrome.google.com/webstore/devconsole) to Chrome's devconsole
 
 ### edge
 
-1. [create a microsoft developer account](https://partner.microsoft.com/dashboard/microsoftedge/public/login)
-2. [upload a zip file](https://partner.microsoft.com/en-us/dashboard/microsoftedge/overview) to the Microsoft Edge devconsole (click the `Create new extension` button)
+1. `pnpm release:chrome` to build the project
+2. [create/log into microsoft developer account](https://partner.microsoft.com/dashboard/microsoftedge/public/login)
+3. [upload a zip file](https://partner.microsoft.com/en-us/dashboard/microsoftedge/overview) to the Microsoft Edge devconsole (click the `Create new extension` button)
