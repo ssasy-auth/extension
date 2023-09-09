@@ -21,7 +21,7 @@ specifiers:
   eslint: ^8.35.0
   eslint-plugin-vue: ^9.10.0
   esno: ^0.16.3
-  fist-bump: ^1.2.3
+  fist-bump: ^2.0.0
   fs-extra: ^11.1.0
   jsdom: ^21.1.0
   kolorist: ^1.7.0
@@ -75,7 +75,7 @@ devDependencies:
   eslint: 8.35.0
   eslint-plugin-vue: 9.10.0_eslint@8.35.0
   esno: 0.16.3
-  fist-bump: 1.2.3
+  fist-bump: 2.0.0
   fs-extra: 11.1.0
   jsdom: 21.1.0
   kolorist: 1.7.0
@@ -3414,8 +3414,8 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /fist-bump/1.2.3:
-    resolution: {integrity: sha512-I6hpO9dTwE34vGStKpTkfBs9kltQ7MDOMahATNVB0JgYMkA4vLvhYuslhhHelSAxDKQDgb34AGXYAJnR81455g==}
+  /fist-bump/2.0.0:
+    resolution: {integrity: sha512-WJ15dx1e76lNJ8MaZ2mNFytv7Mtz6yQC3ClquDgubUZILGVTimihW7cbFSVchJO6MlcRxY/jVjYU78J2w/cTxA==}
     hasBin: true
     dependencies:
       shelljs: 0.8.5
